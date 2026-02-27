@@ -962,6 +962,7 @@ class Pattern(BaseModel):
     id: str
     name: str
     category: str
+    technique: Optional[str] = "aiguilles"
     difficulty: str
     estimated_time: str
     description: str
@@ -970,24 +971,30 @@ class Pattern(BaseModel):
     sizes: dict
     steps: List[dict]
     tips: List[str]
+    video_url: Optional[str] = None
     image_url: str
 
+# Combiner les patrons de base avec les patrons supplémentaires
+ALL_PATTERNS = PREDEFINED_PATTERNS + ADDITIONAL_PATTERNS
+
 @api_router.get("/patterns", response_model=List[Pattern])
-async def get_patterns(category: Optional[str] = None, difficulty: Optional[str] = None):
+async def get_patterns(category: Optional[str] = None, difficulty: Optional[str] = None, technique: Optional[str] = None):
     """Get all predefined patterns (recipes), optionally filtered"""
-    patterns = PREDEFINED_PATTERNS
+    patterns = ALL_PATTERNS
     
     if category:
         patterns = [p for p in patterns if p["category"] == category]
     if difficulty:
         patterns = [p for p in patterns if p["difficulty"] == difficulty]
+    if technique:
+        patterns = [p for p in patterns if p.get("technique") == technique]
     
     return [Pattern(**p) for p in patterns]
 
 @api_router.get("/patterns/{pattern_id}", response_model=Pattern)
 async def get_pattern(pattern_id: str):
     """Get a specific pattern by ID"""
-    for pattern in PREDEFINED_PATTERNS:
+    for pattern in ALL_PATTERNS:
         if pattern["id"] == pattern_id:
             return Pattern(**pattern)
     raise HTTPException(status_code=404, detail="Patron non trouvé")
@@ -995,13 +1002,82 @@ async def get_pattern(pattern_id: str):
 @api_router.get("/patterns/categories/list")
 async def get_pattern_categories():
     """Get list of all pattern categories"""
-    categories = list(set(p["category"] for p in PREDEFINED_PATTERNS))
+    categories = list(set(p["category"] for p in ALL_PATTERNS))
     return {"categories": sorted(categories)}
 
 @api_router.get("/patterns/difficulties/list")
 async def get_pattern_difficulties():
     """Get list of all difficulty levels"""
-    return {"difficulties": ["débutant", "intermédiaire", "avancé"]}
+    return {"difficulties": ["débutant", "intermédiaire", "avancé", "expert"]}
+
+@api_router.get("/patterns/techniques/list")
+async def get_pattern_techniques():
+    """Get list of all techniques"""
+    return {"techniques": ["aiguilles", "crochet"]}
+
+# =====================
+# LEXIQUE ENDPOINTS
+# =====================
+
+@api_router.get("/lexique")
+async def get_lexique(category: Optional[str] = None):
+    """Get all lexique terms, optionally filtered by category"""
+    terms = LEXIQUE
+    if category:
+        terms = [t for t in terms if t["category"] == category]
+    return terms
+
+@api_router.get("/lexique/{term_id}")
+async def get_lexique_term(term_id: str):
+    """Get a specific lexique term"""
+    for term in LEXIQUE:
+        if term["id"] == term_id:
+            return term
+    raise HTTPException(status_code=404, detail="Terme non trouvé")
+
+@api_router.get("/lexique/categories/list")
+async def get_lexique_categories():
+    """Get list of all lexique categories"""
+    categories = list(set(t["category"] for t in LEXIQUE))
+    return {"categories": sorted(categories)}
+
+# =====================
+# TUTORIALS ENDPOINTS
+# =====================
+
+@api_router.get("/tutorials")
+async def get_tutorials(category: Optional[str] = None, technique: Optional[str] = None):
+    """Get all tutorials, optionally filtered"""
+    tutorials = TUTORIALS
+    if category:
+        tutorials = [t for t in tutorials if t["category"] == category]
+    if technique:
+        tutorials = [t for t in tutorials if t.get("technique") == technique]
+    return tutorials
+
+@api_router.get("/tutorials/{tutorial_id}")
+async def get_tutorial(tutorial_id: str):
+    """Get a specific tutorial"""
+    for tutorial in TUTORIALS:
+        if tutorial["id"] == tutorial_id:
+            return tutorial
+    raise HTTPException(status_code=404, detail="Tutoriel non trouvé")
+
+# =====================
+# SIZE GUIDE ENDPOINTS
+# =====================
+
+@api_router.get("/size-guide")
+async def get_size_guide():
+    """Get the complete size guide"""
+    return SIZE_GUIDE
+
+@api_router.get("/size-guide/{category}")
+async def get_size_guide_category(category: str):
+    """Get size guide for a specific category"""
+    if category in SIZE_GUIDE:
+        return SIZE_GUIDE[category]
+    raise HTTPException(status_code=404, detail="Catégorie non trouvée")
 
 # Include the router in the main app
 app.include_router(api_router)
