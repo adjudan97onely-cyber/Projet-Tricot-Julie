@@ -140,7 +140,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "8-10 heures",
         "description": "Crop top tendance composé de granny squares, parfait pour l'été.",
-        "image_url": "https://images.unsplash.com/photo-1747155956854-7d1aaecc3123",
+        "image_url": "https://images.unsplash.com/photo-1767249622099-d035e25610b0",
         "materials": {
             "yarn": {
                 "type": "Coton coloré",
