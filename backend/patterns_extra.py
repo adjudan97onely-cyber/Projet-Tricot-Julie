@@ -56,7 +56,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "18-22 heures",
         "description": "Robe de plage fluide et aérée avec motif en filet, parfaite par-dessus un maillot de bain.",
-        "image_url": "https://images.unsplash.com/photo-1747155956854-7d1aaecc3123",
+        "image_url": "https://images.unsplash.com/photo-1568315081330-f8c9a8211eb6",
         "materials": {
             "yarn": {
                 "type": "Coton fin ou fil de plage",
