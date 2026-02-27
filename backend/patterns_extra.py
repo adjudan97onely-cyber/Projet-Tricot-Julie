@@ -404,7 +404,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "30-40 heures",
         "description": "Couverture traditionnelle composée de carrés assemblés. Idéale pour utiliser des restes de laine.",
-        "image_url": "https://images.unsplash.com/photo-1759544632264-a31a9ff1e60b",
+        "image_url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64",
         "materials": {
             "yarn": {
                 "type": "Acrylique ou laine",
