@@ -244,9 +244,9 @@ ADDITIONAL_PATTERNS = [
         },
         "gauge": "22 mailles x 12 rangs = 10cm en ms",
         "sizes": {
-            "S (36-38)": "Tour hanches 88-92cm",
-            "M (40-42)": "Tour hanches 96-100cm",
-            "L (44-46)": "Tour hanches 104-108cm"
+            "S (36-38)": "Tour poitrine 80-84cm, Tour taille 60-64cm, Tour hanches 88-92cm",
+            "M (40-42)": "Tour poitrine 88-92cm, Tour taille 68-72cm, Tour hanches 96-100cm",
+            "L (44-46)": "Tour poitrine 96-100cm, Tour taille 76-80cm, Tour hanches 104-108cm"
         },
         "steps": [
             {"step": 1, "title": "Partie avant", "instruction": "Chaînette de 30/35/40 ml. Crocheter en ms en augmentant sur les côtés pour la forme."},
