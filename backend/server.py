@@ -296,7 +296,240 @@ async def delete_project(project_id: str):
     result = await db.projects.delete_one({"id": project_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Projet non trouvé")
+    # Also delete related comments
+    await db.comments.delete_many({"project_id": project_id})
     return {"message": "Projet supprimé"}
+
+# =====================
+# GALLERY ENDPOINTS (Public Portfolio)
+# =====================
+
+class GalleryItem(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str
+    category: str  # bonnet, écharpe, pull, etc.
+    image_base64: Optional[str] = None
+    price: Optional[str] = None  # Prix indicatif
+    available: bool = True  # Disponible à la commande
+    featured: bool = False  # Mis en avant
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class GalleryItemCreate(BaseModel):
+    title: str
+    description: str
+    category: str
+    image_base64: Optional[str] = None
+    price: Optional[str] = None
+    available: bool = True
+    featured: bool = False
+
+@api_router.post("/gallery", response_model=GalleryItem)
+async def create_gallery_item(item: GalleryItemCreate):
+    """Add an item to the public gallery"""
+    gallery_item = GalleryItem(**item.dict())
+    await db.gallery.insert_one(gallery_item.dict())
+    return gallery_item
+
+@api_router.get("/gallery", response_model=List[GalleryItem])
+async def get_gallery(category: Optional[str] = None, featured_only: bool = False):
+    """Get all gallery items (public portfolio)"""
+    query = {}
+    if category:
+        query["category"] = category
+    if featured_only:
+        query["featured"] = True
+    items = await db.gallery.find(query).sort("created_at", -1).to_list(100)
+    return [GalleryItem(**item) for item in items]
+
+@api_router.get("/gallery/{item_id}", response_model=GalleryItem)
+async def get_gallery_item(item_id: str):
+    """Get a specific gallery item"""
+    item = await db.gallery.find_one({"id": item_id})
+    if not item:
+        raise HTTPException(status_code=404, detail="Élément non trouvé")
+    return GalleryItem(**item)
+
+@api_router.put("/gallery/{item_id}", response_model=GalleryItem)
+async def update_gallery_item(item_id: str, item_update: GalleryItemCreate):
+    """Update a gallery item"""
+    item = await db.gallery.find_one({"id": item_id})
+    if not item:
+        raise HTTPException(status_code=404, detail="Élément non trouvé")
+    
+    await db.gallery.update_one(
+        {"id": item_id},
+        {"$set": item_update.dict()}
+    )
+    updated_item = await db.gallery.find_one({"id": item_id})
+    return GalleryItem(**updated_item)
+
+@api_router.delete("/gallery/{item_id}")
+async def delete_gallery_item(item_id: str):
+    """Delete a gallery item"""
+    result = await db.gallery.delete_one({"id": item_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Élément non trouvé")
+    return {"message": "Élément supprimé"}
+
+# =====================
+# CLIENT MESSAGES ENDPOINTS
+# =====================
+
+class ClientMessage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    client_name: str
+    client_email: Optional[str] = None
+    client_phone: Optional[str] = None
+    subject: str
+    message: str
+    gallery_item_id: Optional[str] = None  # If related to a specific item
+    project_id: Optional[str] = None  # If related to a project
+    status: str = "nouveau"  # nouveau, lu, répondu, archivé
+    reply: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    read_at: Optional[datetime] = None
+    replied_at: Optional[datetime] = None
+
+class ClientMessageCreate(BaseModel):
+    client_name: str
+    client_email: Optional[str] = None
+    client_phone: Optional[str] = None
+    subject: str
+    message: str
+    gallery_item_id: Optional[str] = None
+    project_id: Optional[str] = None
+
+class MessageReply(BaseModel):
+    reply: str
+
+@api_router.post("/messages", response_model=ClientMessage)
+async def create_message(msg: ClientMessageCreate):
+    """Create a new client message (public endpoint for visitors)"""
+    message_obj = ClientMessage(**msg.dict())
+    await db.client_messages.insert_one(message_obj.dict())
+    return message_obj
+
+@api_router.get("/messages", response_model=List[ClientMessage])
+async def get_messages(status: Optional[str] = None, unread_only: bool = False):
+    """Get all client messages (for Julie)"""
+    query = {}
+    if status:
+        query["status"] = status
+    if unread_only:
+        query["status"] = "nouveau"
+    messages = await db.client_messages.find(query).sort("created_at", -1).to_list(100)
+    return [ClientMessage(**msg) for msg in messages]
+
+@api_router.get("/messages/count")
+async def get_unread_count():
+    """Get count of unread messages"""
+    count = await db.client_messages.count_documents({"status": "nouveau"})
+    return {"unread_count": count}
+
+@api_router.get("/messages/{message_id}", response_model=ClientMessage)
+async def get_message(message_id: str):
+    """Get a specific message"""
+    msg = await db.client_messages.find_one({"id": message_id})
+    if not msg:
+        raise HTTPException(status_code=404, detail="Message non trouvé")
+    return ClientMessage(**msg)
+
+@api_router.put("/messages/{message_id}/read")
+async def mark_message_read(message_id: str):
+    """Mark a message as read"""
+    result = await db.client_messages.update_one(
+        {"id": message_id},
+        {"$set": {"status": "lu", "read_at": datetime.utcnow()}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Message non trouvé")
+    return {"message": "Message marqué comme lu"}
+
+@api_router.put("/messages/{message_id}/reply", response_model=ClientMessage)
+async def reply_to_message(message_id: str, reply: MessageReply):
+    """Reply to a client message"""
+    result = await db.client_messages.update_one(
+        {"id": message_id},
+        {"$set": {
+            "reply": reply.reply,
+            "status": "répondu",
+            "replied_at": datetime.utcnow()
+        }}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Message non trouvé")
+    
+    updated_msg = await db.client_messages.find_one({"id": message_id})
+    return ClientMessage(**updated_msg)
+
+@api_router.delete("/messages/{message_id}")
+async def delete_message(message_id: str):
+    """Delete a message"""
+    result = await db.client_messages.delete_one({"id": message_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Message non trouvé")
+    return {"message": "Message supprimé"}
+
+# =====================
+# PROJECT COMMENTS ENDPOINTS (Public questions on projects)
+# =====================
+
+class Comment(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    project_id: str
+    author_name: str
+    content: str
+    reply: Optional[str] = None  # Julie's reply
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    replied_at: Optional[datetime] = None
+
+class CommentCreate(BaseModel):
+    project_id: str
+    author_name: str
+    content: str
+
+class CommentReply(BaseModel):
+    reply: str
+
+@api_router.post("/comments", response_model=Comment)
+async def create_comment(comment: CommentCreate):
+    """Add a comment to a project (public)"""
+    # Verify project exists
+    project = await db.projects.find_one({"id": comment.project_id})
+    if not project:
+        raise HTTPException(status_code=404, detail="Projet non trouvé")
+    
+    comment_obj = Comment(**comment.dict())
+    await db.comments.insert_one(comment_obj.dict())
+    return comment_obj
+
+@api_router.get("/projects/{project_id}/comments", response_model=List[Comment])
+async def get_project_comments(project_id: str):
+    """Get all comments for a project"""
+    comments = await db.comments.find({"project_id": project_id}).sort("created_at", -1).to_list(100)
+    return [Comment(**c) for c in comments]
+
+@api_router.put("/comments/{comment_id}/reply", response_model=Comment)
+async def reply_to_comment(comment_id: str, reply: CommentReply):
+    """Reply to a comment (Julie only)"""
+    result = await db.comments.update_one(
+        {"id": comment_id},
+        {"$set": {"reply": reply.reply, "replied_at": datetime.utcnow()}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Commentaire non trouvé")
+    
+    updated_comment = await db.comments.find_one({"id": comment_id})
+    return Comment(**updated_comment)
+
+@api_router.delete("/comments/{comment_id}")
+async def delete_comment(comment_id: str):
+    """Delete a comment"""
+    result = await db.comments.delete_one({"id": comment_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Commentaire non trouvé")
+    return {"message": "Commentaire supprimé"}
 
 # Include the router in the main app
 app.include_router(api_router)
