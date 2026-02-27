@@ -541,6 +541,7 @@ PREDEFINED_PATTERNS = [
         "id": "bonnet-basique",
         "name": "Bonnet Classique",
         "category": "bonnet",
+        "technique": "aiguilles",
         "difficulty": "débutant",
         "estimated_time": "3-4 heures",
         "description": "Un bonnet simple et élégant, parfait pour débuter. Point jersey avec côtes.",
@@ -576,6 +577,7 @@ PREDEFINED_PATTERNS = [
             "Utilisez un marqueur pour repérer le début du rang",
             "Pour un bonnet plus chaud, ajoutez un pompon"
         ],
+        "video_url": "https://www.youtube.com/results?search_query=tricoter+bonnet+debutant",
         "image_url": "bonnet"
     },
     {
