@@ -118,19 +118,31 @@ export default function HomeScreen() {
     },
   ];
 
+  // Animated background color
+  const animatedBgColor = sparkleAnim.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: ['rgba(255, 215, 0, 0.05)', 'rgba(255, 223, 0, 0.15)', 'rgba(255, 215, 0, 0.05)'],
+  });
+
   return (
     <SafeAreaView style={styles.container}>
+      <Animated.View style={[styles.sparkleBackground, { backgroundColor: animatedBgColor }]} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.header}>
+          {/* Porcelain flower */}
           <View style={styles.logoCircle}>
-            <Ionicons name="flower-outline" size={36} color="#D4AF37" />
+            <Text style={styles.flowerEmoji}>🌸</Text>
           </View>
-          <Text style={styles.brandName}>Julie</Text>
+          {/* Brand name with dove */}
+          <View style={styles.brandNameRow}>
+            <Text style={styles.brandName}>BUI-THI DAM</Text>
+            <Text style={styles.doveEmoji}>🕊️</Text>
+          </View>
           <Text style={styles.brandTagline}>Créations</Text>
           <View style={styles.divider}>
             <View style={styles.dividerLine} />
-            <Ionicons name="diamond-outline" size={14} color="#D4AF37" />
+            <Text style={styles.sparkleEmoji}>✨</Text>
             <View style={styles.dividerLine} />
           </View>
           <Text style={styles.subtitle}>Tricot • Crochet • Laine</Text>
