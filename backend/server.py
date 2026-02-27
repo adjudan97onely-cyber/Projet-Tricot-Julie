@@ -973,7 +973,7 @@ PREDEFINED_PATTERNS = [
             "Travaillez en spirale continue pour éviter la démarcation",
             "Ajoutez un pompon pour plus de style"
         ],
-        "image_url": "bonnet-crochet"
+        "image_url": "https://images.unsplash.com/photo-1699347611474-5be693bee31e"
     }
 ]
 
