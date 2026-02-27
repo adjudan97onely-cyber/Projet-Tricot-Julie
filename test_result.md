@@ -281,3 +281,5 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "Julie Créations app MVP implemented. Backend has AI chat with vision (GPT-4o via Emergent LLM key), projects CRUD, gallery portfolio, and client messages system. All APIs use base64 for images. Please test all backend endpoints thoroughly."
+  - agent: "main"
+    message: "IMPORTANT UPDATES - Fixed image vision analysis for AI chat - changed image_contents to file_contents in UserMessage. Also added 27 new patterns (total 37) with summer/winter items (robes, maillots, couvertures, shorts, etc.) and added image_url to all patterns. Filters for Aiguilles/Crochet now work. Please re-test the /api/chat endpoint with images to confirm the fix works."
