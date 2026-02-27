@@ -1084,7 +1084,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "30-40 heures",
         "description": "Grand cardigan loose et confortable, parfait pour se blottir dedans.",
-        "image_url": "https://images.unsplash.com/photo-1758981400268-1181291b9503",
+        "image_url": "https://images.unsplash.com/photo-1679847628912-4c3e7402abc7",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse et douce",
