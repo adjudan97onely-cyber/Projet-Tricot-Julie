@@ -529,7 +529,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "4-5 heures",
         "description": "Chaussons confortables et rapides à tricoter, parfaits pour la maison.",
-        "image_url": "https://images.unsplash.com/photo-1631194758628-71ec7c35137e",
+        "image_url": "https://images.unsplash.com/photo-1584917865442-de89df76afd3",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse",
