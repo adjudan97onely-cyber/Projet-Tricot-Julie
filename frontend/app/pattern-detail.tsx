@@ -62,6 +62,26 @@ const CATEGORY_LABELS: Record<string, string> = {
   'accessoire': 'Accessoire',
 };
 
+// Function to open Amazon search for yarn
+const openAmazonSearch = (searchTerm: string) => {
+  // Clean and format the search term for Amazon France
+  const cleanedTerm = searchTerm
+    .replace(/,/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const encodedSearch = encodeURIComponent(`laine tricot ${cleanedTerm}`);
+  const amazonUrl = `https://www.amazon.fr/s?k=${encodedSearch}`;
+  Linking.openURL(amazonUrl);
+};
+
+// Function to open Amazon search for needles
+const openAmazonNeedleSearch = (needleType: string, needleSize: string) => {
+  const searchTerm = `${needleType} ${needleSize} tricot`;
+  const encodedSearch = encodeURIComponent(searchTerm);
+  const amazonUrl = `https://www.amazon.fr/s?k=${encodedSearch}`;
+  Linking.openURL(amazonUrl);
+};
+
 export default function PatternDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
