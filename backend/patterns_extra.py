@@ -269,7 +269,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "avancé",
         "estimated_time": "15-20 heures",
         "description": "Maillot de bain une pièce avec dos nu et détails ajourés, chic et sophistiqué.",
-        "image_url": "https://images.unsplash.com/photo-1756801740685-cfa6ce409633",
+        "image_url": "https://images.unsplash.com/photo-1467632499275-7a693a761056",
         "materials": {
             "yarn": {
                 "type": "Fil élastique spécial maillot",
