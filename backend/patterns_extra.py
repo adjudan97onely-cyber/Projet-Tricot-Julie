@@ -227,7 +227,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "5-6 heures",
         "description": "Culotte de bikini avec liens sur les côtés, ajustable.",
-        "image_url": "https://images.unsplash.com/photo-1756801740685-cfa6ce409633",
+        "image_url": "https://images.unsplash.com/photo-1691315720837-ba3509f28ed1",
         "materials": {
             "yarn": {
                 "type": "Coton résistant",
