@@ -583,15 +583,17 @@ PREDEFINED_PATTERNS = [
             "Pour un bonnet plus chaud, ajoutez un pompon"
         ],
         "video_url": "https://www.youtube.com/results?search_query=tricoter+bonnet+debutant",
-        "image_url": "bonnet"
+        "image_url": "https://images.unsplash.com/photo-1699347611474-5be693bee31e"
     },
     {
         "id": "echarpe-cotes",
         "name": "Écharpe Côtes Anglaises",
         "category": "echarpe",
+        "technique": "aiguilles",
         "difficulty": "débutant",
         "estimated_time": "8-10 heures",
         "description": "Une écharpe moelleuse et réversible avec le point de côtes anglaises.",
+        "image_url": "https://images.unsplash.com/photo-1457545195570-67f207084966",
         "materials": {
             "yarn": {
                 "type": "Laine douce (alpaga, mérinos, ou mélange)",
