@@ -306,6 +306,15 @@ export default function PatternDetailScreen() {
                     <Text style={styles.detailValue}>{pattern.materials.needles.cable_length}</Text>
                   </View>
                 )}
+                {/* Amazon Buy Button for Needles */}
+                <TouchableOpacity
+                  style={styles.amazonButton}
+                  onPress={() => openAmazonNeedleSearch(pattern.materials.needles.type, pattern.materials.needles.size)}
+                >
+                  <Ionicons name="cart-outline" size={18} color="#FFFFFF" />
+                  <Text style={styles.amazonButtonText}>Acheter sur Amazon</Text>
+                  <Ionicons name="open-outline" size={16} color="#FFFFFF" />
+                </TouchableOpacity>
               </View>
 
               {/* Accessories */}
