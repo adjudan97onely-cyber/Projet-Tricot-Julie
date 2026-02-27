@@ -888,15 +888,17 @@ PREDEFINED_PATTERNS = [
             "Ajoutez des franges pour un style bohème",
             "Peut se porter de différentes façons"
         ],
-        "image_url": "poncho"
+        "image_url": "https://images.unsplash.com/photo-1758981400268-1181291b9503"
     },
     {
         "id": "echarpe-crochet-debutant",
         "name": "Écharpe au Crochet",
         "category": "echarpe",
+        "technique": "crochet",
         "difficulty": "débutant",
         "estimated_time": "5-6 heures",
         "description": "Une écharpe simple au crochet, parfaite pour apprendre les bases.",
+        "image_url": "https://images.unsplash.com/photo-1457545195570-67f207084966",
         "materials": {
             "yarn": {
                 "type": "Laine douce et épaisse",
