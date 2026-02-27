@@ -720,7 +720,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "12-15 heures (la paire)",
         "description": "Des chaussettes confortables tricotées du haut vers le bas avec talon renforcé.",
-        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
+        "image_url": "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82",
         "materials": {
             "yarn": {
                 "type": "Laine à chaussettes (mélange laine/nylon)",
@@ -811,7 +811,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "2-3 heures",
         "description": "Un bandeau élégant avec une torsade centrale, parfait pour garder les oreilles au chaud.",
-        "image_url": "https://images.unsplash.com/photo-1617897210309-61331a57ac1f",
+        "image_url": "https://images.unsplash.com/photo-1576871337622-98d48d1cf531",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse et douce",
@@ -855,7 +855,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "15-20 heures",
         "description": "Un poncho facile composé de deux rectangles, idéal pour débuter les vêtements.",
-        "image_url": "https://images.unsplash.com/photo-1758981400268-1181291b9503",
+        "image_url": "https://images.unsplash.com/photo-1611241893603-3c359704e0ee",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse et chaude",
@@ -898,7 +898,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "5-6 heures",
         "description": "Une écharpe simple au crochet, parfaite pour apprendre les bases.",
-        "image_url": "https://images.unsplash.com/photo-1457545195570-67f207084966",
+        "image_url": "https://images.unsplash.com/photo-1601925228446-89029cb1e76f",
         "materials": {
             "yarn": {
                 "type": "Laine douce et épaisse",
