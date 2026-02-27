@@ -315,7 +315,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "10-12 heures",
         "description": "Short ajouré parfait pour la plage, à porter sur un maillot.",
-        "image_url": "https://images.unsplash.com/photo-1591195853828-11db59a44f6b",
+        "image_url": "https://images.unsplash.com/photo-1525507119028-ed4c629a60a3",
         "materials": {
             "yarn": {
                 "type": "Coton",
@@ -447,7 +447,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "40-50 heures",
         "description": "Une couverture texturée avec un beau motif en relief, chaude et décorative.",
-        "image_url": "https://images.unsplash.com/photo-1591144984044-009a102ace51",
+        "image_url": "https://images.unsplash.com/photo-1580301762395-21ce84d00bc6",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse",
@@ -486,7 +486,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "8-10 heures",
         "description": "Plaid XXL avec laine géante, réalisable en un week-end. Effet cocooning garanti.",
-        "image_url": "https://images.unsplash.com/photo-1591144984044-009a102ace51",
+        "image_url": "https://images.unsplash.com/photo-1545239705-1564e58b9e4a",
         "materials": {
             "yarn": {
                 "type": "Laine géante / Arm Knitting",
@@ -529,7 +529,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "4-5 heures",
         "description": "Chaussons confortables et rapides à tricoter, parfaits pour la maison.",
-        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
+        "image_url": "https://images.unsplash.com/photo-1631194758628-71ec7c35137e",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse",
@@ -569,7 +569,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "2-3 heures",
         "description": "Adorables petites chaussettes pour garder les pieds de bébé au chaud.",
-        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
+        "image_url": "https://images.unsplash.com/photo-1519689680058-324335c77eba",
         "materials": {
             "yarn": {
                 "type": "Laine bébé douce",
@@ -611,7 +611,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "15-18 heures (la paire)",
         "description": "Chaussettes épaisses et chaudes pour l'hiver, tricotées en laine résistante.",
-        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
+        "image_url": "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82",
         "materials": {
             "yarn": {
                 "type": "Laine à chaussettes renforcée",
@@ -697,7 +697,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "3-4 heures",
         "description": "Bandeau élégant avec torsade centrale, parfait pour l'hiver.",
-        "image_url": "https://images.unsplash.com/photo-1771766355697-da69c0432a1f",
+        "image_url": "https://images.unsplash.com/photo-1576871337622-98d48d1cf531",
         "materials": {
             "yarn": {
                 "type": "Laine douce",
@@ -737,7 +737,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "6-8 heures (la paire)",
         "description": "Mitaines avec pouces et torsades élégantes, parfaites pour l'hiver.",
-        "image_url": "https://images.unsplash.com/photo-1771766355697-da69c0432a1f",
+        "image_url": "https://images.unsplash.com/photo-1608256246200-53e635b5b65f",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos",
@@ -781,7 +781,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "3-4 heures (la paire)",
         "description": "Moufles chaudes et colorées pour les enfants, avec cordon pour ne pas les perdre.",
-        "image_url": "https://images.unsplash.com/photo-1771766355697-da69c0432a1f",
+        "image_url": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4",
         "materials": {
             "yarn": {
                 "type": "Laine douce enfant",
@@ -828,7 +828,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "8-10 heures",
         "description": "Petit gilet cache-cœur pour nouveau-né, doux et pratique.",
-        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
+        "image_url": "https://images.unsplash.com/photo-1522771930-78b99b3a0e1d",
         "materials": {
             "yarn": {
                 "type": "Laine bébé",
@@ -869,7 +869,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "2-3 heures",
         "description": "Adorables petits chaussons au crochet, rapides à réaliser.",
-        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
+        "image_url": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4",
         "materials": {
             "yarn": {
                 "type": "Coton ou laine bébé",
@@ -953,7 +953,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "avancé",
         "estimated_time": "20-25 heures",
         "description": "Combinaison intégrale pour bébé avec pieds intégrés, ultra douillette.",
-        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
+        "image_url": "https://images.unsplash.com/photo-1519689680058-324335c77eba",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos bébé",
@@ -1001,7 +1001,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "25-35 heures",
         "description": "Pull classique tricoté du haut vers le bas, construction raglan sans couture.",
-        "image_url": "https://images.unsplash.com/photo-1758981400268-1181291b9503",
+        "image_url": "https://images.unsplash.com/photo-1434389677669-e08b4cac3105",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos ou mélange",
@@ -1043,7 +1043,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "15-20 heures",
         "description": "Gilet simple et élégant, parfait pour débuter les vêtements.",
-        "image_url": "https://images.unsplash.com/photo-1758981400298-78cd18eb6793",
+        "image_url": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a",
         "materials": {
             "yarn": {
                 "type": "Laine ou coton",
@@ -1173,7 +1173,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "4-5 heures",
         "description": "Écharpe douce et colorée pour les enfants, facile à tricoter en point mousse.",
-        "image_url": "https://images.unsplash.com/photo-1544816155-12df9643f363",
+        "image_url": "https://images.unsplash.com/photo-1510598969022-c4c6c5d05769",
         "materials": {
             "yarn": {
                 "type": "Laine douce lavable machine",
@@ -1298,7 +1298,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "3-4 heures",
         "description": "Tour de cou pratique pour les enfants, ne se perd pas et garde bien au chaud.",
-        "image_url": "https://images.unsplash.com/photo-1544816155-12df9643f363",
+        "image_url": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4",
         "materials": {
             "yarn": {
                 "type": "Laine douce anti-grattage",
@@ -1380,7 +1380,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "5-6 heures",
         "description": "Snood simple et masculin en côtes, parfait sous une veste ou un blouson.",
-        "image_url": "https://images.unsplash.com/photo-1457545195570-67f207084966",
+        "image_url": "https://images.unsplash.com/photo-1517841905240-472988babdf9",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos ou acrylique doux",
