@@ -549,6 +549,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "3-4 heures",
         "description": "Un bonnet simple et élégant, parfait pour débuter. Point jersey avec côtes.",
+        "image_url": "https://images.unsplash.com/photo-1699347611474-5be693bee31e",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos ou acrylique",
