@@ -379,6 +379,15 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
+  imageContainer: {
+    width: '100%',
+    height: 220,
+    backgroundColor: '#1A1A1A',
+  },
+  patternImage: {
+    width: '100%',
+    height: '100%',
+  },
   patternHeader: {
     padding: 20,
     borderBottomWidth: 1,
