@@ -13,7 +13,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "20-25 heures",
         "description": "Une robe légère et aérée parfaite pour l'été. Motif ajouré avec bretelles ajustables.",
-        "image_url": "https://images.unsplash.com/photo-1747155956854-7d1aaecc3123",
+        "image_url": "https://images.unsplash.com/photo-1568315081330-f8c9a8211eb6",
         "materials": {
             "yarn": {
                 "type": "Coton ou lin",
