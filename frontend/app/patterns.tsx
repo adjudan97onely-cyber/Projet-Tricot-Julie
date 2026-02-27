@@ -66,12 +66,16 @@ export default function PatternsScreen() {
   const [patterns, setPatterns] = useState<Pattern[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedTechnique, setSelectedTechnique] = useState('all');
 
   const fetchPatterns = async () => {
     try {
-      const url = selectedCategory === 'all'
-        ? `${BACKEND_URL}/api/patterns`
-        : `${BACKEND_URL}/api/patterns?category=${selectedCategory}`;
+      let url = `${BACKEND_URL}/api/patterns`;
+      const params = [];
+      if (selectedCategory !== 'all') params.push(`category=${selectedCategory}`);
+      if (selectedTechnique !== 'all') params.push(`technique=${selectedTechnique}`);
+      if (params.length > 0) url += '?' + params.join('&');
+      
       const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
@@ -87,7 +91,7 @@ export default function PatternsScreen() {
   useEffect(() => {
     setIsLoading(true);
     fetchPatterns();
-  }, [selectedCategory]);
+  }, [selectedCategory, selectedTechnique]);
 
   const renderPatternCard = (pattern: Pattern) => {
     const iconName = CATEGORY_ICONS[pattern.category] || 'cube-outline';
