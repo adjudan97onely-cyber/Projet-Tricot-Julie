@@ -710,15 +710,17 @@ PREDEFINED_PATTERNS = [
             "Le point de riz est réversible, pas de mauvais côté !",
             "Ajoutez les initiales du bébé en broderie"
         ],
-        "image_url": "couverture"
+        "image_url": "https://images.unsplash.com/photo-1591144984044-009a102ace51"
     },
     {
         "id": "chaussettes-basiques",
         "name": "Chaussettes Classiques",
         "category": "chaussettes",
+        "technique": "aiguilles",
         "difficulty": "intermédiaire",
         "estimated_time": "12-15 heures (la paire)",
         "description": "Des chaussettes confortables tricotées du haut vers le bas avec talon renforcé.",
+        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
         "materials": {
             "yarn": {
                 "type": "Laine à chaussettes (mélange laine/nylon)",
