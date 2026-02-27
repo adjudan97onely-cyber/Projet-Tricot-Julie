@@ -90,12 +90,11 @@ const openHobbiiSearch = (searchTerm: string) => {
   Linking.openURL(hobbiiUrl);
 };
 
-// Function to open Lou Passion (lainebox.com is known as Lou Passion)
+// Function to open Lou Passion
 const openLouPassionSearch = (searchTerm: string) => {
   const cleanedTerm = searchTerm.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
   const encodedSearch = encodeURIComponent(cleanedTerm);
-  // Lou Passion / La Lainebox
-  const louPassionUrl = `https://www.lainebox.com/recherche?controller=search&s=${encodedSearch}`;
+  const louPassionUrl = `https://loupassion.com/?s=${encodedSearch}&post_type=product`;
   Linking.openURL(louPassionUrl);
 };
 
