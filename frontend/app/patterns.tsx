@@ -19,11 +19,18 @@ interface Pattern {
   id: string;
   name: string;
   category: string;
+  technique?: string;
   difficulty: string;
   estimated_time: string;
   description: string;
   image_url: string;
 }
+
+const TECHNIQUES = [
+  { value: 'all', label: 'Tout' },
+  { value: 'aiguilles', label: 'Aiguilles', icon: 'color-wand-outline' },
+  { value: 'crochet', label: 'Crochet', icon: 'git-branch-outline' },
+];
 
 const CATEGORIES = [
   { value: 'all', label: 'Tous', icon: 'grid-outline' },
