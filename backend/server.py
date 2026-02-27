@@ -549,7 +549,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "3-4 heures",
         "description": "Un bonnet simple et élégant, parfait pour débuter. Point jersey avec côtes.",
-        "image_url": "https://picsum.photos/seed/bonnet1/400/300",
+        "image_url": "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=400&h=300&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos ou acrylique",
@@ -593,7 +593,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "8-10 heures",
         "description": "Une écharpe moelleuse et réversible avec le point de côtes anglaises.",
-        "image_url": "https://picsum.photos/seed/scarf1/400/300",
+        "image_url": "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&h=300&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine douce (alpaga, mérinos, ou mélange)",
@@ -636,7 +636,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "4-5 heures",
         "description": "Un snood rapide à réaliser, parfait pour se protéger du froid.",
-        "image_url": "https://picsum.photos/seed/snood1/400/300",
+        "image_url": "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&h=300&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse et douce",
@@ -677,7 +677,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "20-25 heures",
         "description": "Une douce couverture pour bébé au point de riz, parfaite comme cadeau de naissance.",
-        "image_url": "https://picsum.photos/seed/babyblanket/400/300",
+        "image_url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine bébé douce (coton, mérinos superwash, ou acrylique doux)",
@@ -720,7 +720,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "12-15 heures (la paire)",
         "description": "Des chaussettes confortables tricotées du haut vers le bas avec talon renforcé.",
-        "image_url": "https://picsum.photos/seed/socks1/400/300",
+        "image_url": "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=300&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine à chaussettes (mélange laine/nylon)",
@@ -765,7 +765,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "4-5 heures (la paire)",
         "description": "Des mitaines pratiques qui gardent les mains au chaud tout en laissant les doigts libres.",
-        "image_url": "https://picsum.photos/seed/mittens1/400/300",
+        "image_url": "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=400&h=300&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine douce (mérinos, alpaga, ou mélange)",
@@ -811,7 +811,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "2-3 heures",
         "description": "Un bandeau élégant avec une torsade centrale, parfait pour garder les oreilles au chaud.",
-        "image_url": "https://picsum.photos/seed/headband1/400/300",
+        "image_url": "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=400&h=300&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse et douce",
@@ -855,7 +855,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "15-20 heures",
         "description": "Un poncho facile composé de deux rectangles, idéal pour débuter les vêtements.",
-        "image_url": "https://picsum.photos/seed/poncho/400/300",
+        "image_url": "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&h=300&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse et chaude",
@@ -898,7 +898,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "5-6 heures",
         "description": "Une écharpe simple au crochet, parfaite pour apprendre les bases.",
-        "image_url": "https://picsum.photos/seed/scarf2/400/300",
+        "image_url": "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&h=300&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine douce et épaisse",
@@ -940,7 +940,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "3-4 heures",
         "description": "Un bonnet simple au crochet, travaillé en spirale depuis le sommet.",
-        "image_url": "https://picsum.photos/seed/bonnet2/400/300",
+        "image_url": "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=400&h=300&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine moyenne à épaisse",
