@@ -123,47 +123,107 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "POST /api/chat tested with text message, AI responds in French with expert knitting advice"
+      - working: true
+        agent: "testing"
+        comment: "CRITICAL TEST PASSED: Vision capability confirmed with specific test case 'Que vois-tu?' + base64 image. AI correctly processed image and responded. Text-only and general image tests also working perfectly. file_contents fix successful."
 
-  - task: "Conversations CRUD"
+  - task: "Patterns API Endpoints"
     implemented: true
-    working: NA
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /api/patterns returns exactly 37 patterns with image_url field. Filtering by technique=crochet (14 patterns), technique=aiguilles (23 patterns), category=bonnet (2 patterns) all working. Individual pattern retrieval working."
+
+  - task: "Lexique API Endpoints"
+    implemented: true
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /api/lexique returns 39 glossary terms. Individual term retrieval working perfectly."
+
+  - task: "Tutorials API Endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /api/tutorials returns 11 tutorials. Individual tutorial retrieval working correctly."
+
+  - task: "Size Guide API Endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /api/size-guide returns complete size guide with 5 categories. Category-specific retrieval working."
+
+  - task: "Conversations CRUD"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
     status_history:
       - working: NA
         agent: "main"
         comment: "GET /api/conversations, DELETE /api/conversations/{id} implemented"
+      - working: true
+        agent: "testing"
+        comment: "Full conversations CRUD tested: GET conversations (retrieved 8), GET messages for conversation, DELETE conversation all working correctly."
 
   - task: "Projects CRUD"
     implemented: true
-    working: NA
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: NA
         agent: "main"
         comment: "Full CRUD for projects with image support"
+      - working: true
+        agent: "testing"
+        comment: "Complete projects CRUD working: CREATE with image, GET all, GET specific, UPDATE, DELETE all functioning perfectly. Image base64 support confirmed."
 
   - task: "Gallery CRUD"
     implemented: true
-    working: NA
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: NA
         agent: "main"
         comment: "Public portfolio gallery with categories, pricing, availability"
+      - working: true
+        agent: "testing"
+        comment: "Gallery portfolio system fully functional: CREATE items, GET all, GET by category (bonnet filtering), GET featured items, UPDATE, DELETE all working. Category filtering and featured status working correctly."
 
   - task: "Client Messages System"
     implemented: true
@@ -171,23 +231,29 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "POST /api/messages tested, creates message with status 'nouveau'. GET /api/messages/count returns unread count"
+      - working: true
+        agent: "testing"
+        comment: "Complete client messaging system working: CREATE messages, GET specific message, mark as read, reply to messages, GET by status, unread count, DELETE all functioning perfectly. Status transitions (nouveau→lu→répondu) working correctly."
 
   - task: "Comments on Projects"
     implemented: true
-    working: NA
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: NA
         agent: "main"
         comment: "Comments system for public questions on projects"
+      - working: true
+        agent: "testing"
+        comment: "Project comments system fully working: CREATE comments on projects, GET project comments, REPLY to comments, DELETE comments all functioning correctly."
 
 frontend:
   - task: "Home Screen with Navigation"
