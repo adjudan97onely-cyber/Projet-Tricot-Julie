@@ -272,6 +272,39 @@ const styles = StyleSheet.create({
   headerRight: {
     width: 40,
   },
+  techniqueFilterRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    gap: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1A1A1A',
+  },
+  techniqueFilterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 25,
+    backgroundColor: '#1A1A1A',
+    borderWidth: 1,
+    borderColor: '#D4AF37',
+    gap: 8,
+  },
+  techniqueFilterActive: {
+    backgroundColor: '#D4AF37',
+    borderColor: '#D4AF37',
+  },
+  techniqueFilterText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#D4AF37',
+  },
+  techniqueFilterTextActive: {
+    color: '#0A0A0A',
+    fontWeight: '600',
+  },
   categoryScroll: {
     maxHeight: 56,
     borderBottomWidth: 1,
