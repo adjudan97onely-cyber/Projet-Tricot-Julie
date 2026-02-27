@@ -972,7 +972,7 @@ class Pattern(BaseModel):
     steps: List[dict]
     tips: List[str]
     video_url: Optional[str] = None
-    image_url: str
+    image_url: Optional[str] = None
 
 # Combiner les patrons de base avec les patrons supplémentaires
 ALL_PATTERNS = PREDEFINED_PATTERNS + ADDITIONAL_PATTERNS
