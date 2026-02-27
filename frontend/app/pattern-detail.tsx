@@ -82,6 +82,23 @@ const openAmazonNeedleSearch = (needleType: string, needleSize: string) => {
   Linking.openURL(amazonUrl);
 };
 
+// Function to open Hobbii search
+const openHobbiiSearch = (searchTerm: string) => {
+  const cleanedTerm = searchTerm.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
+  const encodedSearch = encodeURIComponent(cleanedTerm);
+  const hobbiiUrl = `https://hobbii.fr/catalogsearch/result/?q=${encodedSearch}`;
+  Linking.openURL(hobbiiUrl);
+};
+
+// Function to open Lou Passion (lainebox.com is known as Lou Passion)
+const openLouPassionSearch = (searchTerm: string) => {
+  const cleanedTerm = searchTerm.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
+  const encodedSearch = encodeURIComponent(cleanedTerm);
+  // Lou Passion / La Lainebox
+  const louPassionUrl = `https://www.lainebox.com/recherche?controller=search&s=${encodedSearch}`;
+  Linking.openURL(louPassionUrl);
+};
+
 export default function PatternDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
