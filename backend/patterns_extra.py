@@ -358,7 +358,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "12-15 heures",
         "description": "T-shirt léger en coton avec manches courtes et motif ajouré dans le dos.",
-        "image_url": "https://images.unsplash.com/photo-1758981400298-78cd18eb6793",
+        "image_url": "https://images.unsplash.com/photo-1767249622099-d035e25610b0",
         "materials": {
             "yarn": {
                 "type": "Coton mercerisé",
