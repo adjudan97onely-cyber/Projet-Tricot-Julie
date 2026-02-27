@@ -667,15 +667,17 @@ PREDEFINED_PATTERNS = [
             "Peut se porter en double tour pour plus de chaleur",
             "Personnalisez avec un bouton décoratif"
         ],
-        "image_url": "snood"
+        "image_url": "https://images.unsplash.com/photo-1457545195570-67f207084966"
     },
     {
         "id": "couverture-bebe",
         "name": "Couverture Bébé",
         "category": "couverture",
+        "technique": "aiguilles",
         "difficulty": "intermédiaire",
         "estimated_time": "20-25 heures",
         "description": "Une douce couverture pour bébé au point de riz, parfaite comme cadeau de naissance.",
+        "image_url": "https://images.unsplash.com/photo-1591144984044-009a102ace51",
         "materials": {
             "yarn": {
                 "type": "Laine bébé douce (coton, mérinos superwash, ou acrylique doux)",
