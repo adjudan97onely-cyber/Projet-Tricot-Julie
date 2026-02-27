@@ -972,7 +972,7 @@ class Pattern(BaseModel):
     steps: List[dict]
     tips: List[str]
     video_url: Optional[str] = None
-    image_url: Optional[str] = None
+    image_url: str = "https://images.unsplash.com/photo-1591144984044-009a102ace51"  # Default knitting image
 
 # Combiner les patrons de base avec les patrons supplémentaires
 ALL_PATTERNS = PREDEFINED_PATTERNS + ADDITIONAL_PATTERNS
