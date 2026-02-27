@@ -315,7 +315,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "10-12 heures",
         "description": "Short ajouré parfait pour la plage, à porter sur un maillot.",
-        "image_url": "https://images.unsplash.com/photo-1747155956854-7d1aaecc3123",
+        "image_url": "https://images.unsplash.com/photo-1591195853828-11db59a44f6b",
         "materials": {
             "yarn": {
                 "type": "Coton",
