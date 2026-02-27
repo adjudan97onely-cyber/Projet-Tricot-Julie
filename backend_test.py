@@ -729,9 +729,13 @@ class JulieCreationsAPITester:
         print("="*60)
         print()
         
-        # Run tests in order
+        # Run tests in order - HIGH PRIORITY tests first
         self.test_health_check()
-        self.test_chat_api_with_ai()  # HIGH PRIORITY
+        self.test_chat_api_with_ai()  # HIGH PRIORITY - VISION TEST
+        self.test_patterns_endpoints()  # HIGH PRIORITY - Should return 37 patterns
+        self.test_lexique_endpoints()  # NEW TEST
+        self.test_tutorials_endpoints()  # NEW TEST  
+        self.test_size_guide_endpoints()  # NEW TEST
         self.test_conversations_crud()
         self.test_projects_crud()  # HIGH PRIORITY
         self.test_gallery_crud()  # HIGH PRIORITY
