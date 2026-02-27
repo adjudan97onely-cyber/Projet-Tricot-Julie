@@ -286,9 +286,9 @@ ADDITIONAL_PATTERNS = [
         },
         "gauge": "24 mailles x 12 rangs = 10cm en ms serrées",
         "sizes": {
-            "S (36-38)": "Tour poitrine 84-88cm",
-            "M (40-42)": "Tour poitrine 92-96cm",
-            "L (44-46)": "Tour poitrine 100-104cm"
+            "S (36-38)": "Tour poitrine 80-84cm, Tour taille 60-64cm, Tour hanches 88-92cm",
+            "M (40-42)": "Tour poitrine 88-92cm, Tour taille 68-72cm, Tour hanches 96-100cm",
+            "L (44-46)": "Tour poitrine 96-100cm, Tour taille 76-80cm, Tour hanches 104-108cm"
         },
         "steps": [
             {"step": 1, "title": "Culotte", "instruction": "Commencer par la partie basse, crocheter en ms dense."},
