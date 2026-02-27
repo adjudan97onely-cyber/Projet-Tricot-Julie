@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,27 +10,61 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 30000); // Check every 30s
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchUnreadCount = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/messages/count`);
+      if (response.ok) {
+        const data = await response.json();
+        setUnreadCount(data.unread_count);
+      }
+    } catch (error) {
+      console.log('Error fetching unread count');
+    }
+  };
 
   const features = [
     {
       icon: 'chatbubbles-outline' as const,
       title: 'Assistant IA',
-      description: 'Conseils personnalisés et analyse de projets',
+      description: 'Conseils et analyse de projets',
       route: '/chat',
       color: '#D4AF37',
     },
     {
       icon: 'folder-outline' as const,
       title: 'Mes Projets',
-      description: 'Suivez vos créations en cours',
+      description: 'Projets en cours',
       route: '/projects',
       color: '#C9A961',
+    },
+    {
+      icon: 'images-outline' as const,
+      title: 'Ma Galerie',
+      description: 'Portfolio public',
+      route: '/gallery',
+      color: '#E5C76B',
+    },
+    {
+      icon: 'mail-outline' as const,
+      title: 'Messages',
+      description: 'Demandes clients',
+      route: '/messages',
+      color: '#B8963E',
+      badge: unreadCount,
     },
   ];
 
@@ -58,8 +92,7 @@ export default function HomeScreen() {
         <View style={styles.welcomeCard}>
           <Text style={styles.welcomeTitle}>Bienvenue, Julie !</Text>
           <Text style={styles.welcomeText}>
-            Votre assistant personnel pour tous vos projets de tricot et crochet.
-            Photographiez votre travail pour des conseils personnalisés.
+            Gérez vos projets, partagez vos créations et communiquez avec vos clients.
           </Text>
         </View>
 
@@ -73,12 +106,17 @@ export default function HomeScreen() {
               activeOpacity={0.8}
             >
               <View style={[styles.featureIconContainer, { borderColor: feature.color }]}>
-                <Ionicons name={feature.icon} size={32} color={feature.color} />
+                <Ionicons name={feature.icon} size={28} color={feature.color} />
+                {feature.badge && feature.badge > 0 ? (
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>{feature.badge}</Text>
+                  </View>
+                ) : null}
               </View>
               <Text style={styles.featureTitle}>{feature.title}</Text>
               <Text style={styles.featureDescription}>{feature.description}</Text>
               <View style={styles.featureArrow}>
-                <Ionicons name="arrow-forward" size={20} color="#D4AF37" />
+                <Ionicons name="arrow-forward" size={18} color="#D4AF37" />
               </View>
             </TouchableOpacity>
           ))}
@@ -90,8 +128,7 @@ export default function HomeScreen() {
           <View style={styles.tipCard}>
             <Ionicons name="bulb-outline" size={24} color="#D4AF37" />
             <Text style={styles.tipText}>
-              Prenez une photo de votre projet en cours et demandez à l'assistant
-              d'analyser votre travail pour des conseils d'amélioration !
+              Ajoutez vos créations terminées à la Galerie pour que vos clients puissent les voir et commander !
             </Text>
           </View>
         </View>
@@ -186,36 +223,53 @@ const styles = StyleSheet.create({
     width: (width - 52) / 2,
     backgroundColor: '#1A1A1A',
     borderRadius: 16,
-    padding: 20,
+    padding: 16,
     marginBottom: 12,
     borderWidth: 1,
     borderColor: '#2A2A2A',
   },
   featureIconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(212, 175, 55, 0.05)',
-    marginBottom: 16,
+    marginBottom: 12,
+  },
+  badge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: '#FF4444',
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 6,
+  },
+  badgeText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
   },
   featureTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     color: '#FFFFFF',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   featureDescription: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#888888',
-    lineHeight: 18,
+    lineHeight: 16,
   },
   featureArrow: {
     position: 'absolute',
-    top: 20,
-    right: 20,
+    top: 16,
+    right: 16,
   },
   tipsSection: {
     marginHorizontal: 20,

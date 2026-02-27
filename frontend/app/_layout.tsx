@@ -18,6 +18,10 @@ export default function RootLayout() {
         <Stack.Screen name="chat" />
         <Stack.Screen name="projects" />
         <Stack.Screen name="project-detail" />
+        <Stack.Screen name="gallery" />
+        <Stack.Screen name="gallery-detail" />
+        <Stack.Screen name="messages" />
+        <Stack.Screen name="contact" />
       </Stack>
     </View>
   );
