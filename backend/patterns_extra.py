@@ -910,7 +910,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "3-4 heures",
         "description": "Adorable bonnet avec petites oreilles d'ours, trop mignon pour bébé!",
-        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
+        "image_url": "https://images.unsplash.com/photo-1565058528605-670489ab6f6c",
         "materials": {
             "yarn": {
                 "type": "Laine bébé douce",
