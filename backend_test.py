@@ -533,6 +533,142 @@ class JulieCreationsAPITester:
         except Exception as e:
             self.log_result("Comments on Projects", False, f"Exception: {str(e)}")
 
+    def test_patterns_endpoints(self):
+        """Test patterns endpoints - HIGH PRIORITY (should return 37 patterns)"""
+        try:
+            # Test GET all patterns
+            response = self.session.get(f"{API_BASE}/patterns")
+            if response.status_code == 200:
+                patterns = response.json()
+                pattern_count = len(patterns)
+                if pattern_count == 37:
+                    self.log_result("Get All Patterns", True, f"Retrieved expected 37 patterns")
+                    
+                    # Check if patterns have image_url field
+                    has_image_url = all('image_url' in pattern for pattern in patterns)
+                    if has_image_url:
+                        self.log_result("Patterns have image_url", True, "All patterns contain image_url field")
+                    else:
+                        self.log_result("Patterns have image_url", False, "Some patterns missing image_url field")
+                        
+                else:
+                    self.log_result("Get All Patterns", False, f"Expected 37 patterns, got {pattern_count}")
+            else:
+                self.log_result("Get All Patterns", False, f"HTTP {response.status_code}", response.text)
+
+            # Test filtering by technique=crochet
+            response = self.session.get(f"{API_BASE}/patterns?technique=crochet")
+            if response.status_code == 200:
+                crochet_patterns = response.json()
+                crochet_count = len(crochet_patterns)
+                self.log_result("Filter Patterns by Crochet", True, f"Retrieved {crochet_count} crochet patterns")
+            else:
+                self.log_result("Filter Patterns by Crochet", False, f"HTTP {response.status_code}")
+
+            # Test filtering by technique=aiguilles
+            response = self.session.get(f"{API_BASE}/patterns?technique=aiguilles")
+            if response.status_code == 200:
+                needle_patterns = response.json()
+                needle_count = len(needle_patterns)
+                self.log_result("Filter Patterns by Aiguilles", True, f"Retrieved {needle_count} needle patterns")
+            else:
+                self.log_result("Filter Patterns by Aiguilles", False, f"HTTP {response.status_code}")
+
+            # Test filtering by category=bonnet
+            response = self.session.get(f"{API_BASE}/patterns?category=bonnet")
+            if response.status_code == 200:
+                bonnet_patterns = response.json()
+                bonnet_count = len(bonnet_patterns)
+                self.log_result("Filter Patterns by Category (bonnet)", True, f"Retrieved {bonnet_count} bonnet patterns")
+            else:
+                self.log_result("Filter Patterns by Category", False, f"HTTP {response.status_code}")
+
+            # Test getting a specific pattern
+            if response.status_code == 200 and bonnet_patterns:
+                pattern_id = bonnet_patterns[0]['id']
+                response = self.session.get(f"{API_BASE}/patterns/{pattern_id}")
+                if response.status_code == 200:
+                    pattern = response.json()
+                    self.log_result("Get Specific Pattern", True, f"Retrieved pattern: {pattern.get('name', 'Unknown')}")
+                else:
+                    self.log_result("Get Specific Pattern", False, f"HTTP {response.status_code}")
+
+        except Exception as e:
+            self.log_result("Patterns Endpoints", False, f"Exception: {str(e)}")
+
+    def test_lexique_endpoints(self):
+        """Test lexique endpoints"""
+        try:
+            # Test GET lexique
+            response = self.session.get(f"{API_BASE}/lexique")
+            if response.status_code == 200:
+                terms = response.json()
+                self.log_result("Get Lexique", True, f"Retrieved {len(terms)} lexique terms")
+                
+                # Test getting a specific term if available
+                if terms and len(terms) > 0:
+                    term_id = terms[0]['id']
+                    response = self.session.get(f"{API_BASE}/lexique/{term_id}")
+                    if response.status_code == 200:
+                        term = response.json()
+                        self.log_result("Get Specific Lexique Term", True, f"Retrieved term: {term.get('term', 'Unknown')}")
+                    else:
+                        self.log_result("Get Specific Lexique Term", False, f"HTTP {response.status_code}")
+            else:
+                self.log_result("Get Lexique", False, f"HTTP {response.status_code}", response.text)
+
+        except Exception as e:
+            self.log_result("Lexique Endpoints", False, f"Exception: {str(e)}")
+
+    def test_tutorials_endpoints(self):
+        """Test tutorials endpoints"""
+        try:
+            # Test GET tutorials
+            response = self.session.get(f"{API_BASE}/tutorials")
+            if response.status_code == 200:
+                tutorials = response.json()
+                self.log_result("Get Tutorials", True, f"Retrieved {len(tutorials)} tutorials")
+                
+                # Test getting a specific tutorial if available
+                if tutorials and len(tutorials) > 0:
+                    tutorial_id = tutorials[0]['id']
+                    response = self.session.get(f"{API_BASE}/tutorials/{tutorial_id}")
+                    if response.status_code == 200:
+                        tutorial = response.json()
+                        self.log_result("Get Specific Tutorial", True, f"Retrieved tutorial: {tutorial.get('title', 'Unknown')}")
+                    else:
+                        self.log_result("Get Specific Tutorial", False, f"HTTP {response.status_code}")
+            else:
+                self.log_result("Get Tutorials", False, f"HTTP {response.status_code}", response.text)
+
+        except Exception as e:
+            self.log_result("Tutorials Endpoints", False, f"Exception: {str(e)}")
+
+    def test_size_guide_endpoints(self):
+        """Test size guide endpoints"""
+        try:
+            # Test GET size guide
+            response = self.session.get(f"{API_BASE}/size-guide")
+            if response.status_code == 200:
+                size_guide = response.json()
+                self.log_result("Get Size Guide", True, f"Retrieved size guide data with {len(size_guide)} categories")
+                
+                # Test getting a specific category if available
+                categories = list(size_guide.keys()) if isinstance(size_guide, dict) else []
+                if categories:
+                    category = categories[0]
+                    response = self.session.get(f"{API_BASE}/size-guide/{category}")
+                    if response.status_code == 200:
+                        category_data = response.json()
+                        self.log_result("Get Size Guide Category", True, f"Retrieved category: {category}")
+                    else:
+                        self.log_result("Get Size Guide Category", False, f"HTTP {response.status_code}")
+            else:
+                self.log_result("Get Size Guide", False, f"HTTP {response.status_code}", response.text)
+
+        except Exception as e:
+            self.log_result("Size Guide Endpoints", False, f"Exception: {str(e)}")
+
     def cleanup_test_data(self):
         """Clean up created test data"""
         print("\n" + "="*60)
