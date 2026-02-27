@@ -13,7 +13,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "20-25 heures",
         "description": "Une robe légère et aérée parfaite pour l'été. Motif ajouré avec bretelles ajustables.",
-        "image_url": "https://cdn.pixabay.com/photo/2018/03/14/17/29/wool-3225924_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Coton ou lin",
@@ -56,7 +56,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "18-22 heures",
         "description": "Robe de plage fluide et aérée avec motif en filet, parfaite par-dessus un maillot de bain.",
-        "image_url": "https://cdn.pixabay.com/photo/2018/03/14/17/29/wool-3225924_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Coton fin ou fil de plage",
@@ -99,7 +99,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "10-12 heures",
         "description": "Un top léger avec un joli motif ajouré, parfait pour les journées chaudes.",
-        "image_url": "https://cdn.pixabay.com/photo/2018/03/14/17/29/wool-3225924_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Coton léger",
@@ -140,7 +140,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "8-10 heures",
         "description": "Crop top tendance composé de granny squares, parfait pour l'été.",
-        "image_url": "https://cdn.pixabay.com/photo/2018/03/14/17/29/wool-3225924_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Coton coloré",
@@ -185,7 +185,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "6-8 heures",
         "description": "Un haut de bikini triangle classique, ajustable et confortable.",
-        "image_url": "https://cdn.pixabay.com/photo/2018/03/14/17/29/wool-3225924_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Coton mercerisé ou fil polyamide élastique",
@@ -227,7 +227,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "5-6 heures",
         "description": "Culotte de bikini avec liens sur les côtés, ajustable.",
-        "image_url": "https://cdn.pixabay.com/photo/2018/03/14/17/29/wool-3225924_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Coton résistant",
@@ -269,7 +269,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "avancé",
         "estimated_time": "15-20 heures",
         "description": "Maillot de bain une pièce avec dos nu et détails ajourés, chic et sophistiqué.",
-        "image_url": "https://cdn.pixabay.com/photo/2018/03/14/17/29/wool-3225924_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Fil élastique spécial maillot",
@@ -315,7 +315,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "10-12 heures",
         "description": "Short ajouré parfait pour la plage, à porter sur un maillot.",
-        "image_url": "https://cdn.pixabay.com/photo/2018/03/14/17/29/wool-3225924_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Coton",
@@ -358,7 +358,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "12-15 heures",
         "description": "T-shirt léger en coton avec manches courtes et motif ajouré dans le dos.",
-        "image_url": "https://cdn.pixabay.com/photo/2018/03/14/17/29/wool-3225924_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Coton mercerisé",
@@ -404,7 +404,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "30-40 heures",
         "description": "Couverture traditionnelle composée de carrés assemblés. Idéale pour utiliser des restes de laine.",
-        "image_url": "https://cdn.pixabay.com/photo/2018/03/14/17/29/wool-3225924_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Acrylique ou laine",
@@ -447,7 +447,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "40-50 heures",
         "description": "Une couverture texturée avec un beau motif en relief, chaude et décorative.",
-        "image_url": "https://cdn.pixabay.com/photo/2017/02/15/10/39/blanket-2068674_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse",
@@ -486,7 +486,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "8-10 heures",
         "description": "Plaid XXL avec laine géante, réalisable en un week-end. Effet cocooning garanti.",
-        "image_url": "https://cdn.pixabay.com/photo/2017/02/15/10/39/blanket-2068674_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine géante / Arm Knitting",
@@ -529,7 +529,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "4-5 heures",
         "description": "Chaussons confortables et rapides à tricoter, parfaits pour la maison.",
-        "image_url": "https://cdn.pixabay.com/photo/2017/08/01/14/44/socks-2566682_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse",
@@ -569,7 +569,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "2-3 heures",
         "description": "Adorables petites chaussettes pour garder les pieds de bébé au chaud.",
-        "image_url": "https://cdn.pixabay.com/photo/2017/11/23/07/47/baby-2972221_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1544816155-12df9643f363?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine bébé douce",
@@ -611,7 +611,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "15-18 heures (la paire)",
         "description": "Chaussettes épaisses et chaudes pour l'hiver, tricotées en laine résistante.",
-        "image_url": "https://cdn.pixabay.com/photo/2017/08/01/14/44/socks-2566682_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine à chaussettes renforcée",
@@ -658,7 +658,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "4-5 heures",
         "description": "Sac écologique en filet, parfait pour les courses ou la plage.",
-        "image_url": "https://cdn.pixabay.com/photo/2018/03/14/17/29/wool-3225924_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Coton solide",
@@ -697,7 +697,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "3-4 heures",
         "description": "Bandeau élégant avec torsade centrale, parfait pour l'hiver.",
-        "image_url": "https://cdn.pixabay.com/photo/2015/09/17/14/24/hat-944400_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine douce",
@@ -737,7 +737,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "6-8 heures (la paire)",
         "description": "Mitaines avec pouces et torsades élégantes, parfaites pour l'hiver.",
-        "image_url": "https://cdn.pixabay.com/photo/2015/12/08/00/55/mittens-1082726_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos",
@@ -781,7 +781,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "3-4 heures (la paire)",
         "description": "Moufles chaudes et colorées pour les enfants, avec cordon pour ne pas les perdre.",
-        "image_url": "https://cdn.pixabay.com/photo/2015/12/08/00/55/mittens-1082726_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1544816155-12df9643f363?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine douce enfant",
@@ -828,7 +828,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "8-10 heures",
         "description": "Petit gilet cache-cœur pour nouveau-né, doux et pratique.",
-        "image_url": "https://cdn.pixabay.com/photo/2017/11/23/07/47/baby-2972221_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1544816155-12df9643f363?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine bébé",
@@ -869,7 +869,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "2-3 heures",
         "description": "Adorables petits chaussons au crochet, rapides à réaliser.",
-        "image_url": "https://cdn.pixabay.com/photo/2017/11/23/07/47/baby-2972221_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1544816155-12df9643f363?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Coton ou laine bébé",
@@ -910,7 +910,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "3-4 heures",
         "description": "Adorable bonnet avec petites oreilles d'ours, trop mignon pour bébé!",
-        "image_url": "https://cdn.pixabay.com/photo/2017/11/23/07/47/baby-2972221_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1544816155-12df9643f363?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine bébé douce",
@@ -953,7 +953,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "avancé",
         "estimated_time": "20-25 heures",
         "description": "Combinaison intégrale pour bébé avec pieds intégrés, ultra douillette.",
-        "image_url": "https://cdn.pixabay.com/photo/2017/11/23/07/47/baby-2972221_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1544816155-12df9643f363?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos bébé",
@@ -1001,7 +1001,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "25-35 heures",
         "description": "Pull classique tricoté du haut vers le bas, construction raglan sans couture.",
-        "image_url": "https://cdn.pixabay.com/photo/2016/11/29/01/34/blanket-1866726_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos ou mélange",
@@ -1043,7 +1043,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "15-20 heures",
         "description": "Gilet simple et élégant, parfait pour débuter les vêtements.",
-        "image_url": "https://cdn.pixabay.com/photo/2016/11/29/01/34/blanket-1866726_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine ou coton",
@@ -1084,7 +1084,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "30-40 heures",
         "description": "Grand cardigan loose et confortable, parfait pour se blottir dedans.",
-        "image_url": "https://cdn.pixabay.com/photo/2016/11/29/01/34/blanket-1866726_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse et douce",
@@ -1129,7 +1129,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "12-15 heures",
         "description": "Grande écharpe avec torsades irlandaises, chaude et élégante.",
-        "image_url": "https://cdn.pixabay.com/photo/2015/01/08/18/26/man-593333_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos ou alpaga",
@@ -1173,7 +1173,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "4-5 heures",
         "description": "Écharpe douce et colorée pour les enfants, facile à tricoter en point mousse.",
-        "image_url": "https://cdn.pixabay.com/photo/2016/11/29/06/08/child-1867868_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1544816155-12df9643f363?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine douce lavable machine",
@@ -1215,7 +1215,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "8-10 heures",
         "description": "Écharpe raffinée pour femme en côtes fantaisie, chaude et élégante.",
-        "image_url": "https://cdn.pixabay.com/photo/2015/01/08/18/26/man-593333_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos ou alpaga",
@@ -1256,7 +1256,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "10-12 heures",
         "description": "Écharpe sobre et élégante pour homme, en point de riz pour un rendu texturé.",
-        "image_url": "https://cdn.pixabay.com/photo/2015/01/08/18/26/man-593333_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos ou laine épaisse",
@@ -1298,7 +1298,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "3-4 heures",
         "description": "Tour de cou pratique pour les enfants, ne se perd pas et garde bien au chaud.",
-        "image_url": "https://cdn.pixabay.com/photo/2016/11/29/06/08/child-1867868_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1544816155-12df9643f363?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine douce anti-grattage",
@@ -1340,7 +1340,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "6-8 heures",
         "description": "Grand snood à porter en double tour pour un effet cocooning.",
-        "image_url": "https://cdn.pixabay.com/photo/2015/01/08/18/26/man-593333_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine douce et volumineuse",
@@ -1380,7 +1380,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "5-6 heures",
         "description": "Snood simple et masculin en côtes, parfait sous une veste ou un blouson.",
-        "image_url": "https://cdn.pixabay.com/photo/2015/01/08/18/26/man-593333_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos ou acrylique doux",
@@ -1423,7 +1423,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "35-45 heures",
         "description": "Élégant gilet long et chaud pour l'hiver, parfait sur un jean ou une robe. Style cocooning et féminin.",
-        "image_url": "https://cdn.pixabay.com/photo/2016/11/29/01/34/blanket-1866726_640.jpg",
+        "image_url": "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&fit=crop",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos ou alpaga mélangé",
