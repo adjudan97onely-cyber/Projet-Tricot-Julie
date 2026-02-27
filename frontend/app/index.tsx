@@ -207,6 +207,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0A0A0A',
   },
+  sparkleBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 250,
+  },
   scrollContent: {
     paddingBottom: 30,
   },
@@ -216,21 +223,36 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   logoCircle: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: '#FFB6C1',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
+    backgroundColor: 'rgba(255, 182, 193, 0.15)',
     marginBottom: 12,
   },
+  flowerEmoji: {
+    fontSize: 42,
+  },
+  brandNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   brandName: {
-    fontSize: 36,
-    fontWeight: '300',
+    fontSize: 28,
+    fontWeight: '400',
     color: '#FFFFFF',
-    letterSpacing: 6,
+    letterSpacing: 3,
+  },
+  doveEmoji: {
+    fontSize: 24,
+  },
+  sparkleEmoji: {
+    fontSize: 14,
+    marginHorizontal: 8,
   },
   brandTagline: {
     fontSize: 16,
