@@ -1161,5 +1161,255 @@ ADDITIONAL_PATTERNS = [
             "Classique et intemporelle"
         ],
         "video_url": "https://www.youtube.com/results?search_query=echarpe+torsades+tricot"
+    },
+    # =====================
+    # ÉCHARPES CLASSIQUES PAR CATÉGORIE
+    # =====================
+    {
+        "id": "echarpe-enfant-coloree",
+        "name": "Écharpe Enfant Colorée",
+        "category": "echarpe",
+        "technique": "aiguilles",
+        "difficulty": "débutant",
+        "estimated_time": "4-5 heures",
+        "description": "Écharpe douce et colorée pour les enfants, facile à tricoter en point mousse.",
+        "image_url": "https://images.unsplash.com/photo-1544816155-12df9643f363",
+        "materials": {
+            "yarn": {
+                "type": "Laine douce lavable machine",
+                "weight": "DK",
+                "quantity": "100g",
+                "recommended": "Drops Karisma, Phildar Phil Douce, Katia Merino Baby"
+            },
+            "needles": {
+                "type": "Aiguilles droites",
+                "size": "4.5mm",
+                "cable_length": "N/A"
+            },
+            "accessories": ["1 aiguille à laine"]
+        },
+        "gauge": "20 mailles x 40 rangs = 10cm en point mousse",
+        "sizes": {
+            "2-4 ans": "12cm x 100cm",
+            "5-8 ans": "14cm x 120cm",
+            "9-12 ans": "15cm x 130cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Montage", "instruction": "Monter 24/28/30 mailles selon la taille."},
+            {"step": 2, "title": "Corps", "instruction": "Tricoter tout au point mousse jusqu'à la longueur désirée."},
+            {"step": 3, "title": "Finition", "instruction": "Rabattre les mailles souplement et rentrer les fils."},
+            {"step": 4, "title": "Déco (optionnel)", "instruction": "Ajouter des pompons ou des franges aux extrémités."}
+        ],
+        "tips": [
+            "Le point mousse ne roule pas aux bords",
+            "Choisissez des couleurs vives pour les retrouver facilement",
+            "Les pompons ajoutent du fun au projet"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=echarpe+enfant+tricot+debutant"
+    },
+    {
+        "id": "echarpe-femme-elegante",
+        "name": "Écharpe Femme Élégante",
+        "category": "echarpe",
+        "technique": "aiguilles",
+        "difficulty": "débutant",
+        "estimated_time": "8-10 heures",
+        "description": "Écharpe raffinée pour femme en côtes fantaisie, chaude et élégante.",
+        "image_url": "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9",
+        "materials": {
+            "yarn": {
+                "type": "Laine mérinos ou alpaga",
+                "weight": "DK / Worsted",
+                "quantity": "200-250g",
+                "recommended": "Drops Air, Malabrigo Worsted, Phildar Partner 6"
+            },
+            "needles": {
+                "type": "Aiguilles droites",
+                "size": "5mm",
+                "cable_length": "N/A"
+            },
+            "accessories": ["1 aiguille à laine"]
+        },
+        "gauge": "18 mailles x 24 rangs = 10cm en côtes",
+        "sizes": {
+            "Standard": "20cm x 170cm",
+            "Large": "25cm x 200cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Montage", "instruction": "Monter 40/50 mailles."},
+            {"step": 2, "title": "Côtes fantaisie", "instruction": "*3 m end, 2 m env* répéter tout le rang."},
+            {"step": 3, "title": "Corps", "instruction": "Continuer le motif jusqu'à la longueur souhaitée."},
+            {"step": 4, "title": "Finition", "instruction": "Rabattre souplement en respectant le motif."}
+        ],
+        "tips": [
+            "Les côtes donnent de l'élasticité et du moelleux",
+            "Parfaite pour s'enrouler plusieurs fois autour du cou",
+            "Choisissez une couleur neutre ou tendance selon votre garde-robe"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=echarpe+femme+tricot+cotes"
+    },
+    {
+        "id": "echarpe-homme-classique",
+        "name": "Écharpe Homme Classique",
+        "category": "echarpe",
+        "technique": "aiguilles",
+        "difficulty": "débutant",
+        "estimated_time": "10-12 heures",
+        "description": "Écharpe sobre et élégante pour homme, en point de riz pour un rendu texturé.",
+        "image_url": "https://images.unsplash.com/photo-1457545195570-67f207084966",
+        "materials": {
+            "yarn": {
+                "type": "Laine mérinos ou laine épaisse",
+                "weight": "Worsted / Aran",
+                "quantity": "300-350g",
+                "recommended": "Drops Karisma, Lang Yarns Merino 120, Rowan Pure Wool Worsted"
+            },
+            "needles": {
+                "type": "Aiguilles droites",
+                "size": "5.5mm",
+                "cable_length": "N/A"
+            },
+            "accessories": ["1 aiguille à laine"]
+        },
+        "gauge": "16 mailles x 28 rangs = 10cm en point de riz",
+        "sizes": {
+            "Standard": "22cm x 180cm",
+            "Long": "24cm x 200cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Montage", "instruction": "Monter 38/42 mailles (nombre pair)."},
+            {"step": 2, "title": "Point de riz", "instruction": "Rang 1: *1 end, 1 env* Rang 2: *1 env, 1 end* Répéter ces 2 rangs."},
+            {"step": 3, "title": "Corps", "instruction": "Continuer le point de riz jusqu'à la longueur désirée."},
+            {"step": 4, "title": "Finition", "instruction": "Rabattre les mailles et rentrer les fils."},
+            {"step": 5, "title": "Franges (optionnel)", "instruction": "Ajouter des franges de 10cm aux deux extrémités."}
+        ],
+        "tips": [
+            "Le point de riz donne une texture masculine",
+            "Coloris conseillés: gris, marine, bordeaux, noir",
+            "Projet idéal pour offrir à un homme"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=echarpe+homme+tricot+point+riz"
+    },
+    {
+        "id": "snood-enfant-facile",
+        "name": "Snood Enfant Facile",
+        "category": "echarpe",
+        "technique": "aiguilles",
+        "difficulty": "débutant",
+        "estimated_time": "3-4 heures",
+        "description": "Tour de cou pratique pour les enfants, ne se perd pas et garde bien au chaud.",
+        "image_url": "https://images.unsplash.com/photo-1544816155-12df9643f363",
+        "materials": {
+            "yarn": {
+                "type": "Laine douce anti-grattage",
+                "weight": "DK / Chunky",
+                "quantity": "80-100g",
+                "recommended": "Drops Merino Extra Fine, Phildar Phil Douce"
+            },
+            "needles": {
+                "type": "Aiguilles circulaires",
+                "size": "5mm",
+                "cable_length": "40cm"
+            },
+            "accessories": ["1 marqueur", "1 aiguille à laine"]
+        },
+        "gauge": "18 mailles x 24 rangs = 10cm",
+        "sizes": {
+            "2-4 ans": "Circonférence 45cm, hauteur 20cm",
+            "5-8 ans": "Circonférence 50cm, hauteur 22cm",
+            "9-12 ans": "Circonférence 54cm, hauteur 24cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Montage", "instruction": "Monter 80/90/96 mailles. Joindre en rond."},
+            {"step": 2, "title": "Côtes", "instruction": "4 tours en côtes 2/2."},
+            {"step": 3, "title": "Corps", "instruction": "Tricoter en jersey jusqu'à la hauteur souhaitée."},
+            {"step": 4, "title": "Côtes finale", "instruction": "4 tours en côtes 2/2. Rabattre souplement."}
+        ],
+        "tips": [
+            "Le snood ne se perd pas contrairement à l'écharpe",
+            "Idéal sous le manteau pour garder le cou au chaud",
+            "Peut servir de capuche temporaire"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=snood+enfant+tricot+facile"
+    },
+    {
+        "id": "snood-femme-double-tour",
+        "name": "Snood Femme Double Tour",
+        "category": "echarpe",
+        "technique": "aiguilles",
+        "difficulty": "débutant",
+        "estimated_time": "6-8 heures",
+        "description": "Grand snood à porter en double tour pour un effet cocooning.",
+        "image_url": "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9",
+        "materials": {
+            "yarn": {
+                "type": "Laine douce et volumineuse",
+                "weight": "Bulky / Chunky",
+                "quantity": "200-250g",
+                "recommended": "Drops Air, Phildar Phil Nuage, Katia Big Merino"
+            },
+            "needles": {
+                "type": "Aiguilles circulaires",
+                "size": "7mm",
+                "cable_length": "80cm"
+            },
+            "accessories": ["1 marqueur", "1 aiguille à laine"]
+        },
+        "gauge": "12 mailles x 18 rangs = 10cm",
+        "sizes": {
+            "Standard": "Circonférence 130cm, hauteur 30cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Montage", "instruction": "Monter 156 mailles. Joindre en rond."},
+            {"step": 2, "title": "Bordure", "instruction": "6 tours au point mousse (1 tour end, 1 tour env)."},
+            {"step": 3, "title": "Corps", "instruction": "Tricoter en jersey ou point fantaisie jusqu'à 27cm."},
+            {"step": 4, "title": "Bordure finale", "instruction": "6 tours au point mousse. Rabattre souplement."}
+        ],
+        "tips": [
+            "Le double tour protège du froid",
+            "Peut aussi se porter en simple tour large",
+            "Le fil volumineux tricote rapidement"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=snood+femme+double+tour+tricot"
+    },
+    {
+        "id": "snood-homme-urban",
+        "name": "Snood Homme Urban",
+        "category": "echarpe",
+        "technique": "aiguilles",
+        "difficulty": "débutant",
+        "estimated_time": "5-6 heures",
+        "description": "Snood simple et masculin en côtes, parfait sous une veste ou un blouson.",
+        "image_url": "https://images.unsplash.com/photo-1457545195570-67f207084966",
+        "materials": {
+            "yarn": {
+                "type": "Laine mérinos ou acrylique doux",
+                "weight": "Worsted / Aran",
+                "quantity": "150-180g",
+                "recommended": "Drops Karisma, Phildar Partner 6, Bergère de France Barisienne"
+            },
+            "needles": {
+                "type": "Aiguilles circulaires",
+                "size": "5.5mm",
+                "cable_length": "60cm"
+            },
+            "accessories": ["1 marqueur", "1 aiguille à laine"]
+        },
+        "gauge": "16 mailles x 22 rangs = 10cm en côtes",
+        "sizes": {
+            "Standard": "Circonférence 60cm, hauteur 28cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Montage", "instruction": "Monter 96 mailles. Joindre en rond."},
+            {"step": 2, "title": "Côtes", "instruction": "Tricoter en côtes 2/2 tout le long."},
+            {"step": 3, "title": "Corps", "instruction": "Continuer les côtes jusqu'à 28cm de hauteur."},
+            {"step": 4, "title": "Finition", "instruction": "Rabattre souplement en respectant les côtes."}
+        ],
+        "tips": [
+            "Les côtes s'adaptent à toutes les morphologies",
+            "Style sobre et moderne",
+            "Idéal cadeau pour homme"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=snood+homme+tricot"
     }
 ]
