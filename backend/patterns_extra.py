@@ -737,7 +737,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "6-8 heures (la paire)",
         "description": "Mitaines avec pouces et torsades élégantes, parfaites pour l'hiver.",
-        "image_url": "https://images.unsplash.com/photo-1608256246200-53e635b5b65f",
+        "image_url": "https://images.unsplash.com/photo-1545579133-99bb5ab189bd",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos",
