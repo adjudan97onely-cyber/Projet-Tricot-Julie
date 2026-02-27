@@ -845,15 +845,17 @@ PREDEFINED_PATTERNS = [
             "Utilisez une laine avec de l'élasticité pour un bon maintien",
             "Ajoutez un bouton décoratif sur la torsade"
         ],
-        "image_url": "bandeau"
+        "image_url": "https://images.unsplash.com/photo-1771766355697-da69c0432a1f"
     },
     {
         "id": "poncho-debutant",
         "name": "Poncho Simple",
         "category": "pull",
+        "technique": "aiguilles",
         "difficulty": "débutant",
         "estimated_time": "15-20 heures",
         "description": "Un poncho facile composé de deux rectangles, idéal pour débuter les vêtements.",
+        "image_url": "https://images.unsplash.com/photo-1758981400268-1181291b9503",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse et chaude",
