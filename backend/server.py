@@ -930,15 +930,17 @@ PREDEFINED_PATTERNS = [
             "La bride est le point de base le plus polyvalent",
             "Variez les couleurs pour un effet rayé"
         ],
-        "image_url": "echarpe-crochet"
+        "image_url": "https://images.unsplash.com/photo-1457545195570-67f207084966"
     },
     {
         "id": "bonnet-crochet",
         "name": "Bonnet au Crochet",
         "category": "bonnet",
+        "technique": "crochet",
         "difficulty": "débutant",
         "estimated_time": "3-4 heures",
         "description": "Un bonnet simple au crochet, travaillé en spirale depuis le sommet.",
+        "image_url": "https://images.unsplash.com/photo-1699347611474-5be693bee31e",
         "materials": {
             "yarn": {
                 "type": "Laine moyenne à épaisse",
