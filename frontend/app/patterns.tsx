@@ -141,6 +141,36 @@ export default function PatternsScreen() {
         <View style={styles.headerRight} />
       </View>
 
+      {/* Technique Filter (Aiguilles / Crochet) */}
+      <View style={styles.techniqueFilterRow}>
+        {TECHNIQUES.map((tech) => (
+          <TouchableOpacity
+            key={tech.value}
+            style={[
+              styles.techniqueFilterButton,
+              selectedTechnique === tech.value && styles.techniqueFilterActive,
+            ]}
+            onPress={() => setSelectedTechnique(tech.value)}
+          >
+            {tech.icon && (
+              <Ionicons
+                name={tech.icon as any}
+                size={16}
+                color={selectedTechnique === tech.value ? '#0A0A0A' : '#D4AF37'}
+              />
+            )}
+            <Text
+              style={[
+                styles.techniqueFilterText,
+                selectedTechnique === tech.value && styles.techniqueFilterTextActive,
+              ]}
+            >
+              {tech.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
       {/* Category Filter */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
         <View style={styles.categoryContainer}>
