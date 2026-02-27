@@ -30,8 +30,12 @@ const CATEGORIES = [
   { value: 'bonnet', label: 'Bonnets', icon: 'happy-outline' },
   { value: 'echarpe', label: 'Écharpes', icon: 'resize-outline' },
   { value: 'pull', label: 'Vêtements', icon: 'shirt-outline' },
+  { value: 'robe', label: 'Robes', icon: 'woman-outline' },
+  { value: 'top', label: 'Tops', icon: 'sunny-outline' },
+  { value: 'maillot', label: 'Maillots', icon: 'water-outline' },
   { value: 'couverture', label: 'Couvertures', icon: 'bed-outline' },
   { value: 'chaussettes', label: 'Chaussettes', icon: 'footsteps-outline' },
+  { value: 'bebe', label: 'Bébé', icon: 'heart-outline' },
   { value: 'accessoire', label: 'Accessoires', icon: 'diamond-outline' },
 ];
 
