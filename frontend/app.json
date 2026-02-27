@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "Julie Créations",
-    "slug": "julie-creations",
+    "name": "BUI-THI DAM Créations",
+    "slug": "bui-thi-dam-creations",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "juliecreations",
+    "scheme": "buitdamcreations",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.julie.creations"
+      "bundleIdentifier": "com.buithi.dam.creations"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +18,7 @@
         "backgroundColor": "#0A0A0A"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.julie.creations"
+      "package": "com.buithi.dam.creations"
     },
     "web": {
       "bundler": "metro",
