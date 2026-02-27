@@ -181,7 +181,7 @@ async def chat(request: ChatRequest):
             image_content = ImageContent(image_base64=image_data)
             user_message = UserMessage(
                 text=request.message,
-                image_contents=[image_content]
+                file_contents=[image_content]
             )
         else:
             user_message = UserMessage(text=request.message)
