@@ -298,9 +298,24 @@ export default function PatternDetailScreen() {
                   onPress={() => openAmazonSearch(pattern.materials.yarn.recommended || pattern.materials.yarn.type)}
                 >
                   <Ionicons name="cart-outline" size={18} color="#FFFFFF" />
-                  <Text style={styles.amazonButtonText}>Acheter sur Amazon</Text>
+                  <Text style={styles.amazonButtonText}>Amazon</Text>
                   <Ionicons name="open-outline" size={16} color="#FFFFFF" />
                 </TouchableOpacity>
+                {/* Additional store buttons */}
+                <View style={styles.storeButtonsRow}>
+                  <TouchableOpacity
+                    style={styles.hobbiiButton}
+                    onPress={() => openHobbiiSearch(pattern.materials.yarn.type)}
+                  >
+                    <Text style={styles.storeButtonText}>Hobbii</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.louPassionButton}
+                    onPress={() => openLouPassionSearch(pattern.materials.yarn.type)}
+                  >
+                    <Text style={styles.storeButtonText}>Lou Passion</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
 
               {/* Needles */}
