@@ -549,7 +549,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "3-4 heures",
         "description": "Un bonnet simple et élégant, parfait pour débuter. Point jersey avec côtes.",
-        "image_url": "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=400&h=300&fit=crop",
+        "image_url": "",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos ou acrylique",
@@ -583,7 +583,7 @@ PREDEFINED_PATTERNS = [
             "Pour un bonnet plus chaud, ajoutez un pompon"
         ],
         "video_url": "https://www.youtube.com/results?search_query=tricoter+bonnet+debutant",
-        "image_url": "https://images.unsplash.com/photo-1699347611474-5be693bee31e"
+        "image_url": ""
     },
     {
         "id": "echarpe-cotes",
@@ -593,7 +593,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "8-10 heures",
         "description": "Une écharpe moelleuse et réversible avec le point de côtes anglaises.",
-        "image_url": "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&h=300&fit=crop",
+        "image_url": "",
         "materials": {
             "yarn": {
                 "type": "Laine douce (alpaga, mérinos, ou mélange)",
@@ -626,7 +626,7 @@ PREDEFINED_PATTERNS = [
             "Ne serrez pas trop vos mailles pour garder l'élasticité",
             "Ajoutez des franges pour un look plus bohème"
         ],
-        "image_url": "https://images.unsplash.com/photo-1457545195570-67f207084966"
+        "image_url": ""
     },
     {
         "id": "snood-simple",
@@ -636,7 +636,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "4-5 heures",
         "description": "Un snood rapide à réaliser, parfait pour se protéger du froid.",
-        "image_url": "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&h=300&fit=crop",
+        "image_url": "",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse et douce",
@@ -667,7 +667,7 @@ PREDEFINED_PATTERNS = [
             "Peut se porter en double tour pour plus de chaleur",
             "Personnalisez avec un bouton décoratif"
         ],
-        "image_url": "https://images.unsplash.com/photo-1457545195570-67f207084966"
+        "image_url": ""
     },
     {
         "id": "couverture-bebe",
@@ -677,7 +677,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "20-25 heures",
         "description": "Une douce couverture pour bébé au point de riz, parfaite comme cadeau de naissance.",
-        "image_url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop",
+        "image_url": "",
         "materials": {
             "yarn": {
                 "type": "Laine bébé douce (coton, mérinos superwash, ou acrylique doux)",
@@ -710,7 +710,7 @@ PREDEFINED_PATTERNS = [
             "Le point de riz est réversible, pas de mauvais côté !",
             "Ajoutez les initiales du bébé en broderie"
         ],
-        "image_url": "https://images.unsplash.com/photo-1591144984044-009a102ace51"
+        "image_url": ""
     },
     {
         "id": "chaussettes-basiques",
@@ -720,7 +720,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "12-15 heures (la paire)",
         "description": "Des chaussettes confortables tricotées du haut vers le bas avec talon renforcé.",
-        "image_url": "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=300&fit=crop",
+        "image_url": "",
         "materials": {
             "yarn": {
                 "type": "Laine à chaussettes (mélange laine/nylon)",
@@ -755,7 +755,7 @@ PREDEFINED_PATTERNS = [
             "Tricotez les deux chaussettes en même temps pour éviter le 'syndrome de la 2ème chaussette'",
             "Renforcez talon et pointe avec un fil supplémentaire"
         ],
-        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91"
+        "image_url": ""
     },
     {
         "id": "mitaines-simples",
@@ -765,7 +765,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "4-5 heures (la paire)",
         "description": "Des mitaines pratiques qui gardent les mains au chaud tout en laissant les doigts libres.",
-        "image_url": "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=400&h=300&fit=crop",
+        "image_url": "",
         "materials": {
             "yarn": {
                 "type": "Laine douce (mérinos, alpaga, ou mélange)",
@@ -801,7 +801,7 @@ PREDEFINED_PATTERNS = [
             "Ajoutez un motif jacquard pour plus de style",
             "Tricotez la 2ème mitaine en miroir pour le pouce"
         ],
-        "image_url": "https://images.unsplash.com/photo-1771766355697-da69c0432a1f"
+        "image_url": ""
     },
     {
         "id": "bandeau-tresse",
@@ -811,7 +811,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "2-3 heures",
         "description": "Un bandeau élégant avec une torsade centrale, parfait pour garder les oreilles au chaud.",
-        "image_url": "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=400&h=300&fit=crop",
+        "image_url": "",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse et douce",
@@ -845,7 +845,7 @@ PREDEFINED_PATTERNS = [
             "Utilisez une laine avec de l'élasticité pour un bon maintien",
             "Ajoutez un bouton décoratif sur la torsade"
         ],
-        "image_url": "https://images.unsplash.com/photo-1771766355697-da69c0432a1f"
+        "image_url": ""
     },
     {
         "id": "poncho-debutant",
@@ -855,7 +855,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "15-20 heures",
         "description": "Un poncho facile composé de deux rectangles, idéal pour débuter les vêtements.",
-        "image_url": "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&h=300&fit=crop",
+        "image_url": "",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse et chaude",
@@ -888,7 +888,7 @@ PREDEFINED_PATTERNS = [
             "Ajoutez des franges pour un style bohème",
             "Peut se porter de différentes façons"
         ],
-        "image_url": "https://images.unsplash.com/photo-1758981400268-1181291b9503"
+        "image_url": ""
     },
     {
         "id": "echarpe-crochet-debutant",
@@ -898,7 +898,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "5-6 heures",
         "description": "Une écharpe simple au crochet, parfaite pour apprendre les bases.",
-        "image_url": "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&h=300&fit=crop",
+        "image_url": "",
         "materials": {
             "yarn": {
                 "type": "Laine douce et épaisse",
@@ -930,7 +930,7 @@ PREDEFINED_PATTERNS = [
             "La bride est le point de base le plus polyvalent",
             "Variez les couleurs pour un effet rayé"
         ],
-        "image_url": "https://images.unsplash.com/photo-1457545195570-67f207084966"
+        "image_url": ""
     },
     {
         "id": "bonnet-crochet",
@@ -940,7 +940,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "3-4 heures",
         "description": "Un bonnet simple au crochet, travaillé en spirale depuis le sommet.",
-        "image_url": "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=400&h=300&fit=crop",
+        "image_url": "",
         "materials": {
             "yarn": {
                 "type": "Laine moyenne à épaisse",
@@ -973,7 +973,7 @@ PREDEFINED_PATTERNS = [
             "Travaillez en spirale continue pour éviter la démarcation",
             "Ajoutez un pompon pour plus de style"
         ],
-        "image_url": "https://images.unsplash.com/photo-1699347611474-5be693bee31e"
+        "image_url": ""
     }
 ]
 
