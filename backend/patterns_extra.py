@@ -697,7 +697,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "3-4 heures",
         "description": "Bandeau élégant avec torsade centrale, parfait pour l'hiver.",
-        "image_url": "https://images.unsplash.com/photo-1576871337622-98d48d1cf531",
+        "image_url": "https://images.unsplash.com/photo-1510598969022-c4c6c5d05769",
         "materials": {
             "yarn": {
                 "type": "Laine douce",
