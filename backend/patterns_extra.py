@@ -1411,5 +1411,59 @@ ADDITIONAL_PATTERNS = [
             "Idéal cadeau pour homme"
         ],
         "video_url": "https://www.youtube.com/results?search_query=snood+homme+tricot"
+    },
+    # =====================
+    # GILET LONG HIVER FEMME
+    # =====================
+    {
+        "id": "gilet-long-hiver-femme",
+        "name": "Long Gilet Hiver Femme",
+        "category": "pull",
+        "technique": "aiguilles",
+        "difficulty": "intermédiaire",
+        "estimated_time": "35-45 heures",
+        "description": "Élégant gilet long et chaud pour l'hiver, parfait sur un jean ou une robe. Style cocooning et féminin.",
+        "image_url": "https://images.unsplash.com/photo-1434389677669-e08b4cac3105",
+        "materials": {
+            "yarn": {
+                "type": "Laine mérinos ou alpaga mélangé",
+                "weight": "Worsted / Aran",
+                "quantity": "600-750g selon taille",
+                "recommended": "Drops Air, Malabrigo Rios, Phildar Partner 6, Katia Merino Aran"
+            },
+            "needles": {
+                "type": "Aiguilles circulaires",
+                "size": "5mm et 4.5mm (pour les côtes)",
+                "cable_length": "80cm et 100cm"
+            },
+            "accessories": ["4 marqueurs de mailles", "1 aiguille à laine", "Épingles à nourrice"]
+        },
+        "gauge": "18 mailles x 24 rangs = 10cm en jersey",
+        "sizes": {
+            "S (36-38)": "Tour poitrine 88cm, Longueur totale 90cm",
+            "M (40-42)": "Tour poitrine 96cm, Longueur totale 95cm",
+            "L (44-46)": "Tour poitrine 104cm, Longueur totale 100cm",
+            "XL (48-50)": "Tour poitrine 112cm, Longueur totale 105cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Dos", "instruction": "Avec aiguilles 4.5mm, monter 80/88/96/104 mailles. Côtes 2/2 pendant 8cm. Changer pour aiguilles 5mm."},
+            {"step": 2, "title": "Corps du dos", "instruction": "Tricoter en jersey jusqu'à 55/58/60/62cm de hauteur totale."},
+            {"step": 3, "title": "Emmanchures dos", "instruction": "Rabattre 4 mailles de chaque côté, puis diminuer 1 maille de chaque côté tous les 2 rangs, 5 fois."},
+            {"step": 4, "title": "Épaules et encolure dos", "instruction": "À 75/78/80/82cm, façonner l'encolure: rabattre les 20 mailles centrales, puis 3 mailles de chaque côté de l'encolure tous les 2 rangs."},
+            {"step": 5, "title": "Devant droit", "instruction": "Monter 44/48/52/56 mailles. Travailler comme le dos en ajoutant une bande de boutonnage de 8 mailles en côtes sur le bord central."},
+            {"step": 6, "title": "Devant gauche", "instruction": "Idem en miroir, avec boutonnières sur la bande (6-7 boutonnières espacées régulièrement)."},
+            {"step": 7, "title": "Manches (optionnel)", "instruction": "Ce modèle est sans manches, mais vous pouvez ajouter des manches longues en montant 44/48/52/56 mailles et en augmentant progressivement."},
+            {"step": 8, "title": "Assemblage", "instruction": "Coudre les épaules. Coudre les côtés en laissant 20cm de fente en bas pour l'aisance."},
+            {"step": 9, "title": "Bordures", "instruction": "Relever les mailles autour des emmanchures et tricoter 4 rangs de côtes 1/1. Rabattre souplement."},
+            {"step": 10, "title": "Finitions", "instruction": "Coudre les boutons. Rentrer tous les fils. Bloquer légèrement à la vapeur."}
+        ],
+        "tips": [
+            "Les fentes sur les côtés ajoutent de l'aisance et du style",
+            "Choisissez des boutons assortis pour une touche élégante",
+            "L'alpaga donne un tombé magnifique et une chaleur incomparable",
+            "Portez-le ceinturé pour un look différent",
+            "Idéal sur un col roulé ou une chemise"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=long+gilet+femme+tricot+tutoriel"
     }
 ]
