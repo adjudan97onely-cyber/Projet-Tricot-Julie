@@ -12,6 +12,10 @@ from datetime import datetime
 from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
 import base64
 
+# Import du contenu additionnel
+from data_content import LEXIQUE, TUTORIALS, SIZE_GUIDE
+from patterns_extra import ADDITIONAL_PATTERNS
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
