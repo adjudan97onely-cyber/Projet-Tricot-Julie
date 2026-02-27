@@ -675,6 +675,30 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
+  storeButtonsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 8,
+  },
+  hobbiiButton: {
+    flex: 1,
+    backgroundColor: '#E74C3C',
+    borderRadius: 8,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  louPassionButton: {
+    flex: 1,
+    backgroundColor: '#9B59B6',
+    borderRadius: 8,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  storeButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
   accessoryItem: {
     flexDirection: 'row',
     alignItems: 'center',
