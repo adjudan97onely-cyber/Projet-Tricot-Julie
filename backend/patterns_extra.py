@@ -185,7 +185,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "6-8 heures",
         "description": "Un haut de bikini triangle classique, ajustable et confortable.",
-        "image_url": "https://images.unsplash.com/photo-1564859228273-274232fdb516",
+        "image_url": "https://images.unsplash.com/photo-1756801740685-cfa6ce409633",
         "materials": {
             "yarn": {
                 "type": "Coton mercerisé ou fil polyamide élastique",
