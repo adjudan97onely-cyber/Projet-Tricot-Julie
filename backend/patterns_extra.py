@@ -99,7 +99,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "10-12 heures",
         "description": "Un top léger avec un joli motif ajouré, parfait pour les journées chaudes.",
-        "image_url": "https://images.unsplash.com/photo-1747155956854-7d1aaecc3123",
+        "image_url": "https://images.unsplash.com/photo-1767249622099-d035e25610b0",
         "materials": {
             "yarn": {
                 "type": "Coton léger",
