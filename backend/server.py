@@ -626,15 +626,17 @@ PREDEFINED_PATTERNS = [
             "Ne serrez pas trop vos mailles pour garder l'élasticité",
             "Ajoutez des franges pour un look plus bohème"
         ],
-        "image_url": "echarpe"
+        "image_url": "https://images.unsplash.com/photo-1457545195570-67f207084966"
     },
     {
         "id": "snood-simple",
         "name": "Snood / Tour de Cou",
         "category": "echarpe",
+        "technique": "aiguilles",
         "difficulty": "débutant",
         "estimated_time": "4-5 heures",
         "description": "Un snood rapide à réaliser, parfait pour se protéger du froid.",
+        "image_url": "https://images.unsplash.com/photo-1457545195570-67f207084966",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse et douce",
