@@ -1,7 +1,10 @@
 # Patrons supplémentaires pour Julie Créations
+# Inclut des projets été et hiver avec images
 
 ADDITIONAL_PATTERNS = [
-    # ROBES ET VETEMENTS ETE
+    # =====================
+    # ROBES ET VETEMENTS ÉTÉ
+    # =====================
     {
         "id": "robe-ete-crochet",
         "name": "Robe d'Été au Crochet",
@@ -10,6 +13,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "20-25 heures",
         "description": "Une robe légère et aérée parfaite pour l'été. Motif ajouré avec bretelles ajustables.",
+        "image_url": "https://images.unsplash.com/photo-1747155956854-7d1aaecc3123",
         "materials": {
             "yarn": {
                 "type": "Coton ou lin",
@@ -45,6 +49,49 @@ ADDITIONAL_PATTERNS = [
         "video_url": "https://www.youtube.com/results?search_query=robe+crochet+ete+tutoriel"
     },
     {
+        "id": "robe-plage-crochet",
+        "name": "Robe de Plage Bohème",
+        "category": "robe",
+        "technique": "crochet",
+        "difficulty": "intermédiaire",
+        "estimated_time": "18-22 heures",
+        "description": "Robe de plage fluide et aérée avec motif en filet, parfaite par-dessus un maillot de bain.",
+        "image_url": "https://images.unsplash.com/photo-1747155956854-7d1aaecc3123",
+        "materials": {
+            "yarn": {
+                "type": "Coton fin ou fil de plage",
+                "weight": "Light DK",
+                "quantity": "250-350g",
+                "recommended": "Drops Muskat, Katia Tahiti, Lang Mille Colori"
+            },
+            "needles": {
+                "type": "Crochet",
+                "size": "3.5mm",
+                "cable_length": "N/A"
+            },
+            "accessories": ["1 aiguille à laine", "Perles en bois (optionnel)"]
+        },
+        "gauge": "20 mailles x 9 rangs = 10cm en brides",
+        "sizes": {
+            "S": "Tour poitrine 82-86cm",
+            "M": "Tour poitrine 90-94cm",
+            "L": "Tour poitrine 98-102cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Encolure", "instruction": "Commencer par l'encolure avec une chaînette de 120 ml fermée en rond."},
+            {"step": 2, "title": "Empiècement", "instruction": "Crocheter en motif filet (1 br, 1 ml) en augmentant régulièrement sur 15cm."},
+            {"step": 3, "title": "Corps", "instruction": "Séparer pour les manches et continuer le corps en rond."},
+            {"step": 4, "title": "Jupe", "instruction": "Continuer le motif filet en augmentant légèrement pour l'évasement."},
+            {"step": 5, "title": "Finitions", "instruction": "Bordure en point écrevisse et franges optionnelles."}
+        ],
+        "tips": [
+            "Parfaite pour les vacances, légère et transportable",
+            "Le motif filet permet au corps de respirer",
+            "Ajoutez des franges pour un look bohème"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=robe+plage+crochet"
+    },
+    {
         "id": "top-ete-crochet",
         "name": "Top d'Été Ajouré",
         "category": "top",
@@ -52,6 +99,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "10-12 heures",
         "description": "Un top léger avec un joli motif ajouré, parfait pour les journées chaudes.",
+        "image_url": "https://images.unsplash.com/photo-1747155956854-7d1aaecc3123",
         "materials": {
             "yarn": {
                 "type": "Coton léger",
@@ -85,6 +133,51 @@ ADDITIONAL_PATTERNS = [
         "video_url": "https://www.youtube.com/results?search_query=top+crochet+ete+debutant"
     },
     {
+        "id": "crop-top-crochet",
+        "name": "Crop Top Granny Square",
+        "category": "top",
+        "technique": "crochet",
+        "difficulty": "débutant",
+        "estimated_time": "8-10 heures",
+        "description": "Crop top tendance composé de granny squares, parfait pour l'été.",
+        "image_url": "https://images.unsplash.com/photo-1747155956854-7d1aaecc3123",
+        "materials": {
+            "yarn": {
+                "type": "Coton coloré",
+                "weight": "DK",
+                "quantity": "150g (plusieurs couleurs)",
+                "recommended": "Drops Safran, Phildar Phil Coton 3"
+            },
+            "needles": {
+                "type": "Crochet",
+                "size": "4mm",
+                "cable_length": "N/A"
+            },
+            "accessories": ["1 aiguille à laine"]
+        },
+        "gauge": "1 granny square = 10cm x 10cm",
+        "sizes": {
+            "XS/S": "6-8 carrés",
+            "M/L": "8-10 carrés"
+        },
+        "steps": [
+            {"step": 1, "title": "Carrés", "instruction": "Réaliser 6-10 granny squares selon la taille désirée."},
+            {"step": 2, "title": "Disposition", "instruction": "Disposer les carrés: 2-3 pour le devant, 2-3 pour le dos."},
+            {"step": 3, "title": "Assemblage", "instruction": "Assembler les carrés avec des mailles coulées ou mailles serrées."},
+            {"step": 4, "title": "Bretelles", "instruction": "Crocheter des chaînettes pour les bretelles, attacher solidement."},
+            {"step": 5, "title": "Finitions", "instruction": "Border le bas et les emmanchures avec 1 tour de ms."}
+        ],
+        "tips": [
+            "Jouez avec les couleurs pour un effet tie-dye",
+            "Ajustez le nombre de carrés selon votre morphologie",
+            "Projet parfait pour utiliser vos restes de coton"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=crop+top+granny+square+crochet"
+    },
+    # =====================
+    # MAILLOTS DE BAIN
+    # =====================
+    {
         "id": "haut-bikini-crochet",
         "name": "Haut de Maillot de Bain",
         "category": "maillot",
@@ -92,6 +185,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "6-8 heures",
         "description": "Un haut de bikini triangle classique, ajustable et confortable.",
+        "image_url": "https://images.unsplash.com/photo-1756801740685-cfa6ce409633",
         "materials": {
             "yarn": {
                 "type": "Coton ou fil spécial maillot",
@@ -133,6 +227,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "5-6 heures",
         "description": "Culotte de bikini avec liens sur les côtés, ajustable.",
+        "image_url": "https://images.unsplash.com/photo-1756801740685-cfa6ce409633",
         "materials": {
             "yarn": {
                 "type": "Coton résistant",
@@ -166,7 +261,141 @@ ADDITIONAL_PATTERNS = [
         ],
         "video_url": "https://www.youtube.com/results?search_query=culotte+bikini+crochet"
     },
+    {
+        "id": "maillot-une-piece",
+        "name": "Maillot Une Pièce Élégant",
+        "category": "maillot",
+        "technique": "crochet",
+        "difficulty": "avancé",
+        "estimated_time": "15-20 heures",
+        "description": "Maillot de bain une pièce avec dos nu et détails ajourés, chic et sophistiqué.",
+        "image_url": "https://images.unsplash.com/photo-1756801740685-cfa6ce409633",
+        "materials": {
+            "yarn": {
+                "type": "Fil élastique spécial maillot",
+                "weight": "DK",
+                "quantity": "200g",
+                "recommended": "Fil polyamide/élasthanne, Katia Gatsby"
+            },
+            "needles": {
+                "type": "Crochet",
+                "size": "3mm",
+                "cable_length": "N/A"
+            },
+            "accessories": ["2 anneaux métalliques", "Élastique transparent", "1 aiguille à laine"]
+        },
+        "gauge": "24 mailles x 12 rangs = 10cm en ms serrées",
+        "sizes": {
+            "S (36-38)": "Tour poitrine 84-88cm",
+            "M (40-42)": "Tour poitrine 92-96cm",
+            "L (44-46)": "Tour poitrine 100-104cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Culotte", "instruction": "Commencer par la partie basse, crocheter en ms dense."},
+            {"step": 2, "title": "Corps", "instruction": "Remonter en un seul morceau pour devant et dos."},
+            {"step": 3, "title": "Bustier", "instruction": "Façonner le bustier avec des diminutions pour les bonnets."},
+            {"step": 4, "title": "Bretelles", "instruction": "Crocheter des bretelles solides, attachées dans le dos."},
+            {"step": 5, "title": "Finitions", "instruction": "Ajouter un élastique dans les bords pour un meilleur maintien."}
+        ],
+        "tips": [
+            "Projet avancé nécessitant des ajustements",
+            "Essayez régulièrement pendant la réalisation",
+            "La doublure est fortement recommandée"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=maillot+une+piece+crochet"
+    },
+    # =====================
+    # SHORTS ET T-SHIRTS
+    # =====================
+    {
+        "id": "short-plage-crochet",
+        "name": "Short de Plage au Crochet",
+        "category": "top",
+        "technique": "crochet",
+        "difficulty": "intermédiaire",
+        "estimated_time": "10-12 heures",
+        "description": "Short ajouré parfait pour la plage, à porter sur un maillot.",
+        "image_url": "https://images.unsplash.com/photo-1747155956854-7d1aaecc3123",
+        "materials": {
+            "yarn": {
+                "type": "Coton",
+                "weight": "DK",
+                "quantity": "200g",
+                "recommended": "Drops Paris, Phildar Phil Coton 4"
+            },
+            "needles": {
+                "type": "Crochet",
+                "size": "4mm",
+                "cable_length": "N/A"
+            },
+            "accessories": ["Élastique pour la taille", "1 aiguille à laine"]
+        },
+        "gauge": "18 mailles x 9 rangs = 10cm en brides",
+        "sizes": {
+            "S": "Tour hanches 88-92cm",
+            "M": "Tour hanches 96-100cm",
+            "L": "Tour hanches 104-108cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Jambe 1", "instruction": "Chaînette de base, crocheter en rond en motif ajouré."},
+            {"step": 2, "title": "Jambe 2", "instruction": "Répéter pour la deuxième jambe."},
+            {"step": 3, "title": "Jonction", "instruction": "Joindre les deux jambes à l'entrejambe."},
+            {"step": 4, "title": "Ceinture", "instruction": "Crocheter la ceinture en ms avec passage pour l'élastique."},
+            {"step": 5, "title": "Finitions", "instruction": "Insérer l'élastique et border le bas des jambes."}
+        ],
+        "tips": [
+            "L'élastique assure un bon maintien",
+            "Ajustez la longueur selon vos préférences",
+            "Parfait assorti avec le top d'été"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=short+crochet+plage"
+    },
+    {
+        "id": "tshirt-coton-crochet",
+        "name": "T-Shirt Coton d'Été",
+        "category": "top",
+        "technique": "crochet",
+        "difficulty": "intermédiaire",
+        "estimated_time": "12-15 heures",
+        "description": "T-shirt léger en coton avec manches courtes et motif ajouré dans le dos.",
+        "image_url": "https://images.unsplash.com/photo-1758981400298-78cd18eb6793",
+        "materials": {
+            "yarn": {
+                "type": "Coton mercerisé",
+                "weight": "DK",
+                "quantity": "250-300g",
+                "recommended": "Drops Muskat, Schachenmayr Catania"
+            },
+            "needles": {
+                "type": "Crochet",
+                "size": "3.5mm",
+                "cable_length": "N/A"
+            },
+            "accessories": ["1 aiguille à laine"]
+        },
+        "gauge": "20 mailles x 10 rangs = 10cm en brides",
+        "sizes": {
+            "S": "Tour poitrine 86cm",
+            "M": "Tour poitrine 94cm",
+            "L": "Tour poitrine 102cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Dos", "instruction": "Crocheter le dos avec un motif ajouré central."},
+            {"step": 2, "title": "Devant", "instruction": "Crocheter le devant en brides pleines."},
+            {"step": 3, "title": "Manches", "instruction": "Petites manches droites en brides."},
+            {"step": 4, "title": "Assemblage", "instruction": "Coudre épaules, côtés et manches."},
+            {"step": 5, "title": "Bordures", "instruction": "Finir encolure et bas avec un rang de ms."}
+        ],
+        "tips": [
+            "Le coton mercerisé donne un beau tombé",
+            "Le motif ajouré dans le dos apporte de la fraîcheur",
+            "Lavable en machine"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=tshirt+crochet+coton"
+    },
+    # =====================
     # COUVERTURES
+    # =====================
     {
         "id": "couverture-granny-square",
         "name": "Couverture Granny Squares",
@@ -175,6 +404,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "30-40 heures",
         "description": "Couverture traditionnelle composée de carrés assemblés. Idéale pour utiliser des restes de laine.",
+        "image_url": "https://images.unsplash.com/photo-1591144984044-009a102ace51",
         "materials": {
             "yarn": {
                 "type": "Acrylique ou laine",
@@ -217,6 +447,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "40-50 heures",
         "description": "Une couverture texturée avec un beau motif en relief, chaude et décorative.",
+        "image_url": "https://images.unsplash.com/photo-1591144984044-009a102ace51",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse",
@@ -247,7 +478,49 @@ ADDITIONAL_PATTERNS = [
         ],
         "video_url": "https://www.youtube.com/results?search_query=couverture+tricot+point+relief"
     },
+    {
+        "id": "plaid-chunky",
+        "name": "Plaid Chunky Ultra Doux",
+        "category": "couverture",
+        "technique": "aiguilles",
+        "difficulty": "débutant",
+        "estimated_time": "8-10 heures",
+        "description": "Plaid XXL avec laine géante, réalisable en un week-end. Effet cocooning garanti.",
+        "image_url": "https://images.unsplash.com/photo-1591144984044-009a102ace51",
+        "materials": {
+            "yarn": {
+                "type": "Laine géante / Arm Knitting",
+                "weight": "Super Super Bulky",
+                "quantity": "2-3 kg",
+                "recommended": "Laine mérinos géante, Hoooked Zpagetti XXL"
+            },
+            "needles": {
+                "type": "Aiguilles géantes ou bras",
+                "size": "25mm ou arm knitting",
+                "cable_length": "N/A"
+            },
+            "accessories": []
+        },
+        "gauge": "4 mailles x 5 rangs = 10cm",
+        "sizes": {
+            "Standard": "100cm x 150cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Montage", "instruction": "Monter 30-35 mailles avec les bras ou aiguilles géantes."},
+            {"step": 2, "title": "Corps", "instruction": "Tricoter au point mousse jusqu'à la longueur désirée."},
+            {"step": 3, "title": "Rabattre", "instruction": "Rabattre souplement."},
+            {"step": 4, "title": "Finitions", "instruction": "Rentrer les fils (ou les cacher dans les mailles)."}
+        ],
+        "tips": [
+            "Projet parfait pour débuter",
+            "La laine géante donne un résultat spectaculaire rapidement",
+            "Idéal comme cadeau ou déco intérieure"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=plaid+chunky+arm+knitting"
+    },
+    # =====================
     # CHAUSSETTES ET CHAUSSONS
+    # =====================
     {
         "id": "chaussons-adulte",
         "name": "Chaussons Adulte",
@@ -256,6 +529,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "4-5 heures",
         "description": "Chaussons confortables et rapides à tricoter, parfaits pour la maison.",
+        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse",
@@ -295,6 +569,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "2-3 heures",
         "description": "Adorables petites chaussettes pour garder les pieds de bébé au chaud.",
+        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
         "materials": {
             "yarn": {
                 "type": "Laine bébé douce",
@@ -328,7 +603,53 @@ ADDITIONAL_PATTERNS = [
         ],
         "video_url": "https://www.youtube.com/results?search_query=chaussettes+bebe+tricot"
     },
-    # ACCESSOIRES SUPPLEMENTAIRES
+    {
+        "id": "chaussettes-laine-adulte",
+        "name": "Chaussettes Laine Chaudes",
+        "category": "chaussettes",
+        "technique": "aiguilles",
+        "difficulty": "intermédiaire",
+        "estimated_time": "15-18 heures (la paire)",
+        "description": "Chaussettes épaisses et chaudes pour l'hiver, tricotées en laine résistante.",
+        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
+        "materials": {
+            "yarn": {
+                "type": "Laine à chaussettes renforcée",
+                "weight": "Fingering + fil renfort",
+                "quantity": "100g + fil de renfort",
+                "recommended": "Regia 4-fädig, Drops Fabel, Opal"
+            },
+            "needles": {
+                "type": "Aiguilles double pointes ou magic loop",
+                "size": "2.5mm",
+                "cable_length": "80cm si magic loop"
+            },
+            "accessories": ["Marqueurs de mailles", "1 aiguille à laine"]
+        },
+        "gauge": "32 mailles x 42 rangs = 10cm",
+        "sizes": {
+            "36-38": "56 mailles",
+            "39-41": "64 mailles",
+            "42-44": "72 mailles"
+        },
+        "steps": [
+            {"step": 1, "title": "Tige", "instruction": "Monter les mailles et tricoter en côtes 2/2 pendant 6cm."},
+            {"step": 2, "title": "Jambe", "instruction": "Continuer en jersey ou motif pendant 15-20cm."},
+            {"step": 3, "title": "Talon renforcé", "instruction": "Tricoter le talon en rangs aller-retour avec fil de renfort."},
+            {"step": 4, "title": "Gousset", "instruction": "Relever les mailles et tricoter le gousset."},
+            {"step": 5, "title": "Pied", "instruction": "Tricoter le pied jusqu'à la pointe."},
+            {"step": 6, "title": "Pointe", "instruction": "Diminuer pour former la pointe et fermer."}
+        ],
+        "tips": [
+            "Le fil de renfort au talon et à la pointe prolonge la durée de vie",
+            "Tricotez les deux en même temps pour éviter le syndrome de la 2ème chaussette",
+            "Bloquez légèrement pour un meilleur tombé"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=chaussettes+tricot+talon"
+    },
+    # =====================
+    # ACCESSOIRES HIVER
+    # =====================
     {
         "id": "sac-filet-crochet",
         "name": "Sac Filet de Courses",
@@ -337,6 +658,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "4-5 heures",
         "description": "Sac écologique en filet, parfait pour les courses ou la plage.",
+        "image_url": "https://images.unsplash.com/photo-1703679640716-9ef4c3690a37",
         "materials": {
             "yarn": {
                 "type": "Coton solide",
@@ -375,6 +697,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "3-4 heures",
         "description": "Bandeau élégant avec torsade centrale, parfait pour l'hiver.",
+        "image_url": "https://images.unsplash.com/photo-1771766355697-da69c0432a1f",
         "materials": {
             "yarn": {
                 "type": "Laine douce",
@@ -406,7 +729,97 @@ ADDITIONAL_PATTERNS = [
         ],
         "video_url": "https://www.youtube.com/results?search_query=bandeau+torsade+tricot"
     },
+    {
+        "id": "mitaines-torsades",
+        "name": "Mitaines Torsadées Hiver",
+        "category": "accessoire",
+        "technique": "aiguilles",
+        "difficulty": "intermédiaire",
+        "estimated_time": "6-8 heures (la paire)",
+        "description": "Mitaines avec pouces et torsades élégantes, parfaites pour l'hiver.",
+        "image_url": "https://images.unsplash.com/photo-1771766355697-da69c0432a1f",
+        "materials": {
+            "yarn": {
+                "type": "Laine mérinos",
+                "weight": "DK",
+                "quantity": "100g",
+                "recommended": "Drops Karisma, Malabrigo Rios"
+            },
+            "needles": {
+                "type": "Aiguilles double pointes",
+                "size": "4mm",
+                "cable_length": "N/A"
+            },
+            "accessories": ["Aiguille à torsade", "Marqueurs", "1 aiguille à laine"]
+        },
+        "gauge": "22 mailles x 28 rangs = 10cm",
+        "sizes": {
+            "S": "Tour main 16-18cm",
+            "M": "Tour main 18-20cm",
+            "L": "Tour main 20-22cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Poignet", "instruction": "Monter 36/40/44 mailles. Côtes 2/2 pendant 6cm."},
+            {"step": 2, "title": "Main", "instruction": "Continuer en jersey avec torsade sur le dos de la main."},
+            {"step": 3, "title": "Gousset pouce", "instruction": "Augmenter pour le pouce sur 10-12 rangs."},
+            {"step": 4, "title": "Pouce", "instruction": "Mettre le pouce en attente, continuer la main."},
+            {"step": 5, "title": "Doigts", "instruction": "Tricoter chaque doigt séparément."},
+            {"step": 6, "title": "Finitions", "instruction": "Terminer le pouce et rentrer les fils."}
+        ],
+        "tips": [
+            "Les mitaines complètes gardent plus chaud",
+            "Tricotez les deux en même temps pour des résultats identiques",
+            "La torsade apporte une touche d'élégance"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=mitaines+tricot+torsades"
+    },
+    {
+        "id": "moufles-enfant",
+        "name": "Moufles Enfant Colorées",
+        "category": "accessoire",
+        "technique": "aiguilles",
+        "difficulty": "débutant",
+        "estimated_time": "3-4 heures (la paire)",
+        "description": "Moufles chaudes et colorées pour les enfants, avec cordon pour ne pas les perdre.",
+        "image_url": "https://images.unsplash.com/photo-1771766355697-da69c0432a1f",
+        "materials": {
+            "yarn": {
+                "type": "Laine douce enfant",
+                "weight": "DK",
+                "quantity": "50g",
+                "recommended": "Drops Merino Extra Fine, Phildar Phil Douce"
+            },
+            "needles": {
+                "type": "Aiguilles double pointes",
+                "size": "4mm",
+                "cable_length": "N/A"
+            },
+            "accessories": ["Marqueurs", "1 aiguille à laine", "Cordon"]
+        },
+        "gauge": "22 mailles x 28 rangs = 10cm",
+        "sizes": {
+            "2-4 ans": "Tour main 12-14cm",
+            "4-6 ans": "Tour main 14-16cm",
+            "6-8 ans": "Tour main 16-18cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Poignet", "instruction": "Monter 24/28/32 mailles. Côtes 1/1 pendant 4cm."},
+            {"step": 2, "title": "Main", "instruction": "Tricoter en jersey pendant 4-5cm."},
+            {"step": 3, "title": "Pouce", "instruction": "Créer le gousset du pouce avec des augmentations."},
+            {"step": 4, "title": "Corps", "instruction": "Continuer après avoir mis le pouce en attente."},
+            {"step": 5, "title": "Bout", "instruction": "Diminuer pour former le bout arrondi."},
+            {"step": 6, "title": "Pouce", "instruction": "Terminer le pouce et ajouter le cordon."}
+        ],
+        "tips": [
+            "Le cordon passe dans les manches du manteau",
+            "Utilisez des couleurs vives pour retrouver facilement les moufles",
+            "Parfait pour un premier projet de moufles"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=moufles+enfant+tricot"
+    },
+    # =====================
     # VETEMENTS BEBE
+    # =====================
     {
         "id": "brassiere-bebe",
         "name": "Brassière Bébé",
@@ -415,6 +828,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "8-10 heures",
         "description": "Petit gilet cache-cœur pour nouveau-né, doux et pratique.",
+        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
         "materials": {
             "yarn": {
                 "type": "Laine bébé",
@@ -455,6 +869,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "2-3 heures",
         "description": "Adorables petits chaussons au crochet, rapides à réaliser.",
+        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
         "materials": {
             "yarn": {
                 "type": "Coton ou laine bébé",
@@ -487,7 +902,97 @@ ADDITIONAL_PATTERNS = [
         ],
         "video_url": "https://www.youtube.com/results?search_query=chaussons+bebe+crochet+facile"
     },
+    {
+        "id": "bonnet-bebe-oreilles",
+        "name": "Bonnet Bébé Oreilles d'Ours",
+        "category": "bebe",
+        "technique": "aiguilles",
+        "difficulty": "débutant",
+        "estimated_time": "3-4 heures",
+        "description": "Adorable bonnet avec petites oreilles d'ours, trop mignon pour bébé!",
+        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
+        "materials": {
+            "yarn": {
+                "type": "Laine bébé douce",
+                "weight": "DK",
+                "quantity": "50g",
+                "recommended": "Drops Baby Merino, Phildar Phil Douce"
+            },
+            "needles": {
+                "type": "Aiguilles circulaires",
+                "size": "4mm",
+                "cable_length": "40cm"
+            },
+            "accessories": ["1 marqueur", "1 aiguille à laine"]
+        },
+        "gauge": "22 mailles x 28 rangs = 10cm",
+        "sizes": {
+            "0-3 mois": "Tour tête 35-38cm",
+            "3-6 mois": "Tour tête 38-42cm",
+            "6-12 mois": "Tour tête 42-46cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Montage", "instruction": "Monter 60/68/76 mailles. Joindre en rond."},
+            {"step": 2, "title": "Côtes", "instruction": "Tricoter 3cm en côtes 1/1."},
+            {"step": 3, "title": "Corps", "instruction": "Tricoter en jersey jusqu'à 10/11/12cm de hauteur totale."},
+            {"step": 4, "title": "Diminutions", "instruction": "Diminuer régulièrement pour fermer le sommet."},
+            {"step": 5, "title": "Oreilles", "instruction": "Tricoter 4 petits triangles. Les coudre sur les coins pour former les oreilles."}
+        ],
+        "tips": [
+            "Les oreilles peuvent être d'une couleur contrastante",
+            "Ajoutez un pompon entre les oreilles pour plus de fun",
+            "Projet parfait comme cadeau de naissance"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=bonnet+bebe+oreilles+tricot"
+    },
+    {
+        "id": "combinaison-bebe",
+        "name": "Combinaison Bébé Cocooning",
+        "category": "bebe",
+        "technique": "aiguilles",
+        "difficulty": "avancé",
+        "estimated_time": "20-25 heures",
+        "description": "Combinaison intégrale pour bébé avec pieds intégrés, ultra douillette.",
+        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91",
+        "materials": {
+            "yarn": {
+                "type": "Laine mérinos bébé",
+                "weight": "DK",
+                "quantity": "200-250g",
+                "recommended": "Drops Baby Merino, Sandnes Lanett Babyull"
+            },
+            "needles": {
+                "type": "Aiguilles circulaires",
+                "size": "3.5mm et 4mm",
+                "cable_length": "40cm et 60cm"
+            },
+            "accessories": ["Boutons ou fermeture éclair", "1 aiguille à laine"]
+        },
+        "gauge": "22 mailles x 28 rangs = 10cm",
+        "sizes": {
+            "0-3 mois": "Longueur totale 45cm",
+            "3-6 mois": "Longueur totale 52cm",
+            "6-12 mois": "Longueur totale 60cm"
+        },
+        "steps": [
+            {"step": 1, "title": "Pieds", "instruction": "Commencer par les pieds, tricoter séparément."},
+            {"step": 2, "title": "Jambes", "instruction": "Remonter les jambes depuis les pieds."},
+            {"step": 3, "title": "Jonction", "instruction": "Joindre les deux jambes à l'entrejambe."},
+            {"step": 4, "title": "Corps", "instruction": "Tricoter le corps jusqu'aux emmanchures."},
+            {"step": 5, "title": "Empiècement", "instruction": "Façonner le devant avec ouverture."},
+            {"step": 6, "title": "Manches", "instruction": "Tricoter les manches et les assembler."},
+            {"step": 7, "title": "Capuche (optionnel)", "instruction": "Ajouter une capuche si désiré."}
+        ],
+        "tips": [
+            "Projet avancé mais résultat spectaculaire",
+            "La fermeture sur le devant facilite l'habillage",
+            "Choisissez une laine lavable machine"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=combinaison+bebe+tricot"
+    },
+    # =====================
     # PULLS ET GILETS
+    # =====================
     {
         "id": "pull-raglan-debutant",
         "name": "Pull Raglan Simple",
@@ -496,6 +1001,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "25-35 heures",
         "description": "Pull classique tricoté du haut vers le bas, construction raglan sans couture.",
+        "image_url": "https://images.unsplash.com/photo-1758981400268-1181291b9503",
         "materials": {
             "yarn": {
                 "type": "Laine mérinos ou mélange",
@@ -537,6 +1043,7 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "15-20 heures",
         "description": "Gilet simple et élégant, parfait pour débuter les vêtements.",
+        "image_url": "https://images.unsplash.com/photo-1758981400298-78cd18eb6793",
         "materials": {
             "yarn": {
                 "type": "Laine ou coton",
@@ -568,5 +1075,91 @@ ADDITIONAL_PATTERNS = [
             "Parfait pour toutes les saisons"
         ],
         "video_url": "https://www.youtube.com/results?search_query=gilet+tricot+debutant"
+    },
+    {
+        "id": "cardigan-oversized",
+        "name": "Cardigan Oversize Cocooning",
+        "category": "pull",
+        "technique": "aiguilles",
+        "difficulty": "intermédiaire",
+        "estimated_time": "30-40 heures",
+        "description": "Grand cardigan loose et confortable, parfait pour se blottir dedans.",
+        "image_url": "https://images.unsplash.com/photo-1758981400268-1181291b9503",
+        "materials": {
+            "yarn": {
+                "type": "Laine épaisse et douce",
+                "weight": "Chunky",
+                "quantity": "700-900g",
+                "recommended": "Drops Air, Phildar Phil Nuage"
+            },
+            "needles": {
+                "type": "Aiguilles circulaires",
+                "size": "7mm",
+                "cable_length": "80cm et 100cm"
+            },
+            "accessories": ["Marqueurs", "1 aiguille à laine"]
+        },
+        "gauge": "12 mailles x 16 rangs = 10cm",
+        "sizes": {
+            "S/M": "Tour poitrine 120cm fini",
+            "L/XL": "Tour poitrine 140cm fini"
+        },
+        "steps": [
+            {"step": 1, "title": "Dos", "instruction": "Monter 65/75 mailles. Tricoter en jersey jusqu'aux emmanchures."},
+            {"step": 2, "title": "Devants", "instruction": "Tricoter les 2 devants séparément avec bande de boutonnage."},
+            {"step": 3, "title": "Manches", "instruction": "Manches larges tombantes, tricotées à plat."},
+            {"step": 4, "title": "Assemblage", "instruction": "Assembler épaules, côtés et manches."},
+            {"step": 5, "title": "Bordures", "instruction": "Relever et tricoter les bordures en côtes."}
+        ],
+        "tips": [
+            "L'oversize est flatteur pour toutes les morphologies",
+            "La laine épaisse tricote vite",
+            "Portez-le comme une couverture portable!"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=cardigan+oversized+tricot"
+    },
+    # =====================
+    # ÉCHARPES HIVER
+    # =====================
+    {
+        "id": "echarpe-torsades-hiver",
+        "name": "Écharpe Torsades Hiver",
+        "category": "echarpe",
+        "technique": "aiguilles",
+        "difficulty": "intermédiaire",
+        "estimated_time": "12-15 heures",
+        "description": "Grande écharpe avec torsades irlandaises, chaude et élégante.",
+        "image_url": "https://images.unsplash.com/photo-1457545195570-67f207084966",
+        "materials": {
+            "yarn": {
+                "type": "Laine mérinos ou alpaga",
+                "weight": "Worsted",
+                "quantity": "300-350g",
+                "recommended": "Drops Lima, Malabrigo Rios"
+            },
+            "needles": {
+                "type": "Aiguilles droites",
+                "size": "5mm",
+                "cable_length": "N/A"
+            },
+            "accessories": ["Aiguille à torsade", "1 aiguille à laine"]
+        },
+        "gauge": "18 mailles x 24 rangs = 10cm en jersey",
+        "sizes": {
+            "Standard": "22cm de large x 180cm de long"
+        },
+        "steps": [
+            {"step": 1, "title": "Montage", "instruction": "Monter 52 mailles."},
+            {"step": 2, "title": "Bordure", "instruction": "6 rangs au point mousse."},
+            {"step": 3, "title": "Corps", "instruction": "Tricoter le motif de torsades central avec bordures mousse de chaque côté."},
+            {"step": 4, "title": "Répéter", "instruction": "Continuer jusqu'à 175cm."},
+            {"step": 5, "title": "Bordure finale", "instruction": "6 rangs au point mousse et rabattre."}
+        ],
+        "tips": [
+            "Les torsades consomment plus de laine",
+            "Bloquez l'écharpe pour un fini parfait",
+            "Classique et intemporelle"
+        ],
+        "video_url": "https://www.youtube.com/results?search_query=echarpe+torsades+tricot"
     }
 ]
