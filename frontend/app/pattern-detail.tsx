@@ -131,6 +131,17 @@ export default function PatternDetailScreen() {
       </View>
 
       <ScrollView style={styles.content}>
+        {/* Pattern Image */}
+        {pattern.image_url && pattern.image_url.startsWith('http') && (
+          <View style={styles.imageContainer}>
+            <Image 
+              source={{ uri: pattern.image_url }} 
+              style={styles.patternImage}
+              resizeMode="cover"
+            />
+          </View>
+        )}
+
         {/* Pattern Header */}
         <View style={styles.patternHeader}>
           <Text style={styles.patternName}>{pattern.name}</Text>
