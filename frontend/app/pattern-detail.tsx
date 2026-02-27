@@ -275,6 +275,15 @@ export default function PatternDetailScreen() {
                   <Text style={styles.recommendedLabel}>Recommandé</Text>
                   <Text style={styles.recommendedValue}>{pattern.materials.yarn.recommended}</Text>
                 </View>
+                {/* Amazon Buy Button for Yarn */}
+                <TouchableOpacity
+                  style={styles.amazonButton}
+                  onPress={() => openAmazonSearch(pattern.materials.yarn.recommended || pattern.materials.yarn.type)}
+                >
+                  <Ionicons name="cart-outline" size={18} color="#FFFFFF" />
+                  <Text style={styles.amazonButtonText}>Acheter sur Amazon</Text>
+                  <Ionicons name="open-outline" size={16} color="#FFFFFF" />
+                </TouchableOpacity>
               </View>
 
               {/* Needles */}
