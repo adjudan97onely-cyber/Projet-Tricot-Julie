@@ -20,7 +20,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 30000); // Check every 30s
+    const interval = setInterval(fetchUnreadCount, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -38,9 +38,17 @@ export default function HomeScreen() {
 
   const features = [
     {
+      icon: 'book-outline' as const,
+      title: 'Patrons',
+      description: 'Recettes tricot & crochet',
+      route: '/patterns',
+      color: '#E5C76B',
+      highlight: true,
+    },
+    {
       icon: 'chatbubbles-outline' as const,
       title: 'Assistant IA',
-      description: 'Conseils et analyse de projets',
+      description: 'Conseils personnalisés',
       route: '/chat',
       color: '#D4AF37',
     },
@@ -56,14 +64,14 @@ export default function HomeScreen() {
       title: 'Ma Galerie',
       description: 'Portfolio public',
       route: '/gallery',
-      color: '#E5C76B',
+      color: '#B8963E',
     },
     {
       icon: 'mail-outline' as const,
       title: 'Messages',
       description: 'Demandes clients',
       route: '/messages',
-      color: '#B8963E',
+      color: '#A8862E',
       badge: unreadCount,
     },
   ];
@@ -92,7 +100,7 @@ export default function HomeScreen() {
         <View style={styles.welcomeCard}>
           <Text style={styles.welcomeTitle}>Bienvenue, Julie !</Text>
           <Text style={styles.welcomeText}>
-            Gérez vos projets, partagez vos créations et communiquez avec vos clients.
+            Découvrez nos patrons avec toutes les instructions, ou demandez conseil à l'assistant IA.
           </Text>
         </View>
 
@@ -101,36 +109,38 @@ export default function HomeScreen() {
           {features.map((feature, index) => (
             <TouchableOpacity
               key={index}
-              style={styles.featureCard}
+              style={[
+                styles.featureCard,
+                feature.highlight && styles.featureCardHighlight,
+                index === 0 && styles.featureCardFull,
+              ]}
               onPress={() => router.push(feature.route as any)}
               activeOpacity={0.8}
             >
               <View style={[styles.featureIconContainer, { borderColor: feature.color }]}>
-                <Ionicons name={feature.icon} size={28} color={feature.color} />
+                <Ionicons name={feature.icon} size={index === 0 ? 32 : 26} color={feature.color} />
                 {feature.badge && feature.badge > 0 ? (
                   <View style={styles.badge}>
                     <Text style={styles.badgeText}>{feature.badge}</Text>
                   </View>
                 ) : null}
               </View>
-              <Text style={styles.featureTitle}>{feature.title}</Text>
-              <Text style={styles.featureDescription}>{feature.description}</Text>
+              <View style={styles.featureTextContainer}>
+                <Text style={[styles.featureTitle, index === 0 && styles.featureTitleLarge]}>
+                  {feature.title}
+                </Text>
+                <Text style={styles.featureDescription}>{feature.description}</Text>
+                {index === 0 && (
+                  <Text style={styles.featureHint}>
+                    Tout ce qu'il faut pour chaque projet !
+                  </Text>
+                )}
+              </View>
               <View style={styles.featureArrow}>
                 <Ionicons name="arrow-forward" size={18} color="#D4AF37" />
               </View>
             </TouchableOpacity>
           ))}
-        </View>
-
-        {/* Quick Tips */}
-        <View style={styles.tipsSection}>
-          <Text style={styles.tipsTitle}>Astuce du jour</Text>
-          <View style={styles.tipCard}>
-            <Ionicons name="bulb-outline" size={24} color="#D4AF37" />
-            <Text style={styles.tipText}>
-              Ajoutez vos créations terminées à la Galerie pour que vos clients puissent les voir et commander !
-            </Text>
-          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -148,7 +158,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     paddingTop: 40,
-    paddingBottom: 30,
+    paddingBottom: 24,
   },
   logoContainer: {
     marginBottom: 16,
@@ -195,29 +205,29 @@ const styles = StyleSheet.create({
   },
   welcomeCard: {
     marginHorizontal: 20,
-    padding: 24,
+    padding: 20,
     backgroundColor: '#1A1A1A',
     borderRadius: 16,
     borderWidth: 1,
     borderColor: '#2A2A2A',
   },
   welcomeTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
     color: '#FFFFFF',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   welcomeText: {
     fontSize: 14,
     color: '#AAAAAA',
-    lineHeight: 22,
+    lineHeight: 20,
   },
   featuresContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    marginTop: 24,
+    marginTop: 20,
   },
   featureCard: {
     width: (width - 52) / 2,
@@ -228,6 +238,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#2A2A2A',
   },
+  featureCardHighlight: {
+    borderColor: '#D4AF37',
+    backgroundColor: 'rgba(212, 175, 55, 0.05)',
+  },
+  featureCardFull: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   featureIconContainer: {
     width: 56,
     height: 56,
@@ -237,6 +256,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'rgba(212, 175, 55, 0.05)',
     marginBottom: 12,
+  },
+  featureTextContainer: {
+    flex: 1,
+    marginLeft: 16,
+    marginBottom: 0,
   },
   badge: {
     position: 'absolute',
@@ -261,41 +285,22 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     marginBottom: 4,
   },
+  featureTitleLarge: {
+    fontSize: 18,
+  },
   featureDescription: {
     fontSize: 11,
     color: '#888888',
     lineHeight: 16,
   },
+  featureHint: {
+    fontSize: 12,
+    color: '#D4AF37',
+    marginTop: 4,
+  },
   featureArrow: {
     position: 'absolute',
     top: 16,
     right: 16,
-  },
-  tipsSection: {
-    marginHorizontal: 20,
-    marginTop: 24,
-  },
-  tipsTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginBottom: 12,
-  },
-  tipCard: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: '#1A1A1A',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#D4AF37',
-    borderLeftWidth: 3,
-  },
-  tipText: {
-    flex: 1,
-    fontSize: 13,
-    color: '#CCCCCC',
-    lineHeight: 20,
-    marginLeft: 12,
   },
 });

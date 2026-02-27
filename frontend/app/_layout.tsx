@@ -22,6 +22,8 @@ export default function RootLayout() {
         <Stack.Screen name="gallery-detail" />
         <Stack.Screen name="messages" />
         <Stack.Screen name="contact" />
+        <Stack.Screen name="patterns" />
+        <Stack.Screen name="pattern-detail" />
       </Stack>
     </View>
   );
