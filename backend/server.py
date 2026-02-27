@@ -755,15 +755,17 @@ PREDEFINED_PATTERNS = [
             "Tricotez les deux chaussettes en même temps pour éviter le 'syndrome de la 2ème chaussette'",
             "Renforcez talon et pointe avec un fil supplémentaire"
         ],
-        "image_url": "chaussettes"
+        "image_url": "https://images.unsplash.com/photo-1708661758229-fb1e73852b91"
     },
     {
         "id": "mitaines-simples",
         "name": "Mitaines Sans Doigts",
         "category": "accessoire",
+        "technique": "aiguilles",
         "difficulty": "débutant",
         "estimated_time": "4-5 heures (la paire)",
         "description": "Des mitaines pratiques qui gardent les mains au chaud tout en laissant les doigts libres.",
+        "image_url": "https://images.unsplash.com/photo-1771766355697-da69c0432a1f",
         "materials": {
             "yarn": {
                 "type": "Laine douce (mérinos, alpaga, ou mélange)",
