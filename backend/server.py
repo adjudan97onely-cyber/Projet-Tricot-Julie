@@ -811,7 +811,7 @@ PREDEFINED_PATTERNS = [
         "difficulty": "débutant",
         "estimated_time": "2-3 heures",
         "description": "Un bandeau élégant avec une torsade centrale, parfait pour garder les oreilles au chaud.",
-        "image_url": "https://images.unsplash.com/photo-1771766355697-da69c0432a1f",
+        "image_url": "https://images.unsplash.com/photo-1617897210309-61331a57ac1f",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse et douce",
