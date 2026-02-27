@@ -18,8 +18,30 @@ const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 export default function HomeScreen() {
   const router = useRouter();
   const [unreadCount, setUnreadCount] = useState(0);
-
+  
+  // Animation for sparkle effect
+  const sparkleAnim = useRef(new Animated.Value(0)).current;
+  
   useEffect(() => {
+    // Sparkle animation loop
+    const animateSparkle = () => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(sparkleAnim, {
+            toValue: 1,
+            duration: 2000,
+            useNativeDriver: false,
+          }),
+          Animated.timing(sparkleAnim, {
+            toValue: 0,
+            duration: 2000,
+            useNativeDriver: false,
+          }),
+        ])
+      ).start();
+    };
+    animateSparkle();
+    
     fetchUnreadCount();
     const interval = setInterval(fetchUnreadCount, 30000);
     return () => clearInterval(interval);
