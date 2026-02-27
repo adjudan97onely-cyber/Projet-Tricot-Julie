@@ -69,7 +69,7 @@ class JulieCreationsAPITester:
             self.log_result("API Health Check", False, f"Exception: {str(e)}")
 
     def test_chat_api_with_ai(self):
-        """Test chat API with AI - HIGH PRIORITY"""
+        """Test chat API with AI - HIGH PRIORITY with specific vision test"""
         try:
             # Test text-only chat
             chat_data = {
@@ -98,7 +98,28 @@ class JulieCreationsAPITester:
             else:
                 self.log_result("Chat API - Text Message", False, f"HTTP {response.status_code}", response.text)
 
-            # Test chat with image
+            # SPECIFIC TEST REQUESTED: Test chat with image using exact test case
+            specific_test_data = {
+                "message": "Que vois-tu ?",
+                "image_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg=="
+            }
+            
+            print("   Testing SPECIFIC vision capability with provided test case...")
+            response = self.session.post(f"{API_BASE}/chat", json=specific_test_data)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'response' in data and data['response']:
+                    if data.get('conversation_id'):
+                        self.created_ids['conversations'].append(data['conversation_id'])
+                    self.log_result("Chat API - SPECIFIC Vision Test", True, 
+                                  f"AI responded to 'Que vois-tu ?' with image. Response: {data['response'][:100]}...")
+                else:
+                    self.log_result("Chat API - SPECIFIC Vision Test", False, "AI returned empty or missing response", data)
+            else:
+                self.log_result("Chat API - SPECIFIC Vision Test", False, f"HTTP {response.status_code}", response.text)
+
+            # Test chat with larger image
             image_base64 = self.create_sample_image_base64()
             chat_with_image = {
                 "message": "Pouvez-vous analyser ce projet de tricot et me donner des conseils?",
@@ -112,11 +133,11 @@ class JulieCreationsAPITester:
                 if 'response' in data:
                     if data.get('conversation_id'):
                         self.created_ids['conversations'].append(data['conversation_id'])
-                    self.log_result("Chat API - With Image", True, "AI processed image and responded")
+                    self.log_result("Chat API - General Image Test", True, "AI processed image and responded")
                 else:
-                    self.log_result("Chat API - With Image", False, "Missing response in data", data)
+                    self.log_result("Chat API - General Image Test", False, "Missing response in data", data)
             else:
-                self.log_result("Chat API - With Image", False, f"HTTP {response.status_code}", response.text)
+                self.log_result("Chat API - General Image Test", False, f"HTTP {response.status_code}", response.text)
 
         except Exception as e:
             self.log_result("Chat API", False, f"Exception: {str(e)}")
