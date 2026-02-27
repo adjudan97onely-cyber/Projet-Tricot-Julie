@@ -97,6 +97,7 @@ export default function PatternsScreen() {
   const renderPatternCard = (pattern: Pattern) => {
     const iconName = CATEGORY_ICONS[pattern.category] || 'cube-outline';
     const difficultyColor = DIFFICULTY_COLORS[pattern.difficulty] || '#888888';
+    const hasImage = pattern.image_url && pattern.image_url.startsWith('http');
 
     return (
       <TouchableOpacity
@@ -105,8 +106,18 @@ export default function PatternsScreen() {
         onPress={() => router.push({ pathname: '/pattern-detail', params: { id: pattern.id } })}
         activeOpacity={0.8}
       >
-        <View style={styles.patternIconContainer}>
-          <Ionicons name={iconName as any} size={40} color="#D4AF37" />
+        <View style={styles.patternImageContainer}>
+          {hasImage ? (
+            <Image 
+              source={{ uri: pattern.image_url }} 
+              style={styles.patternImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={styles.patternIconFallback}>
+              <Ionicons name={iconName as any} size={40} color="#D4AF37" />
+            </View>
+          )}
         </View>
         <View style={styles.patternInfo}>
           <Text style={styles.patternName}>{pattern.name}</Text>
