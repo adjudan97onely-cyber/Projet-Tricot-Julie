@@ -185,13 +185,13 @@ ADDITIONAL_PATTERNS = [
         "difficulty": "intermédiaire",
         "estimated_time": "6-8 heures",
         "description": "Un haut de bikini triangle classique, ajustable et confortable.",
-        "image_url": "https://images.unsplash.com/photo-1756801740685-cfa6ce409633",
+        "image_url": "https://images.unsplash.com/photo-1564859228273-274232fdb516",
         "materials": {
             "yarn": {
-                "type": "Coton ou fil spécial maillot",
-                "weight": "DK",
+                "type": "Coton mercerisé ou fil polyamide élastique",
+                "weight": "DK / Sport",
                 "quantity": "100g",
-                "recommended": "Fil coton résistant au chlore, Drops Muskat"
+                "recommended": "Katia Tahiti, Drops Muskat, Phildar Phil Coton 3, Fil polyamide/élasthanne"
             },
             "needles": {
                 "type": "Crochet",
@@ -202,9 +202,9 @@ ADDITIONAL_PATTERNS = [
         },
         "gauge": "22 mailles x 12 rangs = 10cm en ms",
         "sizes": {
-            "S (85A-B)": "Triangle 15cm de base",
-            "M (90B-C)": "Triangle 17cm de base",
-            "L (95C-D)": "Triangle 19cm de base"
+            "S (85A-B)": "Tour poitrine 80-84cm, Tour taille 60-64cm, Triangle 15cm de base",
+            "M (90B-C)": "Tour poitrine 88-92cm, Tour taille 68-72cm, Triangle 17cm de base",
+            "L (95C-D)": "Tour poitrine 96-100cm, Tour taille 76-80cm, Triangle 19cm de base"
         },
         "steps": [
             {"step": 1, "title": "Triangle (x2)", "instruction": "Commencer par 3 ml. Rang 1: 2 ms dans la 2ème ml. Rang 2: 1 ml, 2 ms dans chaque ms. Continuer en augmentant 2 ms par rang jusqu'à la largeur désirée."},
