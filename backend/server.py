@@ -801,15 +801,17 @@ PREDEFINED_PATTERNS = [
             "Ajoutez un motif jacquard pour plus de style",
             "Tricotez la 2ème mitaine en miroir pour le pouce"
         ],
-        "image_url": "mitaines"
+        "image_url": "https://images.unsplash.com/photo-1771766355697-da69c0432a1f"
     },
     {
         "id": "bandeau-tresse",
         "name": "Bandeau Tressé",
         "category": "accessoire",
+        "technique": "aiguilles",
         "difficulty": "débutant",
         "estimated_time": "2-3 heures",
         "description": "Un bandeau élégant avec une torsade centrale, parfait pour garder les oreilles au chaud.",
+        "image_url": "https://images.unsplash.com/photo-1771766355697-da69c0432a1f",
         "materials": {
             "yarn": {
                 "type": "Laine épaisse et douce",
