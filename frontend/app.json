@@ -23,7 +23,16 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "name": "Julie Créations",
+      "shortName": "Julie 🧶",
+      "description": "Votre assistante experte en tricot et crochet",
+      "themeColor": "#D4AF37",
+      "backgroundColor": "#0A0A0A",
+      "display": "standalone",
+      "orientation": "portrait",
+      "scope": "/",
+      "startUrl": "/"
     },
     "plugins": [
       "expo-router",
