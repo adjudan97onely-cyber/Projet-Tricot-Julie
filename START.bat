@@ -1,28 +1,41 @@
 @echo off
-title Julie Tricot - Lancement
-color 0A
+title Julie Creations - Lancement
+color 0B
+cls
 echo.
-echo ================================================
-echo   JULIE CREATIONS - Demarrage de l'application
-echo ================================================
+echo  ============================================
+echo    JULIE CREATIONS  - Demarrage complet
+echo  ============================================
 echo.
 
-:: Lancer le backend FastAPI
-echo [1/2] Demarrage du backend (port 8001)...
-start "Julie - Backend" cmd /c "cd /d C:\Tricot-Julie\backend && venv\Scripts\uvicorn.exe server:app --host 0.0.0.0 --port 8001"
+:: --- BACKEND FastAPI (port 8001) ---
+echo  [1/2] Backend FastAPI  ^> http://localhost:8001
+start "Julie - Backend" cmd /k "cd /d C:\Tricot-Julie\backend && set PYTHONPATH=C:\Tricot-Julie\backend && venv\Scripts\uvicorn.exe server:app --host 0.0.0.0 --port 8001 --reload"
 
+echo  Attente demarrage backend...
+timeout /t 4 /nobreak >nul
+
+:: --- FRONTEND Expo Web (port 8082) ---
+echo  [2/2] Frontend Expo   ^> http://localhost:8082
+start "Julie - Frontend" cmd /k "cd /d C:\Tricot-Julie\frontend && node_modules\.bin\expo.cmd start --web --port 8082"
+
+echo.
 timeout /t 3 /nobreak >nul
 
-:: Lancer le frontend Expo
-echo [2/2] Demarrage du frontend Expo (port 8082)...
-start "Julie - Frontend" cmd /c "cd /d C:\Tricot-Julie\frontend && node_modules\.bin\expo.cmd start --web --port 8082"
+:: --- Ouvrir le navigateur ---
+start "" "http://localhost:8082"
 
 echo.
-echo ================================================
-echo   Application lancee !
-echo   Backend  : http://localhost:8001/docs
-echo   Frontend : http://localhost:8082
-echo   Mobile   : Scanner le QR code dans Expo Go
-echo ================================================
+echo  ============================================
+echo    Tout est lance !
+echo.
+echo    Frontend  : http://localhost:8082
+echo    API Docs  : http://localhost:8001/docs
+echo    API Sante : http://localhost:8001/api/health
+echo  ============================================
+echo.
+echo  Fermer cette fenetre ne coupe pas l'appli.
+echo  Fermer les fenetres "Backend" et "Frontend"
+echo  pour tout couper.
 echo.
 pause
