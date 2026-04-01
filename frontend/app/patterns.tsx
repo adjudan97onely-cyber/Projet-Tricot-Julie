@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import BottomTab from './components/BottomTab';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 const { width } = Dimensions.get('window');
@@ -235,6 +236,7 @@ export default function PatternsScreen() {
           </>
         )}
       </ScrollView>
+      <BottomTab />
     </SafeAreaView>
   );
 }

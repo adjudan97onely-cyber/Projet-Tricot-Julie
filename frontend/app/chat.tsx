@@ -17,8 +17,18 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import BottomTab from './components/BottomTab';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+
+const QUICK_SUGGESTIONS = [
+  { emoji: '🧶', text: 'Comment tricoter un bonnet pour débutante ?' },
+  { emoji: '📸', text: 'Analyse cette photo de mon tricot' },
+  { emoji: '🧮', text: 'Combien de pelotes pour un pull taille M ?' },
+  { emoji: '🪡', text: "Quelle taille d'aiguilles pour cette laine ?" },
+  { emoji: '🔰', text: 'Je débute, par où commencer ?' },
+  { emoji: '🛠️', text: 'Comment rattraper une maille sautée ?' },
+];
 
 interface Message {
   id: string;
@@ -36,6 +46,7 @@ export default function ChatScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isStreaming, setIsStreaming] = useState(false);
 
   useEffect(() => {
     // Add welcome message
@@ -92,63 +103,91 @@ export default function ChatScreen() {
     setSelectedImage(null);
   };
 
-  const sendMessage = async () => {
-    if (!message.trim() && !selectedImage) return;
-    
-    Keyboard.dismiss();
-    
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: message.trim() || 'Analyse cette image',
-      image_base64: selectedImage || undefined,
-      timestamp: new Date().toISOString(),
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setMessage('');
-    const imageToSend = selectedImage;
-    setSelectedImage(null);
+  const sendMessageFallback = async (content: string, img: string | null, convId: string | null) => {
     setIsLoading(true);
-
     try {
       const response = await fetch(`${BACKEND_URL}/api/chat`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          conversation_id: conversationId,
-          message: userMessage.content,
-          image_base64: imageToSend,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversation_id: convId, message: content, image_base64: img }),
       });
-
-      if (!response.ok) {
-        throw new Error('Erreur de communication avec le serveur');
-      }
-
+      if (!response.ok) throw new Error('Erreur serveur');
       const data = await response.json();
-      
-      if (!conversationId) {
-        setConversationId(data.conversation_id);
-      }
-
-      const assistantMessage: Message = {
-        id: data.message_id,
+      if (!convId) setConversationId(data.conversation_id);
+      setMessages(prev => [...prev, {
+        id: data.message_id || Date.now().toString(),
         role: 'assistant',
         content: data.response,
         timestamp: new Date().toISOString(),
-      };
-
-      setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
-      console.error('Error sending message:', error);
-      Alert.alert(
-        'Erreur',
-        'Impossible d\'envoyer le message. Veuillez réessayer.'
-      );
+      }]);
+    } catch {
+      Alert.alert('Erreur', 'Impossible de contacter Julie. Vérifiez votre connexion.');
     } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!message.trim() && !selectedImage) return;
+    Keyboard.dismiss();
+
+    const content = message.trim() || 'Analyse cette image';
+    const img = selectedImage;
+    const convId = conversationId;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content,
+      image_base64: img || undefined,
+      timestamp: new Date().toISOString(),
+    };
+    setMessages(prev => [...prev, userMessage]);
+    setMessage('');
+    setSelectedImage(null);
+
+    // Try streaming endpoint first
+    const assistantId = (Date.now() + 1).toString();
+    let usedStreaming = false;
+    try {
+      const resp = await fetch(`${BACKEND_URL}/api/chat/stream`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversation_id: convId, message: content, image_base64: img }),
+      });
+      if (!resp.ok || !resp.body) throw new Error('no stream');
+      usedStreaming = true;
+      setIsStreaming(true);
+      setMessages(prev => [...prev, { id: assistantId, role: 'assistant', content: '', timestamp: new Date().toISOString() }]);
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const raw = decoder.decode(value, { stream: true });
+        for (const line of raw.split('\n')) {
+          if (!line.startsWith('data: ')) continue;
+          const payload = line.slice(6).trim();
+          if (payload === '[DONE]') break;
+          try {
+            const parsed = JSON.parse(payload);
+            if (parsed.token) {
+              accumulated += parsed.token;
+              const snap = accumulated;
+              setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: snap } : m));
+            }
+            if (parsed.conversation_id && !conversationId) setConversationId(parsed.conversation_id);
+          } catch {}
+        }
+      }
+    } catch {
+      if (!usedStreaming) {
+        await sendMessageFallback(content, img, convId);
+      }
+    } finally {
+      setIsStreaming(false);
       setIsLoading(false);
     }
   };
@@ -243,6 +282,19 @@ export default function ChatScreen() {
           )}
         </ScrollView>
 
+        {/* Quick Suggestions */}
+        {!message.trim() && !selectedImage && messages.length <= 1 && (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.suggestionsScroll}
+            contentContainerStyle={styles.suggestionsContent}>
+            {QUICK_SUGGESTIONS.map((s, i) => (
+              <TouchableOpacity key={i} style={styles.suggestionChip} onPress={() => setMessage(s.text)}>
+                <Text style={styles.suggestionEmoji}>{s.emoji}</Text>
+                <Text style={styles.suggestionText}>{s.text}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
+
         {/* Selected Image Preview */}
         {selectedImage && (
           <View style={styles.imagePreviewContainer}>
@@ -288,6 +340,7 @@ export default function ChatScreen() {
           </View>
         </View>
       </KeyboardAvoidingView>
+      <BottomTab />
     </SafeAreaView>
   );
 }
@@ -459,5 +512,34 @@ const styles = StyleSheet.create({
   },
   sendButtonDisabled: {
     backgroundColor: '#2A2A2A',
+  },
+  suggestionsScroll: {
+    borderTopWidth: 1,
+    borderTopColor: '#1A1A1A',
+  },
+  suggestionsContent: {
+    flexDirection: 'row',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    gap: 8,
+  },
+  suggestionChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1A1A1A',
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+    gap: 6,
+  },
+  suggestionEmoji: {
+    fontSize: 14,
+  },
+  suggestionText: {
+    fontSize: 13,
+    color: '#CCCCCC',
+    maxWidth: 180,
   },
 });

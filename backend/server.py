@@ -1,15 +1,17 @@
 from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
+import json
 from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import List, Optional
 import uuid
 from datetime import datetime
-from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
+from openai import AsyncOpenAI
 import base64
 
 # Import du contenu additionnel
@@ -24,8 +26,8 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# Emergent LLM Key
-EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
+# OpenAI API Key
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
 
 # Create the main app
 app = FastAPI()
@@ -41,34 +43,46 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # System message for the AI assistant
-SYSTEM_MESSAGE = """Tu es Julie, une experte passionnée de tricot et crochet avec plus de 20 ans d'expérience.
-Tu es l'assistante personnelle de l'application "Julie Créations".
+SYSTEM_MESSAGE = """Tu es Julie Créations, l'assistante IA experte du monde du tricot et du crochet.
 
-Ton rôle est d'aider les utilisateurs avec:
-- L'analyse de leurs projets en cours (photos)
-- Les recommandations d'aiguilles et de crochets (tailles, matériaux)
-- Le choix de la laine (poids, composition, quantité nécessaire)
-- L'estimation du temps pour chaque projet
-- Les techniques pour améliorer et accélérer le travail
-- La correction d'erreurs et résolution de problèmes
-- Des conseils sur les points et motifs
+IDENTITÉ :
+Tu es chaleureuse, précise et passionnée. Tu t'exprimes toujours en français, avec enthousiasme bienveillant.
+Tu as 25 ans d'expérience comme créatrice textile et enseignante de tricot. Tu es l'amie experte que tout tricoteur rêve d'avoir.
 
-Tu dois toujours:
-- Répondre en français
-- Être chaleureuse et encourageante
-- Donner des conseils précis et pratiques
-- Expliquer les techniques de façon claire
-- Suggérer des alternatives si nécessaire
+TES EXPERTISES :
+• Tricot sur aiguilles : jersey, point mousse, côtes, jacquard, colorwork, torsades, dentelle, entrelac
+• Crochet : maille serrée, bride, double bride, amigurumi, dentelle, motifs 3D, granny square
+• Fibres et laines : mérinos, alpaga, cachemire, coton, mohair, soie, acrylique, mélangés, planté-bas
+• Marques : Drops Design, Phildar, Bergère de France, La Droguerie, BC Garn, Katia, Paintbox, WE ARE KNITTERS
+• Calculs : conversions tailles mondiales, estimation de laine précise, tension/jauge, modifications de patron
+• Matériel : aiguilles (bambou, métal, bois), crochets, markers, bloquage, compteurs
 
-Quand on te montre une photo d'un projet:
-1. Identifie le type de projet (bonnet, écharpe, pull, etc.)
-2. Analyse le point utilisé
-3. Évalue la qualité du travail
-4. Donne des conseils d'amélioration si nécessaire
-5. Estime le temps restant si le projet est en cours
-6. Suggère les outils et laines appropriés
+RÈGLES ABSOLUES :
+1. Toujours répondre en français, avec chaleur et précision
+2. Être CONCRÈTE : chiffres exacts (ex: "8 mm", "100g", "environ 3h"), pas de vague
+3. Structurer les réponses longues avec listes et étapes numérotées
+4. Pour les photos : décrire d'abord ce que tu vois, puis conseiller
+5. Terminer par une question de suivi ou un conseil bonus inattendu
+6. Jamais de “je ne peux pas” ou “je ne suis pas sûre” — toujours une réponse ou une alternative
 
-Sois professionnelle mais accessible, comme une amie experte qui partage ses connaissances."""
+ANALYSE DE PHOTOS (quand une image est partagée) :
+1. Identifie : type de projet, technique utilisée, point(s) principal(aux)
+2. Évalue : tension, régularité, qualité générale (bienveillamment)
+3. Estime le stade d’avancement (%)
+4. Formule 2-3 conseils d’amélioration très concrets
+5. Recommande le matériel optimal si pertinent
+
+CALCUL DE LAINE :
+- Toujours demander : taille souhaitée, type de fil, technique (tricot ou crochet)
+- Calculer précisément et arrondir à la pelote supérieure
+- Toujours ajouter 10-15% de surplus (variation de tension + travaux futurs)
+- Recommander des marques disponibles en France
+
+STYLE DE RÉPONSE :
+- Utilisations ponctuelles de 🧶 (fil/tricot) et ✨ (astuces) uniquement si naturel
+- Réponses inédites et personnalisées, pas de formules génériques
+- Tu mémorises tout ce que l’utilisatrice te dit dans la conversation (projets, matériel, niveau)
+"""
 
 # Models
 class Message(BaseModel):
@@ -118,21 +132,40 @@ class ProjectCreate(BaseModel):
     image_base64: Optional[str] = None
     notes: Optional[str] = None
 
-# Store active chat sessions
-chat_sessions = {}
+# Store active chat sessions (conversation history per session)
+chat_sessions: dict = {}
 
-def get_or_create_chat(conversation_id: str) -> LlmChat:
-    """Get existing chat session or create a new one"""
+async def send_message_to_ai(conversation_id: str, message: str, image_base64: Optional[str] = None) -> str:
+    """Send a message to OpenAI GPT-4o and return the response"""
+    openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+
     if conversation_id not in chat_sessions:
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=conversation_id,
-            system_message=SYSTEM_MESSAGE
-        )
-        # Use GPT-4o for vision capabilities
-        chat.with_model("openai", "gpt-4o")
-        chat_sessions[conversation_id] = chat
-    return chat_sessions[conversation_id]
+        chat_sessions[conversation_id] = []
+
+    # Build user content
+    if image_base64:
+        image_data = image_base64
+        if ',' in image_data:
+            image_data = image_data.split(',')[1]
+        content = [
+            {"type": "text", "text": message},
+            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_data}"}}
+        ]
+    else:
+        content = message
+
+    chat_sessions[conversation_id].append({"role": "user", "content": content})
+
+    messages = [{"role": "system", "content": SYSTEM_MESSAGE}] + chat_sessions[conversation_id][-50:]
+
+    response = await openai_client.chat.completions.create(
+        model="gpt-4o",
+        messages=messages
+    )
+    response_text = response.choices[0].message.content
+
+    chat_sessions[conversation_id].append({"role": "assistant", "content": response_text})
+    return response_text
 
 # Routes
 @api_router.get("/")
@@ -163,31 +196,13 @@ async def chat(request: ChatRequest):
             await db.conversations.insert_one(conv.dict())
             conversation_id = conv.id
         
-        # Get or create chat session
-        chat = get_or_create_chat(conversation_id)
-        
         # Load previous messages from DB to maintain context
         previous_messages = await db.messages.find(
             {"conversation_id": conversation_id}
         ).sort("timestamp", 1).to_list(50)
         
-        # Create user message
-        if request.image_base64:
-            # Clean base64 string if it has data URL prefix
-            image_data = request.image_base64
-            if ',' in image_data:
-                image_data = image_data.split(',')[1]
-            
-            image_content = ImageContent(image_base64=image_data)
-            user_message = UserMessage(
-                text=request.message,
-                file_contents=[image_content]
-            )
-        else:
-            user_message = UserMessage(text=request.message)
-        
-        # Send message and get response
-        response_text = await chat.send_message(user_message)
+        # Send message to AI and get response
+        response_text = await send_message_to_ai(conversation_id, request.message, request.image_base64)
         
         # Save user message to DB
         user_msg = Message(
@@ -229,6 +244,87 @@ async def chat(request: ChatRequest):
     except Exception as e:
         logger.error(f"Chat error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Erreur lors de la communication avec l'assistant: {str(e)}")
+
+
+@api_router.post("/chat/stream")
+async def chat_stream(request: ChatRequest):
+    """Streaming chat endpoint returning Server-Sent Events"""
+    async def event_generator():
+        openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+        try:
+            # Get or create conversation
+            conv_id = request.conversation_id
+            if not conv_id:
+                conv = Conversation()
+                await db.conversations.insert_one(conv.dict())
+                conv_id = conv.id
+            else:
+                conv = await db.conversations.find_one({"id": conv_id})
+                if not conv:
+                    new_conv = Conversation(id=conv_id)
+                    await db.conversations.insert_one(new_conv.dict())
+
+            if conv_id not in chat_sessions:
+                chat_sessions[conv_id] = []
+
+            # Build content
+            if request.image_base64:
+                img_data = request.image_base64
+                if ',' in img_data:
+                    img_data = img_data.split(',')[1]
+                content = [
+                    {"type": "text", "text": request.message},
+                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{img_data}"}}
+                ]
+            else:
+                content = request.message
+
+            chat_sessions[conv_id].append({"role": "user", "content": content})
+            messages = [{"role": "system", "content": SYSTEM_MESSAGE}] + chat_sessions[conv_id][-50:]
+
+            # Save user message
+            user_msg = Message(conversation_id=conv_id, role="user", content=request.message,
+                               image_base64=request.image_base64)
+            await db.messages.insert_one(user_msg.dict())
+
+            # Send conversation_id first
+            yield f"data: {json.dumps({'conversation_id': conv_id})}\n\n"
+
+            # Stream GPT response
+            full_response = ""
+            stream = await openai_client.chat.completions.create(
+                model="gpt-4o",
+                messages=messages,
+                stream=True,
+            )
+            async for chunk in stream:
+                token = chunk.choices[0].delta.content or ""
+                if token:
+                    full_response += token
+                    yield f"data: {json.dumps({'token': token})}\n\n"
+
+            yield "data: [DONE]\n\n"
+
+            # Persist assistant message
+            chat_sessions[conv_id].append({"role": "assistant", "content": full_response})
+            asst_msg = Message(conversation_id=conv_id, role="assistant", content=full_response)
+            await db.messages.insert_one(asst_msg.dict())
+            await db.conversations.update_one(
+                {"id": conv_id},
+                {"$set": {"updated_at": datetime.utcnow()}}
+            )
+        except Exception as e:
+            logger.error(f"Streaming error: {str(e)}")
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 @api_router.get("/conversations", response_model=List[Conversation])
 async def get_conversations():

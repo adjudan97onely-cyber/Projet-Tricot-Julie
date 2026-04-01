@@ -16,6 +16,7 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import BottomTab from './components/BottomTab';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 const { width } = Dimensions.get('window');
@@ -397,6 +398,7 @@ export default function ProjectsScreen() {
           </ScrollView>
         </View>
       </Modal>
+      <BottomTab />
     </SafeAreaView>
   );
 }

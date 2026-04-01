@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import BottomTab from './components/BottomTab';
 
 const { width } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
@@ -93,27 +94,33 @@ export default function HomeScreen() {
   const toolFeatures = [
     {
       icon: 'chatbubbles-outline' as const,
-      title: 'Assistant IA',
+      title: 'Julie IA',
       route: '/chat',
       color: '#D4AF37',
     },
     {
-      icon: 'folder-outline' as const,
-      title: 'Mes Projets',
-      route: '/projects',
+      icon: 'construct-outline' as const,
+      title: 'Outils',
+      route: '/tools',
       color: '#C9A961',
     },
     {
-      icon: 'images-outline' as const,
-      title: 'Ma Galerie',
-      route: '/gallery',
+      icon: 'folder-outline' as const,
+      title: 'Projets',
+      route: '/projects',
       color: '#B8963E',
+    },
+    {
+      icon: 'images-outline' as const,
+      title: 'Galerie',
+      route: '/gallery',
+      color: '#A8862E',
     },
     {
       icon: 'mail-outline' as const,
       title: 'Messages',
       route: '/messages',
-      color: '#A8862E',
+      color: '#987235',
       badge: unreadCount,
     },
   ];
@@ -198,6 +205,7 @@ export default function HomeScreen() {
           ))}
         </View>
       </ScrollView>
+      <BottomTab />
     </SafeAreaView>
   );
 }
@@ -215,7 +223,7 @@ const styles = StyleSheet.create({
     height: 250,
   },
   scrollContent: {
-    paddingBottom: 30,
+    paddingBottom: 90,
   },
   header: {
     alignItems: 'center',
@@ -333,7 +341,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   toolCard: {
-    width: (width - 56) / 4,
+    width: (width - 68) / 5,
     backgroundColor: '#1A1A1A',
     borderRadius: 12,
     paddingVertical: 14,

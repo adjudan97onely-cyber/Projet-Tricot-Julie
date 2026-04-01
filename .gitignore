@@ -8,6 +8,22 @@
 node_modules/
 /node_modules
 /.pnp
+
+# Python virtual environments
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Environment secrets (NEVER commit these)
+.env
+.env.local
+.env.production
+backend/.env
+frontend/.env
 .pnp.js
 .yarn/install-state.gz
 .yarn/*
@@ -75,6 +91,8 @@ agenthub/agents/youtube/db
 
 # Build caches
 .cache/
+frontend/.metro-cache/
+.metro-cache/
 
 # Mobile development
 android-sdk/ -e 
