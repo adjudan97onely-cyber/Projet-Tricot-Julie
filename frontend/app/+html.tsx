@@ -35,6 +35,9 @@ export default function Root({ children }: PropsWithChildren) {
         {/* === Favicon === */}
         <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
 
+        {/* === Manifest PWA === */}
+        <link rel="manifest" href="/manifest.json" />
+
         <ScrollViewStyleReset />
         <style
           dangerouslySetInnerHTML={{
@@ -57,6 +60,20 @@ export default function Root({ children }: PropsWithChildren) {
         }}
       >
         {children}
+        {/* === Enregistrement Service Worker === */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js')
+                    .then(function(reg) { console.log('SW enregistré:', reg.scope); })
+                    .catch(function(err) { console.warn('SW échec:', err); });
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );
