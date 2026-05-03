@@ -11,8 +11,8 @@ from datetime import datetime
 from typing import Dict, Any
 import sys
 
-# Get backend URL from environment
-BACKEND_URL = "https://knit-studio-1.preview.emergentagent.com"
+# Get backend URL from environment (Railway ou localhost)
+BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:8001")
 API_BASE = f"{BACKEND_URL}/api"
 
 class JulieCreationsAPITester:
