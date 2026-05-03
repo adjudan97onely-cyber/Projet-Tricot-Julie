@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -13,6 +13,8 @@ import uuid
 from datetime import datetime
 from openai import AsyncOpenAI
 import base64
+import time
+from collections import defaultdict
 
 # Import du contenu additionnel
 from data_content import LEXIQUE, TUTORIALS, SIZE_GUIDE
@@ -176,10 +178,21 @@ async def root():
 async def health_check():
     return {"status": "healthy", "service": "Julie Créations"}
 
+# Rate limiter: max 20 requêtes par heure par IP
+_rate_store: dict = defaultdict(list)
+
+def _check_rate_limit(ip: str, max_req: int = 20, window_sec: int = 3600):
+    now = time.time()
+    _rate_store[ip] = [t for t in _rate_store[ip] if now - t < window_sec]
+    if len(_rate_store[ip]) >= max_req:
+        raise HTTPException(status_code=429, detail="Trop de requêtes. Réessayez dans une heure.")
+    _rate_store[ip].append(now)
+
 # Chat endpoints
 @api_router.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest):
+async def chat(request: ChatRequest, req: Request):
     """Send a message to the AI assistant"""
+    _check_rate_limit(req.client.host if req.client else "unknown")
     try:
         # Create or get conversation
         if request.conversation_id:
@@ -247,8 +260,9 @@ async def chat(request: ChatRequest):
 
 
 @api_router.post("/chat/stream")
-async def chat_stream(request: ChatRequest):
+async def chat_stream(request: ChatRequest, req: Request):
     """Streaming chat endpoint returning Server-Sent Events"""
+    _check_rate_limit(req.client.host if req.client else "unknown")
     async def event_generator():
         openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
         try:

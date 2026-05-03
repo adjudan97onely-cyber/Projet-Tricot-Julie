@@ -10,16 +10,43 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  Linking,
+  Modal,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { unlockAdmin, isAdmin, lockAdmin } from './services/adminAccess';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
 export default function ContactScreen() {
   const router = useRouter();
   const { itemId, itemTitle } = useLocalSearchParams<{ itemId?: string; itemTitle?: string }>();
-  
+
+  const [tapCount, setTapCount] = useState(0);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [adminPassword, setAdminPassword] = useState("");
+  const [adminError, setAdminError] = useState(false);
+  const [adminUnlocked, setAdminUnlocked] = useState(() => isAdmin());
+
+  function handleLogoTap() {
+    const next = tapCount + 1;
+    setTapCount(next);
+    if (next >= 5) { setShowAdminLogin(true); setTapCount(0); }
+  }
+
+  function handleAdminLogin() {
+    if (unlockAdmin(adminPassword)) {
+      setAdminUnlocked(true);
+      setShowAdminLogin(false);
+      setAdminPassword("");
+      setAdminError(false);
+    } else {
+      setAdminError(true);
+      setAdminPassword("");
+    }
+  }
+
   const [formData, setFormData] = useState({
     client_name: '',
     client_email: '',
@@ -78,14 +105,73 @@ export default function ContactScreen() {
         </View>
 
         <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
-          {/* Info Card */}
-          <View style={styles.infoCard}>
+          {/* Modal admin login */}
+          <Modal visible={showAdminLogin} transparent animationType="fade">
+            <TouchableOpacity
+              style={styles.modalOverlay}
+              activeOpacity={1}
+              onPress={() => { setShowAdminLogin(false); setAdminPassword(""); setAdminError(false); }}
+            >
+              <TouchableOpacity style={styles.modalCard} activeOpacity={1} onPress={() => {}}>
+                <View style={styles.modalHeader}>
+                  <Ionicons name="shield-outline" size={20} color="#D4AF37" />
+                  <Text style={styles.modalTitle}>Accès admin</Text>
+                </View>
+                <TextInput
+                  style={styles.modalInput}
+                  value={adminPassword}
+                  onChangeText={(t) => { setAdminPassword(t); setAdminError(false); }}
+                  placeholder="Mot de passe"
+                  placeholderTextColor="#555"
+                  secureTextEntry
+                  autoFocus
+                />
+                {adminError && <Text style={styles.modalError}>Mot de passe incorrect</Text>}
+                <View style={styles.modalButtons}>
+                  <TouchableOpacity
+                    style={styles.modalCancelBtn}
+                    onPress={() => { setShowAdminLogin(false); setAdminPassword(""); setAdminError(false); }}
+                  >
+                    <Text style={styles.modalCancelText}>Annuler</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.modalConfirmBtn} onPress={handleAdminLogin}>
+                    <Text style={styles.modalConfirmText}>Déverrouiller</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </Modal>
+
+          {/* Info Card with logo tap (admin trigger) */}
+          <TouchableOpacity onPress={handleLogoTap} activeOpacity={1} style={styles.infoCard}>
             <Ionicons name="information-circle-outline" size={24} color="#D4AF37" />
             <Text style={styles.infoText}>
               Envoyez un message à Julie pour poser une question ou passer une commande.
               Elle vous répondra rapidement !
             </Text>
-          </View>
+          </TouchableOpacity>
+
+          {/* Instagram + Admin buttons */}
+          <TouchableOpacity
+            style={styles.instaButton}
+            onPress={() => Linking.openURL("https://www.instagram.com/djeminie972/")}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="logo-instagram" size={18} color="#FFFFFF" />
+            <Text style={styles.instaButtonText}>Poser une question sur Instagram</Text>
+          </TouchableOpacity>
+
+          {adminUnlocked && (
+            <View style={styles.adminRow}>
+              <TouchableOpacity style={styles.adminDashBtn} onPress={() => router.push('/admin' as any)}>
+                <Ionicons name="bar-chart-outline" size={16} color="#D4AF37" />
+                <Text style={styles.adminDashText}>Dashboard admin</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.adminLockBtn} onPress={() => { lockAdmin(); setAdminUnlocked(false); }}>
+                <Ionicons name="lock-closed-outline" size={16} color="#888" />
+              </TouchableOpacity>
+            </View>
+          )}
 
           {/* Form */}
           <View style={styles.formGroup}>
@@ -256,4 +342,49 @@ const styles = StyleSheet.create({
     color: '#0A0A0A',
     marginLeft: 10,
   },
+  instaButton: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 10, backgroundColor: '#C13584', borderRadius: 12,
+    paddingVertical: 14, marginBottom: 12,
+  },
+  instaButtonText: { fontSize: 15, fontWeight: '600', color: '#FFFFFF' },
+  adminRow: { flexDirection: 'row', gap: 10, marginBottom: 12 },
+  adminDashBtn: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 8, backgroundColor: 'rgba(212,175,55,0.1)',
+    borderRadius: 12, paddingVertical: 12,
+    borderWidth: 1, borderColor: 'rgba(212,175,55,0.3)',
+  },
+  adminDashText: { fontSize: 13, fontWeight: '600', color: '#D4AF37' },
+  adminLockBtn: {
+    width: 44, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: '#1A1A1A', borderRadius: 12, borderWidth: 1, borderColor: '#2A2A2A',
+  },
+  modalOverlay: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.7)',
+    alignItems: 'center', justifyContent: 'center', padding: 24,
+  },
+  modalCard: {
+    width: '100%', backgroundColor: '#1A1A1A', borderRadius: 20, padding: 24,
+    borderWidth: 1, borderColor: '#2A2A2A',
+  },
+  modalHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 20 },
+  modalTitle: { fontSize: 16, fontWeight: '700', color: '#FFFFFF' },
+  modalInput: {
+    backgroundColor: '#0A0A0A', borderRadius: 12, paddingHorizontal: 16,
+    paddingVertical: 14, fontSize: 15, color: '#FFFFFF',
+    borderWidth: 1, borderColor: '#333', marginBottom: 8,
+  },
+  modalError: { fontSize: 12, color: '#FF6B6B', marginBottom: 12 },
+  modalButtons: { flexDirection: 'row', gap: 10, marginTop: 8 },
+  modalCancelBtn: {
+    flex: 1, borderRadius: 12, paddingVertical: 12, alignItems: 'center',
+    borderWidth: 1, borderColor: '#333',
+  },
+  modalCancelText: { fontSize: 14, color: '#888', fontWeight: '600' },
+  modalConfirmBtn: {
+    flex: 1, borderRadius: 12, paddingVertical: 12, alignItems: 'center',
+    backgroundColor: '#D4AF37',
+  },
+  modalConfirmText: { fontSize: 14, color: '#0A0A0A', fontWeight: '700' },
 });

@@ -8,10 +8,13 @@ import {
   ScrollView,
   Dimensions,
   Animated,
+  Modal,
+  TextInput,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import BottomTab from './components/BottomTab';
+import { unlockAdmin, isAdmin, lockAdmin } from './services/adminAccess';
 
 const { width } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
@@ -19,7 +22,30 @@ const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 export default function HomeScreen() {
   const router = useRouter();
   const [unreadCount, setUnreadCount] = useState(0);
-  
+  const [tapCount, setTapCount] = useState(0);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminError, setAdminError] = useState(false);
+  const [adminUnlocked, setAdminUnlocked] = useState(() => isAdmin());
+
+  function handleLogoTap() {
+    const next = tapCount + 1;
+    setTapCount(next);
+    if (next >= 5) { setShowAdminLogin(true); setTapCount(0); }
+  }
+
+  function handleAdminLogin() {
+    if (unlockAdmin(adminPassword)) {
+      setAdminUnlocked(true);
+      setShowAdminLogin(false);
+      setAdminPassword('');
+      setAdminError(false);
+    } else {
+      setAdminError(true);
+      setAdminPassword('');
+    }
+  }
+
   // Animation for sparkle effect
   const sparkleAnim = useRef(new Animated.Value(0)).current;
   
@@ -135,12 +161,49 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
       <Animated.View style={[styles.sparkleBackground, { backgroundColor: animatedBgColor }]} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* Admin login modal */}
+        <Modal visible={showAdminLogin} transparent animationType="fade">
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => { setShowAdminLogin(false); setAdminPassword(''); setAdminError(false); }}
+          >
+            <TouchableOpacity style={styles.modalCard} activeOpacity={1} onPress={() => {}}>
+              <View style={styles.modalHeader}>
+                <Ionicons name="shield-outline" size={20} color="#D4AF37" />
+                <Text style={styles.modalTitle}>Accès admin</Text>
+              </View>
+              <TextInput
+                style={styles.modalInput}
+                value={adminPassword}
+                onChangeText={(t) => { setAdminPassword(t); setAdminError(false); }}
+                placeholder="Mot de passe"
+                placeholderTextColor="#555"
+                secureTextEntry
+                autoFocus
+              />
+              {adminError && <Text style={styles.modalError}>Mot de passe incorrect</Text>}
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={styles.modalCancelBtn}
+                  onPress={() => { setShowAdminLogin(false); setAdminPassword(''); setAdminError(false); }}
+                >
+                  <Text style={styles.modalCancelText}>Annuler</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.modalConfirmBtn} onPress={handleAdminLogin}>
+                  <Text style={styles.modalConfirmText}>Déverrouiller</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </Modal>
+
         {/* Header */}
         <View style={styles.header}>
-          {/* Porcelain flower */}
-          <View style={styles.logoCircle}>
-            <Text style={styles.flowerEmoji}>🌸</Text>
-          </View>
+          {/* Logo BDM */}
+          <TouchableOpacity onPress={handleLogoTap} activeOpacity={1} style={styles.logoCircle}>
+            <Text style={styles.logoText}>BTM</Text>
+          </TouchableOpacity>
           {/* Brand name with dove */}
           <View style={styles.brandNameRow}>
             <Text style={styles.brandName}>BUI-THI DAM</Text>
@@ -153,6 +216,18 @@ export default function HomeScreen() {
             <View style={styles.dividerLine} />
           </View>
           <Text style={styles.subtitle}>Tricot • Crochet • Laine</Text>
+
+          {adminUnlocked && (
+            <View style={styles.adminRow}>
+              <TouchableOpacity style={styles.adminDashBtn} onPress={() => router.push('/admin' as any)}>
+                <Ionicons name="bar-chart-outline" size={16} color="#D4AF37" />
+                <Text style={styles.adminDashText}>Dashboard admin</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.adminLockBtn} onPress={() => { lockAdmin(); setAdminUnlocked(false); }}>
+                <Ionicons name="lock-closed-outline" size={16} color="#888" />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         {/* Section Apprendre */}
@@ -241,8 +316,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 182, 193, 0.15)',
     marginBottom: 12,
   },
-  flowerEmoji: {
-    fontSize: 42,
+  logoText: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#D4AF37',
+    letterSpacing: 2,
   },
   brandNameRow: {
     flexDirection: 'row',
@@ -376,4 +454,43 @@ const styles = StyleSheet.create({
     color: '#CCCCCC',
     textAlign: 'center',
   },
+  adminRow: { flexDirection: 'row', gap: 10, marginTop: 14, paddingHorizontal: 16 },
+  adminDashBtn: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 8, backgroundColor: 'rgba(212,175,55,0.1)',
+    borderRadius: 12, paddingVertical: 12,
+    borderWidth: 1, borderColor: 'rgba(212,175,55,0.3)',
+  },
+  adminDashText: { fontSize: 13, fontWeight: '600', color: '#D4AF37' },
+  adminLockBtn: {
+    width: 44, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: '#1A1A1A', borderRadius: 12, borderWidth: 1, borderColor: '#2A2A2A',
+  },
+  modalOverlay: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.7)',
+    alignItems: 'center', justifyContent: 'center', padding: 24,
+  },
+  modalCard: {
+    width: '100%', backgroundColor: '#1A1A1A', borderRadius: 20, padding: 24,
+    borderWidth: 1, borderColor: '#2A2A2A',
+  },
+  modalHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 20 },
+  modalTitle: { fontSize: 16, fontWeight: '700', color: '#FFFFFF' },
+  modalInput: {
+    backgroundColor: '#0A0A0A', borderRadius: 12, paddingHorizontal: 16,
+    paddingVertical: 14, fontSize: 15, color: '#FFFFFF',
+    borderWidth: 1, borderColor: '#333', marginBottom: 8,
+  },
+  modalError: { fontSize: 12, color: '#FF6B6B', marginBottom: 12 },
+  modalButtons: { flexDirection: 'row', gap: 10, marginTop: 8 },
+  modalCancelBtn: {
+    flex: 1, borderRadius: 12, paddingVertical: 12, alignItems: 'center',
+    borderWidth: 1, borderColor: '#333',
+  },
+  modalCancelText: { fontSize: 14, color: '#888', fontWeight: '600' },
+  modalConfirmBtn: {
+    flex: 1, borderRadius: 12, paddingVertical: 12, alignItems: 'center',
+    backgroundColor: '#D4AF37',
+  },
+  modalConfirmText: { fontSize: 14, color: '#0A0A0A', fontWeight: '700' },
 });

@@ -9,9 +9,15 @@ import {
   ActivityIndicator,
   Image,
   Linking,
+  Share,
+  TextInput,
+  Alert,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import PremiumGate from './components/PremiumGate';
+import { hasGuestAccess } from './services/guestAccess';
+import { submitFeedback, getFeedbackCounts, getComments } from './services/supabaseService';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -104,12 +110,55 @@ export default function PatternDetailScreen() {
   const [pattern, setPattern] = useState<Pattern | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'materials' | 'steps' | 'tips'>('materials');
+  const [premiumAccess, setPremiumAccess] = useState(() => hasGuestAccess());
+  const [likes, setLikes] = useState(0);
+  const [hasLiked, setHasLiked] = useState(false);
+  const [comments, setComments] = useState<{ comment: string; created_at: string }[]>([]);
+  const [showComments, setShowComments] = useState(false);
+  const [newComment, setNewComment] = useState('');
+  const [commentLoading, setCommentLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
       fetchPattern();
+      loadFeedback();
     }
   }, [id]);
+
+  const loadFeedback = async () => {
+    if (!id) return;
+    const [counts, cmts] = await Promise.all([getFeedbackCounts(id), getComments(id)]);
+    setLikes(counts.likes);
+    setComments(cmts);
+  };
+
+  const handleLike = async () => {
+    if (hasLiked || !id) return;
+    setHasLiked(true);
+    setLikes(l => l + 1);
+    await submitFeedback({ patternId: id, type: 'like' });
+  };
+
+  const handleComment = async () => {
+    if (!newComment.trim() || !id) return;
+    setCommentLoading(true);
+    await submitFeedback({ patternId: id, comment: newComment.trim() });
+    setNewComment('');
+    const cmts = await getComments(id);
+    setComments(cmts);
+    setCommentLoading(false);
+  };
+
+  const handleShare = async () => {
+    if (!pattern) return;
+    try {
+      await Share.share({
+        title: pattern.name,
+        message: `Découvre ce patron de tricot : ${pattern.name} — ${pattern.description}\n\nhttps://projet-tricot-julie.vercel.app`,
+        url: 'https://projet-tricot-julie.vercel.app',
+      });
+    } catch {}
+  };
 
   const fetchPattern = async () => {
     try {
@@ -152,7 +201,7 @@ export default function PatternDetailScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/patterns')} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
         </TouchableOpacity>
         <Text style={styles.headerTitle} numberOfLines={1}>{pattern.name}</Text>
@@ -222,7 +271,72 @@ export default function PatternDetailScreen() {
           </View>
         </View>
 
-        {/* Tabs */}
+        {/* Action bar : likes, commentaires, partage, instagram */}
+        <View style={styles.actionBar}>
+          <TouchableOpacity style={[styles.actionBtn, hasLiked && styles.actionBtnActive]} onPress={handleLike}>
+            <Ionicons name={hasLiked ? "heart" : "heart-outline"} size={20} color={hasLiked ? "#E74C3C" : "#AAAAAA"} />
+            <Text style={[styles.actionText, hasLiked && { color: '#E74C3C' }]}>{likes}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.actionBtn} onPress={() => setShowComments(v => !v)}>
+            <Ionicons name="chatbubble-outline" size={20} color="#AAAAAA" />
+            <Text style={styles.actionText}>{comments.length}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
+            <Ionicons name="share-social-outline" size={20} color="#AAAAAA" />
+            <Text style={styles.actionText}>Partager</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.actionBtn} onPress={() => Linking.openURL('https://www.instagram.com/djeminie972/')}>
+            <Ionicons name="logo-instagram" size={20} color="#C13584" />
+            <Text style={[styles.actionText, { color: '#C13584' }]}>Julie</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Section commentaires */}
+        {showComments && (
+          <View style={styles.commentsSection}>
+            <View style={styles.commentInputRow}>
+              <TextInput
+                style={styles.commentInput}
+                value={newComment}
+                onChangeText={setNewComment}
+                placeholder="Laisser un commentaire..."
+                placeholderTextColor="#555"
+                multiline
+              />
+              <TouchableOpacity
+                style={[styles.commentSendBtn, !newComment.trim() && { opacity: 0.4 }]}
+                onPress={handleComment}
+                disabled={commentLoading || !newComment.trim()}
+              >
+                <Ionicons name="send" size={18} color="#0A0A0A" />
+              </TouchableOpacity>
+            </View>
+            {comments.length === 0 ? (
+              <Text style={styles.noCommentText}>Soyez le premier à commenter !</Text>
+            ) : (
+              comments.map((c, i) => (
+                <View key={i} style={styles.commentItem}>
+                  <Ionicons name="person-circle-outline" size={22} color="#D4AF37" />
+                  <View style={{ flex: 1, marginLeft: 10 }}>
+                    <Text style={styles.commentText}>{c.comment}</Text>
+                    <Text style={styles.commentDate}>{new Date(c.created_at).toLocaleDateString('fr-FR')}</Text>
+                  </View>
+                </View>
+              ))
+            )}
+          </View>
+        )}
+
+        {/* Premium Gate pour les instructions complètes */}
+        {!premiumAccess && (
+          <PremiumGate feature="patron" onAccess={() => setPremiumAccess(true)} />
+        )}
+
+        {/* Tabs + contenu + bouton IA — visibles seulement en premium */}
+        {premiumAccess && (<>
         <View style={styles.tabsContainer}>
           <TouchableOpacity
             style={[styles.tab, activeTab === 'materials' && styles.tabActive]}
@@ -403,6 +517,7 @@ export default function PatternDetailScreen() {
           <Ionicons name="sparkles" size={22} color="#0A0A0A" />
           <Text style={styles.askAiText}>Demander conseil à Julie</Text>
         </TouchableOpacity>
+        </>)}
       </ScrollView>
     </SafeAreaView>
   );
@@ -777,5 +892,83 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#0A0A0A',
+  },
+  actionBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginHorizontal: 16,
+    marginBottom: 16,
+    backgroundColor: '#1A1A1A',
+    borderRadius: 12,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  actionBtn: {
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+  },
+  actionBtnActive: {},
+  actionText: {
+    fontSize: 11,
+    color: '#AAAAAA',
+    fontWeight: '500',
+  },
+  commentsSection: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+    backgroundColor: '#1A1A1A',
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  commentInputRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 10,
+    marginBottom: 14,
+  },
+  commentInput: {
+    flex: 1,
+    backgroundColor: '#0A0A0A',
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    fontSize: 14,
+    color: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#333',
+    maxHeight: 80,
+  },
+  commentSendBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#D4AF37',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noCommentText: {
+    fontSize: 13,
+    color: '#555',
+    textAlign: 'center',
+    paddingVertical: 8,
+  },
+  commentItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 12,
+  },
+  commentText: {
+    fontSize: 14,
+    color: '#CCCCCC',
+    lineHeight: 20,
+  },
+  commentDate: {
+    fontSize: 11,
+    color: '#555',
+    marginTop: 3,
   },
 });
