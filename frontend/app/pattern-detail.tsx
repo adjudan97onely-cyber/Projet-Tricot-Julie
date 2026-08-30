@@ -15,8 +15,6 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import PremiumGate from './components/PremiumGate';
-import { hasGuestAccess } from './services/guestAccess';
 import { submitFeedback, getFeedbackCounts, getComments } from './services/supabaseService';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
@@ -110,7 +108,6 @@ export default function PatternDetailScreen() {
   const [pattern, setPattern] = useState<Pattern | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'materials' | 'steps' | 'tips'>('materials');
-  const [premiumAccess, setPremiumAccess] = useState(() => hasGuestAccess());
   const [likes, setLikes] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
   const [comments, setComments] = useState<{ comment: string; created_at: string }[]>([]);
@@ -330,13 +327,8 @@ export default function PatternDetailScreen() {
           </View>
         )}
 
-        {/* Premium Gate pour les instructions complètes */}
-        {!premiumAccess && (
-          <PremiumGate feature="patron" onAccess={() => setPremiumAccess(true)} />
-        )}
-
-        {/* Tabs + contenu + bouton IA — visibles seulement en premium */}
-        {premiumAccess && (<>
+        {/* Tabs + contenu + bouton IA */}
+        {(<>
         <View style={styles.tabsContainer}>
           <TouchableOpacity
             style={[styles.tab, activeTab === 'materials' && styles.tabActive]}

@@ -19,8 +19,6 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import BottomTab from './components/BottomTab';
-import PremiumGate from './components/PremiumGate';
-import { hasGuestAccess } from './services/guestAccess';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -43,7 +41,6 @@ interface Message {
 
 export default function ChatScreen() {
   const router = useRouter();
-  const [premiumAccess, setPremiumAccess] = useState(() => hasGuestAccess());
   const scrollViewRef = useRef<ScrollView>(null);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -232,25 +229,6 @@ export default function ChatScreen() {
       </View>
     );
   };
-
-  if (!premiumAccess) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-          <View style={styles.headerCenter}>
-            <Text style={styles.headerTitle}>Assistant Julie</Text>
-          </View>
-          <View style={{ width: 40 }} />
-        </View>
-        <ScrollView>
-          <PremiumGate feature="chat" onAccess={() => setPremiumAccess(true)} />
-        </ScrollView>
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView style={styles.container}>
