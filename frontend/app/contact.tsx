@@ -35,8 +35,8 @@ export default function ContactScreen() {
     if (next >= 5) { setShowAdminLogin(true); setTapCount(0); }
   }
 
-  function handleAdminLogin() {
-    if (unlockAdmin(adminPassword)) {
+  async function handleAdminLogin() {
+    if (await unlockAdmin(adminPassword)) {
       setAdminUnlocked(true);
       setShowAdminLogin(false);
       setAdminPassword("");

@@ -17,6 +17,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import BottomTab from './components/BottomTab';
+import { adminFetch } from './services/adminAccess';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 const { width } = Dimensions.get('window');
@@ -115,7 +116,7 @@ export default function ProjectsScreen() {
     }
 
     try {
-      const response = await fetch(`${BACKEND_URL}/api/projects`, {
+      const response = await adminFetch(`${BACKEND_URL}/api/projects`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -158,7 +159,7 @@ export default function ProjectsScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await fetch(`${BACKEND_URL}/api/projects/${projectId}`, {
+              await adminFetch(`${BACKEND_URL}/api/projects/${projectId}`, {
                 method: 'DELETE',
               });
               fetchProjects();

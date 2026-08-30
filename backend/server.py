@@ -1,5 +1,6 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Request
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Depends
 from fastapi.responses import StreamingResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -10,11 +11,13 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import List, Optional
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from openai import AsyncOpenAI
 import base64
 import time
 from collections import defaultdict
+from passlib.hash import bcrypt
+from jose import jwt, JWTError
 
 # Import du contenu additionnel
 from data_content import LEXIQUE, TUTORIALS, SIZE_GUIDE
@@ -30,6 +33,31 @@ db = client[os.environ['DB_NAME']]
 
 # OpenAI API Key
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
+
+# Admin auth config
+JWT_SECRET = os.environ.get('JWT_SECRET', 'change-me-in-production-' + str(uuid.uuid4()))
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRE_HOURS = 24
+# Hash du mot de passe admin (sera initialisé au premier démarrage ou via env var)
+ADMIN_PASSWORD_HASH = os.environ.get('ADMIN_PASSWORD_HASH', '')
+
+security = HTTPBearer(auto_error=False)
+
+def create_jwt_token(data: dict) -> str:
+    expire = datetime.utcnow() + timedelta(hours=JWT_EXPIRE_HOURS)
+    return jwt.encode({**data, "exp": expire}, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+async def require_admin(credentials: HTTPAuthorizationCredentials = Depends(security)) -> bool:
+    """Dependency that protects admin-only endpoints."""
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Token d'authentification requis")
+    try:
+        payload = jwt.decode(credentials.credentials, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        if payload.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Accès administrateur requis")
+        return True
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Token invalide ou expiré")
 
 # Create the main app
 app = FastAPI()
@@ -177,6 +205,32 @@ async def root():
 @api_router.get("/health")
 async def health_check():
     return {"status": "healthy", "service": "Julie Créations"}
+
+# =====================
+# ADMIN AUTH ENDPOINTS
+# =====================
+
+class AdminLoginRequest(BaseModel):
+    password: str
+
+class AdminLoginResponse(BaseModel):
+    token: str
+    expires_in_hours: int = JWT_EXPIRE_HOURS
+
+@api_router.post("/admin/login", response_model=AdminLoginResponse)
+async def admin_login(req: AdminLoginRequest):
+    """Authenticate as admin and get a JWT token."""
+    if not ADMIN_PASSWORD_HASH:
+        raise HTTPException(status_code=503, detail="Mot de passe admin non configuré sur le serveur")
+    if not bcrypt.verify(req.password, ADMIN_PASSWORD_HASH):
+        raise HTTPException(status_code=401, detail="Mot de passe incorrect")
+    token = create_jwt_token({"role": "admin", "sub": "julie"})
+    return AdminLoginResponse(token=token)
+
+@api_router.post("/admin/hash-password")
+async def hash_password_util(req: AdminLoginRequest, _: bool = Depends(require_admin)):
+    """Utility: generate a bcrypt hash for a new password. Admin-only."""
+    return {"hash": bcrypt.hash(req.password)}
 
 # Rate limiter: max 20 requêtes par heure par IP
 _rate_store: dict = defaultdict(list)
@@ -355,8 +409,8 @@ async def get_messages(conversation_id: str):
     return [Message(**msg) for msg in messages]
 
 @api_router.delete("/conversations/{conversation_id}")
-async def delete_conversation(conversation_id: str):
-    """Delete a conversation and its messages"""
+async def delete_conversation(conversation_id: str, _: bool = Depends(require_admin)):
+    """Delete a conversation and its messages (admin only)"""
     await db.conversations.delete_one({"id": conversation_id})
     await db.messages.delete_many({"conversation_id": conversation_id})
     # Remove from active sessions
@@ -366,8 +420,8 @@ async def delete_conversation(conversation_id: str):
 
 # Project endpoints
 @api_router.post("/projects", response_model=Project)
-async def create_project(project: ProjectCreate):
-    """Create a new project"""
+async def create_project(project: ProjectCreate, _: bool = Depends(require_admin)):
+    """Create a new project (admin only)"""
     project_obj = Project(**project.dict())
     await db.projects.insert_one(project_obj.dict())
     return project_obj
@@ -387,8 +441,8 @@ async def get_project(project_id: str):
     return Project(**project)
 
 @api_router.put("/projects/{project_id}", response_model=Project)
-async def update_project(project_id: str, project_update: ProjectCreate):
-    """Update a project"""
+async def update_project(project_id: str, project_update: ProjectCreate, _: bool = Depends(require_admin)):
+    """Update a project (admin only)"""
     project = await db.projects.find_one({"id": project_id})
     if not project:
         raise HTTPException(status_code=404, detail="Projet non trouvé")
@@ -405,8 +459,8 @@ async def update_project(project_id: str, project_update: ProjectCreate):
     return Project(**updated_project)
 
 @api_router.delete("/projects/{project_id}")
-async def delete_project(project_id: str):
-    """Delete a project"""
+async def delete_project(project_id: str, _: bool = Depends(require_admin)):
+    """Delete a project (admin only)"""
     result = await db.projects.delete_one({"id": project_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Projet non trouvé")
@@ -439,8 +493,8 @@ class GalleryItemCreate(BaseModel):
     featured: bool = False
 
 @api_router.post("/gallery", response_model=GalleryItem)
-async def create_gallery_item(item: GalleryItemCreate):
-    """Add an item to the public gallery"""
+async def create_gallery_item(item: GalleryItemCreate, _: bool = Depends(require_admin)):
+    """Add an item to the public gallery (admin only)"""
     gallery_item = GalleryItem(**item.dict())
     await db.gallery.insert_one(gallery_item.dict())
     return gallery_item
@@ -465,8 +519,8 @@ async def get_gallery_item(item_id: str):
     return GalleryItem(**item)
 
 @api_router.put("/gallery/{item_id}", response_model=GalleryItem)
-async def update_gallery_item(item_id: str, item_update: GalleryItemCreate):
-    """Update a gallery item"""
+async def update_gallery_item(item_id: str, item_update: GalleryItemCreate, _: bool = Depends(require_admin)):
+    """Update a gallery item (admin only)"""
     item = await db.gallery.find_one({"id": item_id})
     if not item:
         raise HTTPException(status_code=404, detail="Élément non trouvé")
@@ -479,8 +533,8 @@ async def update_gallery_item(item_id: str, item_update: GalleryItemCreate):
     return GalleryItem(**updated_item)
 
 @api_router.delete("/gallery/{item_id}")
-async def delete_gallery_item(item_id: str):
-    """Delete a gallery item"""
+async def delete_gallery_item(item_id: str, _: bool = Depends(require_admin)):
+    """Delete a gallery item (admin only)"""
     result = await db.gallery.delete_one({"id": item_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Élément non trouvé")
@@ -525,8 +579,8 @@ async def create_message(msg: ClientMessageCreate):
     return message_obj
 
 @api_router.get("/messages", response_model=List[ClientMessage])
-async def get_messages(status: Optional[str] = None, unread_only: bool = False):
-    """Get all client messages (for Julie)"""
+async def get_messages(status: Optional[str] = None, unread_only: bool = False, _: bool = Depends(require_admin)):
+    """Get all client messages (admin only)"""
     query = {}
     if status:
         query["status"] = status
@@ -536,22 +590,22 @@ async def get_messages(status: Optional[str] = None, unread_only: bool = False):
     return [ClientMessage(**msg) for msg in messages]
 
 @api_router.get("/messages/count")
-async def get_unread_count():
-    """Get count of unread messages"""
+async def get_unread_count(_: bool = Depends(require_admin)):
+    """Get count of unread messages (admin only)"""
     count = await db.client_messages.count_documents({"status": "nouveau"})
     return {"unread_count": count}
 
 @api_router.get("/messages/{message_id}", response_model=ClientMessage)
-async def get_message(message_id: str):
-    """Get a specific message"""
+async def get_message(message_id: str, _: bool = Depends(require_admin)):
+    """Get a specific message (admin only)"""
     msg = await db.client_messages.find_one({"id": message_id})
     if not msg:
         raise HTTPException(status_code=404, detail="Message non trouvé")
     return ClientMessage(**msg)
 
 @api_router.put("/messages/{message_id}/read")
-async def mark_message_read(message_id: str):
-    """Mark a message as read"""
+async def mark_message_read(message_id: str, _: bool = Depends(require_admin)):
+    """Mark a message as read (admin only)"""
     result = await db.client_messages.update_one(
         {"id": message_id},
         {"$set": {"status": "lu", "read_at": datetime.utcnow()}}
@@ -561,8 +615,8 @@ async def mark_message_read(message_id: str):
     return {"message": "Message marqué comme lu"}
 
 @api_router.put("/messages/{message_id}/reply", response_model=ClientMessage)
-async def reply_to_message(message_id: str, reply: MessageReply):
-    """Reply to a client message"""
+async def reply_to_message(message_id: str, reply: MessageReply, _: bool = Depends(require_admin)):
+    """Reply to a client message (admin only)"""
     result = await db.client_messages.update_one(
         {"id": message_id},
         {"$set": {
@@ -578,8 +632,8 @@ async def reply_to_message(message_id: str, reply: MessageReply):
     return ClientMessage(**updated_msg)
 
 @api_router.delete("/messages/{message_id}")
-async def delete_message(message_id: str):
-    """Delete a message"""
+async def delete_message(message_id: str, _: bool = Depends(require_admin)):
+    """Delete a message (admin only)"""
     result = await db.client_messages.delete_one({"id": message_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Message non trouvé")
@@ -625,8 +679,8 @@ async def get_project_comments(project_id: str):
     return [Comment(**c) for c in comments]
 
 @api_router.put("/comments/{comment_id}/reply", response_model=Comment)
-async def reply_to_comment(comment_id: str, reply: CommentReply):
-    """Reply to a comment (Julie only)"""
+async def reply_to_comment(comment_id: str, reply: CommentReply, _: bool = Depends(require_admin)):
+    """Reply to a comment (admin only)"""
     result = await db.comments.update_one(
         {"id": comment_id},
         {"$set": {"reply": reply.reply, "replied_at": datetime.utcnow()}}
@@ -638,8 +692,8 @@ async def reply_to_comment(comment_id: str, reply: CommentReply):
     return Comment(**updated_comment)
 
 @api_router.delete("/comments/{comment_id}")
-async def delete_comment(comment_id: str):
-    """Delete a comment"""
+async def delete_comment(comment_id: str, _: bool = Depends(require_admin)):
+    """Delete a comment (admin only)"""
     result = await db.comments.delete_one({"id": comment_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Commentaire non trouvé")
@@ -1211,10 +1265,11 @@ async def get_size_guide_category(category: str):
 # Include the router in the main app
 app.include_router(api_router)
 
+ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "").split(",") if os.environ.get("ALLOWED_ORIGINS") else ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )

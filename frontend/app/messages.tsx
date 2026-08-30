@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { adminFetch } from './services/adminAccess';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -45,7 +46,7 @@ export default function MessagesScreen() {
       const url = filter === 'all' 
         ? `${BACKEND_URL}/api/messages`
         : `${BACKEND_URL}/api/messages?status=${filter}`;
-      const response = await fetch(url);
+      const response = await adminFetch(url);
       if (response.ok) {
         const data = await response.json();
         setMessages(data);
@@ -73,7 +74,7 @@ export default function MessagesScreen() {
     
     if (msg.status === 'nouveau') {
       try {
-        await fetch(`${BACKEND_URL}/api/messages/${msg.id}/read`, {
+        await adminFetch(`${BACKEND_URL}/api/messages/${msg.id}/read`, {
           method: 'PUT',
         });
         fetchMessages();
@@ -87,7 +88,7 @@ export default function MessagesScreen() {
     if (!selectedMessage || !replyText.trim()) return;
 
     try {
-      const response = await fetch(`${BACKEND_URL}/api/messages/${selectedMessage.id}/reply`, {
+      const response = await adminFetch(`${BACKEND_URL}/api/messages/${selectedMessage.id}/reply`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reply: replyText }),
@@ -115,7 +116,7 @@ export default function MessagesScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await fetch(`${BACKEND_URL}/api/messages/${msgId}`, {
+              await adminFetch(`${BACKEND_URL}/api/messages/${msgId}`, {
                 method: 'DELETE',
               });
               setSelectedMessage(null);

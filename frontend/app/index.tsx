@@ -14,7 +14,7 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import BottomTab from './components/BottomTab';
-import { unlockAdmin, isAdmin, lockAdmin } from './services/adminAccess';
+import { unlockAdmin, isAdmin, lockAdmin, adminFetch } from './services/adminAccess';
 
 const { width } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
@@ -34,8 +34,8 @@ export default function HomeScreen() {
     if (next >= 5) { setShowAdminLogin(true); setTapCount(0); }
   }
 
-  function handleAdminLogin() {
-    if (unlockAdmin(adminPassword)) {
+  async function handleAdminLogin() {
+    if (await unlockAdmin(adminPassword)) {
       setAdminUnlocked(true);
       setShowAdminLogin(false);
       setAdminPassword('');
@@ -76,7 +76,7 @@ export default function HomeScreen() {
 
   const fetchUnreadCount = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/messages/count`);
+      const response = await adminFetch(`${BACKEND_URL}/api/messages/count`);
       if (response.ok) {
         const data = await response.json();
         setUnreadCount(data.unread_count);

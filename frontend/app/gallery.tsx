@@ -17,6 +17,7 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { adminFetch } from './services/adminAccess';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 const { width } = Dimensions.get('window');
@@ -109,7 +110,7 @@ export default function GalleryScreen() {
     }
 
     try {
-      const response = await fetch(`${BACKEND_URL}/api/gallery`, {
+      const response = await adminFetch(`${BACKEND_URL}/api/gallery`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -149,7 +150,7 @@ export default function GalleryScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await fetch(`${BACKEND_URL}/api/gallery/${itemId}`, {
+              await adminFetch(`${BACKEND_URL}/api/gallery/${itemId}`, {
                 method: 'DELETE',
               });
               fetchItems();

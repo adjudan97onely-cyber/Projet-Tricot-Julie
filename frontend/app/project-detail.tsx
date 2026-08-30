@@ -14,6 +14,7 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { adminFetch } from './services/adminAccess';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -109,7 +110,7 @@ export default function ProjectDetailScreen() {
 
   const updateProject = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/projects/${id}`, {
+      const response = await adminFetch(`${BACKEND_URL}/api/projects/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -143,7 +144,7 @@ export default function ProjectDetailScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await fetch(`${BACKEND_URL}/api/projects/${id}`, {
+              await adminFetch(`${BACKEND_URL}/api/projects/${id}`, {
                 method: 'DELETE',
               });
               router.back();
