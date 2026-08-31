@@ -1,16 +1,17 @@
 import React from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { colors } from './theme';
 
 export default function RootLayout() {
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: '#0A0A0A' },
+          contentStyle: { backgroundColor: colors.cream },
           animation: 'slide_from_right',
         }}
       >
@@ -30,6 +31,7 @@ export default function RootLayout() {
         <Stack.Screen name="tutorial-detail" />
         <Stack.Screen name="size-guide" />
         <Stack.Screen name="admin" />
+        <Stack.Screen name="more" />
       </Stack>
     </View>
   );
@@ -38,6 +40,6 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.cream,
   },
 });

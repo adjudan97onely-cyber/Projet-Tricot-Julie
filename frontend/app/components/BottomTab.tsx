@@ -1,39 +1,22 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Platform } from 'react-native';
-import { useRouter, usePathname } from 'expo-router';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { usePathname, useRouter } from 'expo-router';
+import { colors, radii, shadows, spacing } from '../theme';
 
-const TABS = [
-  {
-    route: '/',
-    label: 'Accueil',
-    icon: 'home-outline' as const,
-    activeIcon: 'home' as const,
-  },
-  {
-    route: '/patterns',
-    label: 'Patrons',
-    icon: 'book-outline' as const,
-    activeIcon: 'book' as const,
-  },
-  {
-    route: '/tools',
-    label: 'Outils',
-    icon: 'construct-outline' as const,
-    activeIcon: 'construct' as const,
-  },
-  {
-    route: '/projects',
-    label: 'Projets',
-    icon: 'folder-outline' as const,
-    activeIcon: 'folder' as const,
-  },
-  {
-    route: '/chat',
-    label: 'Julie IA',
-    icon: 'chatbubble-ellipses-outline' as const,
-    activeIcon: 'chatbubble-ellipses' as const,
-  },
+interface Tab {
+  route: string;
+  label: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  active: keyof typeof Ionicons.glyphMap;
+}
+
+const tabs: Tab[] = [
+  { route: '/', label: 'Accueil', icon: 'home-outline', active: 'home' },
+  { route: '/gallery', label: 'Galerie', icon: 'images-outline', active: 'images' },
+  { route: '/chat', label: 'Chat', icon: 'chatbubble-ellipses-outline', active: 'chatbubble-ellipses' },
+  { route: '/patterns', label: 'Patrons', icon: 'book-outline', active: 'book' },
+  { route: '/more', label: 'Plus', icon: 'grid-outline', active: 'grid' },
 ];
 
 export default function BottomTab() {
@@ -42,25 +25,28 @@ export default function BottomTab() {
 
   return (
     <View style={styles.container}>
-      {TABS.map((tab) => {
-        const isActive =
+      {tabs.map((tab) => {
+        const selected =
           pathname === tab.route ||
           (tab.route !== '/' && pathname.startsWith(tab.route));
+
         return (
           <TouchableOpacity
             key={tab.route}
             style={styles.tab}
+            accessibilityRole="tab"
+            accessibilityLabel={tab.label}
+            accessibilityState={{ selected }}
             onPress={() => router.replace(tab.route as any)}
-            activeOpacity={0.7}
           >
-            <View style={[styles.iconWrapper, isActive && styles.iconWrapperActive]}>
+            <View style={[styles.icon, selected && styles.iconSelected]}>
               <Ionicons
-                name={isActive ? tab.activeIcon : tab.icon}
-                size={22}
-                color={isActive ? '#0A0A0A' : '#666666'}
+                name={selected ? tab.active : tab.icon}
+                size={21}
+                color={selected ? colors.white : colors.textMuted}
               />
             </View>
-            <Text style={[styles.label, isActive && styles.labelActive]}>
+            <Text style={[styles.label, selected && styles.labelSelected]}>
               {tab.label}
             </Text>
           </TouchableOpacity>
@@ -73,36 +59,34 @@ export default function BottomTab() {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#111111',
-    borderTopWidth: 1,
-    borderTopColor: '#2A2A2A',
-    paddingBottom: Platform.OS === 'ios' ? 24 : 8,
-    paddingTop: 8,
-    paddingHorizontal: 4,
+    backgroundColor: colors.surface,
+    paddingTop: spacing.sm,
+    paddingBottom: Platform.OS === 'ios' ? 24 : 9,
+    paddingHorizontal: spacing.xs,
+    ...shadows.soft,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     gap: 3,
-    paddingVertical: 2,
   },
-  iconWrapper: {
-    width: 40,
+  icon: {
+    width: 42,
     height: 30,
-    borderRadius: 15,
+    borderRadius: radii.round,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  iconWrapperActive: {
-    backgroundColor: '#D4AF37',
+  iconSelected: {
+    backgroundColor: colors.blushDeep,
   },
   label: {
     fontSize: 10,
-    color: '#666666',
-    fontWeight: '500',
+    color: colors.textMuted,
+    fontWeight: '600',
   },
-  labelActive: {
-    color: '#D4AF37',
-    fontWeight: '700',
+  labelSelected: {
+    color: colors.blushDeep,
+    fontWeight: '800',
   },
 });

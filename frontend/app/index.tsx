@@ -1,496 +1,450 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
+  Image,
+  Modal,
   SafeAreaView,
   ScrollView,
-  Dimensions,
-  Animated,
-  Modal,
+  StyleSheet,
+  Text,
   TextInput,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import BottomTab from './components/BottomTab';
-import { unlockAdmin, isAdmin, lockAdmin, adminFetch } from './services/adminAccess';
+import Card from './components/Card';
+import Badge from './components/Badge';
+import { adminFetch, isAdmin, lockAdmin, unlockAdmin } from './services/adminAccess';
+import { colors, fonts, layout, radii, shadows, spacing } from './theme';
 
-const { width } = Dimensions.get('window');
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+
+interface Creation {
+  id: string;
+  title: string;
+  image_base64?: string;
+  available: boolean;
+  price?: string;
+}
+
+interface Shortcut {
+  icon: keyof typeof Ionicons.glyphMap;
+  title: string;
+  description: string;
+  route: string;
+  tint: string;
+}
+
+const shortcuts: Shortcut[] = [
+  { icon: 'images-outline', title: 'Galerie', description: 'Mes créations', route: '/gallery', tint: colors.blushDeep },
+  { icon: 'book-outline', title: 'Patrons', description: '44 idées guidées', route: '/patterns', tint: colors.sage },
+  { icon: 'chatbubble-ellipses-outline', title: 'Chat Julie', description: 'Un conseil tricot', route: '/chat', tint: colors.gold },
+  { icon: 'folder-open-outline', title: 'Mes projets', description: 'Suivre mes ouvrages', route: '/projects', tint: '#A989A1' },
+];
 
 export default function HomeScreen() {
   const router = useRouter();
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [tapCount, setTapCount] = useState(0);
-  const [showAdminLogin, setShowAdminLogin] = useState(false);
-  const [adminPassword, setAdminPassword] = useState('');
-  const [adminError, setAdminError] = useState(false);
-  const [adminUnlocked, setAdminUnlocked] = useState(() => isAdmin());
+  const { width } = useWindowDimensions();
+  const wide = width >= 720;
 
-  function handleLogoTap() {
-    const next = tapCount + 1;
-    setTapCount(next);
-    if (next >= 5) { setShowAdminLogin(true); setTapCount(0); }
-  }
+  const [creations, setCreations] = useState<Creation[]>([]);
+  const [unread, setUnread] = useState(0);
+  const [secretTaps, setSecretTaps] = useState(0);
+  const [loginVisible, setLoginVisible] = useState(false);
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState(false);
+  const [admin, setAdmin] = useState(() => isAdmin());
 
-  async function handleAdminLogin() {
-    if (await unlockAdmin(adminPassword)) {
-      setAdminUnlocked(true);
-      setShowAdminLogin(false);
-      setAdminPassword('');
-      setAdminError(false);
-    } else {
-      setAdminError(true);
-      setAdminPassword('');
-    }
-  }
-
-  // Animation for sparkle effect
-  const sparkleAnim = useRef(new Animated.Value(0)).current;
-  
   useEffect(() => {
-    // Sparkle animation loop
-    const animateSparkle = () => {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(sparkleAnim, {
-            toValue: 1,
-            duration: 2000,
-            useNativeDriver: false,
-          }),
-          Animated.timing(sparkleAnim, {
-            toValue: 0,
-            duration: 2000,
-            useNativeDriver: false,
-          }),
-        ])
-      ).start();
-    };
-    animateSparkle();
-    
-    fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    fetchCreations();
+    if (admin) fetchUnreadCount();
+  }, [admin]);
 
-  const fetchUnreadCount = async () => {
+  async function fetchCreations() {
     try {
-      const response = await adminFetch(`${BACKEND_URL}/api/messages/count`);
-      if (response.ok) {
-        const data = await response.json();
-        setUnreadCount(data.unread_count);
+      const res = await fetch(`${BACKEND_URL}/api/gallery`);
+      if (res.ok) {
+        const data = await res.json();
+        setCreations(data.slice(0, 6));
       }
-    } catch (error) {
-      console.log('Error fetching unread count');
+    } catch {
+      // API indisponible — la galerie restera vide
     }
-  };
+  }
 
-  const mainFeatures = [
-    {
-      icon: 'book-outline' as const,
-      title: 'Patrons',
-      description: 'Recettes complètes',
-      route: '/patterns',
-      color: '#E5C76B',
-    },
-    {
-      icon: 'school-outline' as const,
-      title: 'Tutoriels',
-      description: 'Bases & techniques',
-      route: '/tutorials',
-      color: '#D4AF37',
-    },
-    {
-      icon: 'library-outline' as const,
-      title: 'Lexique',
-      description: 'Termes & définitions',
-      route: '/lexique',
-      color: '#C9A961',
-    },
-    {
-      icon: 'resize-outline' as const,
-      title: 'Tailles',
-      description: 'Guide des tailles',
-      route: '/size-guide',
-      color: '#B8963E',
-    },
-  ];
+  async function fetchUnreadCount() {
+    try {
+      const res = await adminFetch(`${BACKEND_URL}/api/messages/count`);
+      if (res.ok) {
+        const data = await res.json();
+        setUnread(data.unread_count);
+      }
+    } catch {
+      // Silencieux — pas critique
+    }
+  }
 
-  const toolFeatures = [
-    {
-      icon: 'chatbubbles-outline' as const,
-      title: 'Julie IA',
-      route: '/chat',
-      color: '#D4AF37',
-    },
-    {
-      icon: 'construct-outline' as const,
-      title: 'Outils',
-      route: '/tools',
-      color: '#C9A961',
-    },
-    {
-      icon: 'folder-outline' as const,
-      title: 'Projets',
-      route: '/projects',
-      color: '#B8963E',
-    },
-    {
-      icon: 'images-outline' as const,
-      title: 'Galerie',
-      route: '/gallery',
-      color: '#A8862E',
-    },
-    {
-      icon: 'mail-outline' as const,
-      title: 'Messages',
-      route: '/messages',
-      color: '#987235',
-      badge: unreadCount,
-    },
-  ];
+  function handleSecretTap() {
+    const next = secretTaps + 1;
+    if (next >= 5) {
+      setLoginVisible(true);
+      setSecretTaps(0);
+    } else {
+      setSecretTaps(next);
+    }
+  }
 
-  // Animated background color
-  const animatedBgColor = sparkleAnim.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: ['rgba(255, 215, 0, 0.05)', 'rgba(255, 223, 0, 0.15)', 'rgba(255, 215, 0, 0.05)'],
-  });
+  async function handleLogin() {
+    if (await unlockAdmin(password)) {
+      setAdmin(true);
+      setLoginVisible(false);
+      setPassword('');
+      setLoginError(false);
+    } else {
+      setPassword('');
+      setLoginError(true);
+    }
+  }
+
+  function handleLogout() {
+    lockAdmin();
+    setAdmin(false);
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Animated.View style={[styles.sparkleBackground, { backgroundColor: animatedBgColor }]} />
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Admin login modal */}
-        <Modal visible={showAdminLogin} transparent animationType="fade">
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            activeOpacity={1}
-            onPress={() => { setShowAdminLogin(false); setAdminPassword(''); setAdminError(false); }}
-          >
-            <TouchableOpacity style={styles.modalCard} activeOpacity={1} onPress={() => {}}>
-              <View style={styles.modalHeader}>
-                <Ionicons name="shield-outline" size={20} color="#D4AF37" />
-                <Text style={styles.modalTitle}>Accès admin</Text>
-              </View>
-              <TextInput
-                style={styles.modalInput}
-                value={adminPassword}
-                onChangeText={(t) => { setAdminPassword(t); setAdminError(false); }}
-                placeholder="Mot de passe"
-                placeholderTextColor="#555"
-                secureTextEntry
-                autoFocus
-              />
-              {adminError && <Text style={styles.modalError}>Mot de passe incorrect</Text>}
-              <View style={styles.modalButtons}>
-                <TouchableOpacity
-                  style={styles.modalCancelBtn}
-                  onPress={() => { setShowAdminLogin(false); setAdminPassword(''); setAdminError(false); }}
-                >
-                  <Text style={styles.modalCancelText}>Annuler</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.modalConfirmBtn} onPress={handleAdminLogin}>
-                  <Text style={styles.modalConfirmText}>Déverrouiller</Text>
-                </TouchableOpacity>
-              </View>
-            </TouchableOpacity>
-          </TouchableOpacity>
-        </Modal>
-
-        {/* Header */}
-        <View style={styles.header}>
-          {/* Logo BDM */}
-          <TouchableOpacity onPress={handleLogoTap} activeOpacity={1} style={styles.logoCircle}>
-            <Text style={styles.logoText}>BTM</Text>
-          </TouchableOpacity>
-          {/* Brand name with dove */}
-          <View style={styles.brandNameRow}>
-            <Text style={styles.brandName}>BUI-THI DAM</Text>
-            <Text style={styles.doveEmoji}>🕊️</Text>
-          </View>
-          <Text style={styles.brandTagline}>Créations</Text>
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.sparkleEmoji}>✨</Text>
-            <View style={styles.dividerLine} />
-          </View>
-          <Text style={styles.subtitle}>Tricot • Crochet • Laine</Text>
-
-          {adminUnlocked && (
-            <View style={styles.adminRow}>
-              <TouchableOpacity style={styles.adminDashBtn} onPress={() => router.push('/admin' as any)}>
-                <Ionicons name="bar-chart-outline" size={16} color="#D4AF37" />
-                <Text style={styles.adminDashText}>Dashboard admin</Text>
+    <SafeAreaView style={styles.page}>
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <View style={[styles.content, { maxWidth: layout.maxContentWidth }]}>
+          {/* Hero */}
+          <View style={styles.hero}>
+            <LinearGradient
+              colors={['#F4C9D1', '#F8E5D1', '#DCE8D3']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.heroGradient}
+            >
+              {/* Illustration laine = zone secret tap admin */}
+              <TouchableOpacity
+                onPress={handleSecretTap}
+                activeOpacity={0.9}
+                style={styles.heroYarn}
+                accessibilityLabel="Illustration laine"
+              >
+                <Text style={styles.heroYarnText}>🧶</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.adminLockBtn} onPress={() => { lockAdmin(); setAdminUnlocked(false); }}>
-                <Ionicons name="lock-closed-outline" size={16} color="#888" />
+
+              <Badge label="Fait main avec amour" tone="rose" />
+              <Text style={styles.eyebrow}>JULIE CRÉATIONS</Text>
+              <Text style={styles.heroTitle}>
+                Des mailles, des couleurs, une histoire.
+              </Text>
+              <Text style={styles.heroText}>
+                Bienvenue dans mon univers de tricot et crochet, imaginé avec patience en Martinique.
+              </Text>
+
+              {/* Bouton qui navigue réellement vers la galerie */}
+              <TouchableOpacity
+                style={styles.heroButton}
+                activeOpacity={0.8}
+                accessibilityRole="button"
+                accessibilityLabel="Découvrir la galerie"
+                onPress={() => router.push('/gallery' as any)}
+              >
+                <Text style={styles.heroButtonText}>Découvrir la galerie</Text>
+                <Ionicons name="arrow-forward" size={17} color={colors.white} />
+              </TouchableOpacity>
+            </LinearGradient>
+          </View>
+
+          {/* Barre admin (visible uniquement si connecté) */}
+          {admin && (
+            <View style={styles.adminRow}>
+              <TouchableOpacity
+                style={styles.adminButton}
+                accessibilityRole="button"
+                onPress={() => router.push('/admin' as any)}
+              >
+                <Ionicons name="sparkles" size={16} color={colors.blushDeep} />
+                <Text style={styles.adminText}>Espace Julie</Text>
+                {unread > 0 && (
+                  <Badge
+                    label={`${unread} nouveau${unread > 1 ? 'x' : ''}`}
+                    tone="rose"
+                  />
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.lock}
+                accessibilityRole="button"
+                accessibilityLabel="Se déconnecter"
+                onPress={handleLogout}
+              >
+                <Ionicons name="lock-closed-outline" size={18} color={colors.textMuted} />
               </TouchableOpacity>
             </View>
           )}
-        </View>
 
-        {/* Section Apprendre */}
-        <View style={styles.sectionHeader}>
-          <Ionicons name="sparkles" size={18} color="#D4AF37" />
-          <Text style={styles.sectionTitle}>Apprendre & Créer</Text>
-        </View>
+          {/* Raccourcis */}
+          <View style={styles.sectionHead}>
+            <View>
+              <Text style={styles.kicker}>POUR CRÉER</Text>
+              <Text style={styles.sectionTitle}>Que souhaitez-vous faire ?</Text>
+            </View>
+          </View>
 
-        <View style={styles.gridContainer}>
-          {mainFeatures.map((feature, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.featureCard}
-              onPress={() => router.push(feature.route as any)}
-              activeOpacity={0.8}
-            >
-              <View style={[styles.featureIcon, { borderColor: feature.color }]}>
-                <Ionicons name={feature.icon} size={26} color={feature.color} />
-              </View>
-              <Text style={styles.featureTitle}>{feature.title}</Text>
-              <Text style={styles.featureDesc}>{feature.description}</Text>
+          <View style={styles.quickGrid}>
+            {shortcuts.map((s) => (
+              <TouchableOpacity
+                key={s.route}
+                style={[styles.quickCard, { width: wide ? '23.5%' : '48%' }]}
+                accessibilityRole="button"
+                onPress={() => router.push(s.route as any)}
+              >
+                <View style={[styles.quickIcon, { backgroundColor: `${s.tint}22` }]}>
+                  <Ionicons name={s.icon} size={25} color={s.tint} />
+                </View>
+                <Text style={styles.quickTitle}>{s.title}</Text>
+                <Text style={styles.quickText}>{s.description}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Dernières créations */}
+          <View style={styles.sectionHead}>
+            <View>
+              <Text style={styles.kicker}>DERNIÈRES PIÈCES</Text>
+              <Text style={styles.sectionTitle}>Fraîchement tombées des aiguilles</Text>
+            </View>
+            <TouchableOpacity onPress={() => router.push('/gallery' as any)}>
+              <Text style={styles.seeAll}>Tout voir</Text>
             </TouchableOpacity>
-          ))}
-        </View>
+          </View>
 
-        {/* Section Outils */}
-        <View style={styles.sectionHeader}>
-          <Ionicons name="construct-outline" size={18} color="#D4AF37" />
-          <Text style={styles.sectionTitle}>Mes Outils</Text>
-        </View>
-
-        <View style={styles.toolsRow}>
-          {toolFeatures.map((feature, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.toolCard}
-              onPress={() => router.push(feature.route as any)}
-              activeOpacity={0.8}
+          {creations.length > 0 ? (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.carousel}
             >
-              <View style={styles.toolIconContainer}>
-                <Ionicons name={feature.icon} size={24} color={feature.color} />
-                {feature.badge && feature.badge > 0 ? (
-                  <View style={styles.badge}>
-                    <Text style={styles.badgeText}>{feature.badge}</Text>
+              {creations.map((c) => (
+                <TouchableOpacity
+                  key={c.id}
+                  style={styles.creation}
+                  activeOpacity={0.88}
+                  onPress={() => router.push({ pathname: '/gallery-detail', params: { id: c.id } })}
+                >
+                  {c.image_base64 ? (
+                    <Image source={{ uri: c.image_base64 }} style={styles.creationImage} />
+                  ) : (
+                    <View style={styles.creationPlaceholder}>
+                      <Text style={styles.placeholderEmoji}>🧶</Text>
+                    </View>
+                  )}
+                  <View style={styles.creationCopy}>
+                    <Text style={styles.creationTitle} numberOfLines={1}>
+                      {c.title}
+                    </Text>
+                    <Badge
+                      label={c.available ? 'Disponible' : 'Vendu'}
+                      tone={c.available ? 'sage' : 'neutral'}
+                    />
                   </View>
-                ) : null}
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          ) : (
+            <Card style={styles.empty}>
+              <Text style={styles.emptyEmoji}>🧵</Text>
+              <View style={styles.emptyCopy}>
+                <Text style={styles.emptyTitle}>La galerie se prépare</Text>
+                <Text style={styles.emptyText}>
+                  Les vraies créations de Julie trouveront bientôt leur place ici.
+                </Text>
               </View>
-              <Text style={styles.toolTitle}>{feature.title}</Text>
-            </TouchableOpacity>
-          ))}
+              {admin && (
+                <TouchableOpacity onPress={() => router.push('/gallery' as any)}>
+                  <Text style={styles.seeAll}>Ajouter une photo</Text>
+                </TouchableOpacity>
+              )}
+            </Card>
+          )}
+
+          {/* Mon histoire */}
+          <Card style={styles.story}>
+            <View style={styles.storyAvatar}>
+              <Text style={styles.storyEmoji}>🌸</Text>
+            </View>
+            <View style={styles.storyCopy}>
+              <Text style={styles.kicker}>MON HISTOIRE</Text>
+              <Text style={styles.storyTitle}>Moi, c'est Julie</Text>
+              <Text style={styles.storyText}>
+                Je transforme fils et couleurs en pièces uniques, pensées pour faire plaisir et durer.
+              </Text>
+              <TouchableOpacity onPress={() => router.push('/contact' as any)}>
+                <Text style={styles.storyLink}>Faire connaissance →</Text>
+              </TouchableOpacity>
+            </View>
+          </Card>
         </View>
       </ScrollView>
+
       <BottomTab />
+
+      {/* Modal login admin */}
+      <Modal visible={loginVisible} transparent animationType="fade">
+        <TouchableOpacity
+          style={styles.overlay}
+          activeOpacity={1}
+          onPress={() => setLoginVisible(false)}
+        >
+          <View style={styles.modal}>
+            <Text style={styles.modalTitle}>Espace privé de Julie</Text>
+            <TextInput
+              style={styles.input}
+              value={password}
+              onChangeText={(t) => { setPassword(t); setLoginError(false); }}
+              placeholder="Mot de passe"
+              placeholderTextColor={colors.textMuted}
+              secureTextEntry
+              autoFocus
+              onSubmitEditing={handleLogin}
+            />
+            {loginError && (
+              <Text style={styles.error}>Mot de passe incorrect</Text>
+            )}
+            <TouchableOpacity
+              style={styles.signIn}
+              accessibilityRole="button"
+              onPress={handleLogin}
+            >
+              <Text style={styles.signInText}>Entrer</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0A0A0A',
+  page: { flex: 1, backgroundColor: colors.cream },
+  scroll: { paddingBottom: layout.bottomTabSpace },
+  content: { width: '100%', alignSelf: 'center', padding: layout.pagePadding },
+
+  hero: { borderRadius: radii.xl, overflow: 'hidden', ...shadows.soft },
+  heroGradient: { minHeight: 360, padding: spacing.xl, justifyContent: 'flex-end' },
+  heroYarn: {
+    position: 'absolute', right: 18, top: 16,
+    width: 116, height: 116, borderRadius: 58,
+    backgroundColor: 'rgba(255,255,255,.55)',
+    alignItems: 'center', justifyContent: 'center',
   },
-  sparkleBackground: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 250,
+  heroYarnText: { fontSize: 62 },
+  eyebrow: {
+    marginTop: spacing.md, fontSize: 11,
+    letterSpacing: 2.5, fontWeight: '800', color: colors.blushDeep,
   },
-  scrollContent: {
-    paddingBottom: 90,
+  heroTitle: {
+    fontFamily: fonts.display, fontSize: 34, lineHeight: 39,
+    color: colors.text, maxWidth: 540, marginTop: spacing.sm, fontWeight: '700',
   },
-  header: {
-    alignItems: 'center',
-    paddingTop: 30,
-    paddingBottom: 20,
+  heroText: {
+    fontSize: 15, lineHeight: 22,
+    color: colors.textMuted, maxWidth: 500, marginTop: spacing.md,
   },
-  logoCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    borderWidth: 2,
-    borderColor: '#FFB6C1',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(255, 182, 193, 0.15)',
-    marginBottom: 12,
+  heroButton: {
+    alignSelf: 'flex-start', marginTop: spacing.lg,
+    backgroundColor: colors.blushDeep, borderRadius: radii.round,
+    paddingHorizontal: spacing.lg, paddingVertical: 11,
+    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
   },
-  logoText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#D4AF37',
-    letterSpacing: 2,
+  heroButtonText: { color: colors.white, fontWeight: '800' },
+
+  adminRow: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md },
+  adminButton: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
+    backgroundColor: colors.surface, borderRadius: radii.md, padding: spacing.md,
   },
-  brandNameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  adminText: { color: colors.text, fontWeight: '700', flex: 1 },
+  lock: {
+    width: 48, backgroundColor: colors.surface,
+    borderRadius: radii.md, alignItems: 'center', justifyContent: 'center',
   },
-  brandName: {
-    fontSize: 28,
-    fontWeight: '400',
-    color: '#FFFFFF',
-    letterSpacing: 3,
+
+  sectionHead: {
+    flexDirection: 'row', alignItems: 'flex-end',
+    justifyContent: 'space-between', marginTop: spacing.xxl, marginBottom: spacing.md,
   },
-  doveEmoji: {
-    fontSize: 24,
-  },
-  sparkleEmoji: {
-    fontSize: 14,
-    marginHorizontal: 8,
-  },
-  brandTagline: {
-    fontSize: 16,
-    fontWeight: '300',
-    color: '#D4AF37',
-    letterSpacing: 10,
-    marginTop: 2,
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  dividerLine: {
-    width: 50,
-    height: 1,
-    backgroundColor: '#D4AF37',
-    marginHorizontal: 10,
-  },
-  subtitle: {
-    fontSize: 11,
-    color: '#888888',
-    letterSpacing: 3,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    marginTop: 20,
-    marginBottom: 12,
-  },
+  kicker: { fontSize: 10, letterSpacing: 2, color: colors.blushDeep, fontWeight: '900' },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginLeft: 8,
+    fontFamily: fonts.display, fontSize: 24,
+    color: colors.text, fontWeight: '700', marginTop: 3,
   },
-  gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
+  seeAll: { color: colors.blushDeep, fontWeight: '800', fontSize: 13 },
+
+  quickGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: spacing.md },
+  quickCard: {
+    backgroundColor: colors.surface, borderRadius: radii.lg,
+    padding: spacing.lg, minHeight: 142, ...shadows.soft,
   },
-  featureCard: {
-    width: (width - 44) / 2,
-    backgroundColor: '#1A1A1A',
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
-    alignItems: 'center',
+  quickIcon: {
+    width: 48, height: 48, borderRadius: 24,
+    alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md,
   },
-  featureIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(212, 175, 55, 0.05)',
-    marginBottom: 10,
+  quickTitle: { fontFamily: fonts.display, fontSize: 17, color: colors.text, fontWeight: '700' },
+  quickText: { fontSize: 12, color: colors.textMuted, marginTop: 4 },
+
+  carousel: { gap: spacing.md, paddingBottom: spacing.md },
+  creation: {
+    width: 210, backgroundColor: colors.surface,
+    borderRadius: radii.lg, overflow: 'hidden', ...shadows.soft,
   },
-  featureTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginBottom: 4,
+  creationImage: { width: '100%', height: 210 },
+  creationPlaceholder: {
+    height: 210, backgroundColor: colors.blushSoft,
+    alignItems: 'center', justifyContent: 'center',
   },
-  featureDesc: {
-    fontSize: 11,
-    color: '#888888',
+  placeholderEmoji: { fontSize: 52 },
+  creationCopy: { padding: spacing.md, gap: spacing.sm },
+  creationTitle: { fontFamily: fonts.display, color: colors.text, fontSize: 17, fontWeight: '700' },
+
+  empty: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  emptyEmoji: { fontSize: 38 },
+  emptyCopy: { flex: 1 },
+  emptyTitle: { fontFamily: fonts.display, fontSize: 18, color: colors.text, fontWeight: '700' },
+  emptyText: { fontSize: 13, color: colors.textMuted, marginTop: 3 },
+
+  story: { marginTop: spacing.xxl, flexDirection: 'row', gap: spacing.lg, backgroundColor: colors.sageSoft },
+  storyAvatar: {
+    width: 88, height: 110, borderRadius: radii.lg,
+    backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center',
   },
-  toolsRow: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    justifyContent: 'space-between',
+  storyEmoji: { fontSize: 42 },
+  storyCopy: { flex: 1 },
+  storyTitle: {
+    fontFamily: fonts.display, fontSize: 24,
+    color: colors.text, fontWeight: '700', marginTop: 3,
   },
-  toolCard: {
-    width: (width - 68) / 5,
-    backgroundColor: '#1A1A1A',
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 8,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
+  storyText: { fontSize: 14, lineHeight: 20, color: colors.textMuted, marginTop: spacing.sm },
+  storyLink: { color: '#587047', fontWeight: '800', marginTop: spacing.md },
+
+  overlay: { flex: 1, backgroundColor: colors.overlay, justifyContent: 'center', padding: spacing.xl },
+  modal: {
+    backgroundColor: colors.surface, borderRadius: radii.xl,
+    padding: spacing.xl, maxWidth: 420, width: '100%', alignSelf: 'center',
   },
-  toolIconContainer: {
-    position: 'relative',
-    marginBottom: 8,
+  modalTitle: {
+    fontFamily: fonts.display, fontSize: 22,
+    color: colors.text, fontWeight: '700', marginBottom: spacing.lg,
   },
-  badge: {
-    position: 'absolute',
-    top: -6,
-    right: -10,
-    backgroundColor: '#FF4444',
-    borderRadius: 8,
-    minWidth: 16,
-    height: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 4,
+  input: { backgroundColor: colors.cream, borderRadius: radii.md, padding: spacing.lg, color: colors.text },
+  error: { color: colors.danger, fontSize: 12, marginTop: spacing.sm },
+  signIn: {
+    backgroundColor: colors.blushDeep, borderRadius: radii.round,
+    alignItems: 'center', padding: 13, marginTop: spacing.lg,
   },
-  badgeText: {
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  toolTitle: {
-    fontSize: 10,
-    color: '#CCCCCC',
-    textAlign: 'center',
-  },
-  adminRow: { flexDirection: 'row', gap: 10, marginTop: 14, paddingHorizontal: 16 },
-  adminDashBtn: {
-    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 8, backgroundColor: 'rgba(212,175,55,0.1)',
-    borderRadius: 12, paddingVertical: 12,
-    borderWidth: 1, borderColor: 'rgba(212,175,55,0.3)',
-  },
-  adminDashText: { fontSize: 13, fontWeight: '600', color: '#D4AF37' },
-  adminLockBtn: {
-    width: 44, alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#1A1A1A', borderRadius: 12, borderWidth: 1, borderColor: '#2A2A2A',
-  },
-  modalOverlay: {
-    flex: 1, backgroundColor: 'rgba(0,0,0,0.7)',
-    alignItems: 'center', justifyContent: 'center', padding: 24,
-  },
-  modalCard: {
-    width: '100%', backgroundColor: '#1A1A1A', borderRadius: 20, padding: 24,
-    borderWidth: 1, borderColor: '#2A2A2A',
-  },
-  modalHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 20 },
-  modalTitle: { fontSize: 16, fontWeight: '700', color: '#FFFFFF' },
-  modalInput: {
-    backgroundColor: '#0A0A0A', borderRadius: 12, paddingHorizontal: 16,
-    paddingVertical: 14, fontSize: 15, color: '#FFFFFF',
-    borderWidth: 1, borderColor: '#333', marginBottom: 8,
-  },
-  modalError: { fontSize: 12, color: '#FF6B6B', marginBottom: 12 },
-  modalButtons: { flexDirection: 'row', gap: 10, marginTop: 8 },
-  modalCancelBtn: {
-    flex: 1, borderRadius: 12, paddingVertical: 12, alignItems: 'center',
-    borderWidth: 1, borderColor: '#333',
-  },
-  modalCancelText: { fontSize: 14, color: '#888', fontWeight: '600' },
-  modalConfirmBtn: {
-    flex: 1, borderRadius: 12, paddingVertical: 12, alignItems: 'center',
-    backgroundColor: '#D4AF37',
-  },
-  modalConfirmText: { fontSize: 14, color: '#0A0A0A', fontWeight: '700' },
+  signInText: { color: colors.white, fontWeight: '800' },
 });
