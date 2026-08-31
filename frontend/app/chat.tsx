@@ -13,16 +13,22 @@ import {
   Image,
   Alert,
   Keyboard,
-  Linking,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import BottomTab from './components/BottomTab';
+import Header from './components/Header';
+import { colors, fonts, radii, spacing, layout } from './theme';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
-const QUICK_SUGGESTIONS = [
+interface QuickSuggestion {
+  emoji: string;
+  text: string;
+}
+
+const QUICK_SUGGESTIONS: QuickSuggestion[] = [
   { emoji: '🧶', text: 'Comment tricoter un bonnet pour débutante ?' },
   { emoji: '📸', text: 'Analyse cette photo de mon tricot' },
   { emoji: '🧮', text: 'Combien de pelotes pour un pull taille M ?' },
@@ -50,23 +56,25 @@ export default function ChatScreen() {
   const [isStreaming, setIsStreaming] = useState(false);
 
   useEffect(() => {
-    // Add welcome message
-    setMessages([{
-      id: 'welcome',
-      role: 'assistant',
-      content: 'Bonjour ! Je suis Julie, votre assistante experte en tricot et crochet. 🧶\n\nComment puis-je vous aider aujourd\'hui ?\n\n• Analysez une photo de votre projet\n• Demandez des conseils sur les aiguilles ou la laine\n• Obtenez des estimations de temps\n• Apprenez de nouvelles techniques',
-      timestamp: new Date().toISOString(),
-    }]);
+    setMessages([
+      {
+        id: 'welcome',
+        role: 'assistant',
+        content:
+          'Bonjour ! Je suis Julie, votre assistante experte en tricot et crochet. 🧶\n\nComment puis-je vous aider aujourd\'hui ?\n\n• Analysez une photo de votre projet\n• Demandez des conseils sur les aiguilles ou la laine\n• Obtenez des estimations de temps\n• Apprenez de nouvelles techniques',
+        timestamp: new Date().toISOString(),
+      },
+    ]);
   }, []);
 
-  const pickImage = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
-    if (permissionResult.granted === false) {
-      Alert.alert('Permission requise', 'Veuillez autoriser l\'accès à vos photos.');
+  /* ─── Photo picking ─── */
+
+  async function pickImage() {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert('Permission requise', "Veuillez autoriser l'accès à vos photos.");
       return;
     }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -74,37 +82,35 @@ export default function ChatScreen() {
       quality: 0.7,
       base64: true,
     });
-
     if (!result.canceled && result.assets[0].base64) {
       setSelectedImage(`data:image/jpeg;base64,${result.assets[0].base64}`);
     }
-  };
+  }
 
-  const takePhoto = async () => {
-    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-    
-    if (permissionResult.granted === false) {
-      Alert.alert('Permission requise', 'Veuillez autoriser l\'accès à la caméra.');
+  async function takePhoto() {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert('Permission requise', "Veuillez autoriser l'accès à la caméra.");
       return;
     }
-
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.7,
       base64: true,
     });
-
     if (!result.canceled && result.assets[0].base64) {
       setSelectedImage(`data:image/jpeg;base64,${result.assets[0].base64}`);
     }
-  };
+  }
 
-  const removeImage = () => {
+  function removeImage() {
     setSelectedImage(null);
-  };
+  }
 
-  const sendMessageFallback = async (content: string, img: string | null, convId: string | null) => {
+  /* ─── Send message (fallback non-streaming) ─── */
+
+  async function sendMessageFallback(content: string, img: string | null, convId: string | null) {
     setIsLoading(true);
     try {
       const response = await fetch(`${BACKEND_URL}/api/chat`, {
@@ -115,20 +121,25 @@ export default function ChatScreen() {
       if (!response.ok) throw new Error('Erreur serveur');
       const data = await response.json();
       if (!convId) setConversationId(data.conversation_id);
-      setMessages(prev => [...prev, {
-        id: data.message_id || Date.now().toString(),
-        role: 'assistant',
-        content: data.response,
-        timestamp: new Date().toISOString(),
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: data.message_id || Date.now().toString(),
+          role: 'assistant',
+          content: data.response,
+          timestamp: new Date().toISOString(),
+        },
+      ]);
     } catch {
       Alert.alert('Erreur', 'Impossible de contacter Julie. Vérifiez votre connexion.');
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
-  const sendMessage = async () => {
+  /* ─── Send message (streaming SSE with fallback) ─── */
+
+  async function sendMessage() {
     if (!message.trim() && !selectedImage) return;
     Keyboard.dismiss();
 
@@ -143,27 +154,34 @@ export default function ChatScreen() {
       image_base64: img || undefined,
       timestamp: new Date().toISOString(),
     };
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setMessage('');
     setSelectedImage(null);
 
-    // Try streaming endpoint first
     const assistantId = (Date.now() + 1).toString();
     let usedStreaming = false;
+
     try {
       const resp = await fetch(`${BACKEND_URL}/api/chat/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ conversation_id: convId, message: content, image_base64: img }),
       });
-      if (!resp.ok || !resp.body) throw new Error('no stream');
+      if (!resp.ok || !resp.body || typeof resp.body.getReader !== 'function') {
+        throw new Error('no stream');
+      }
+
       usedStreaming = true;
       setIsStreaming(true);
-      setMessages(prev => [...prev, { id: assistantId, role: 'assistant', content: '', timestamp: new Date().toISOString() }]);
+      setMessages((prev) => [
+        ...prev,
+        { id: assistantId, role: 'assistant', content: '', timestamp: new Date().toISOString() },
+      ]);
 
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
       let accumulated = '';
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -177,10 +195,16 @@ export default function ChatScreen() {
             if (parsed.token) {
               accumulated += parsed.token;
               const snap = accumulated;
-              setMessages(prev => prev.map(m => m.id === assistantId ? { ...m, content: snap } : m));
+              setMessages((prev) =>
+                prev.map((m) => (m.id === assistantId ? { ...m, content: snap } : m)),
+              );
             }
-            if (parsed.conversation_id && !conversationId) setConversationId(parsed.conversation_id);
-          } catch {}
+            if (parsed.conversation_id && !conversationId) {
+              setConversationId(parsed.conversation_id);
+            }
+          } catch {
+            // Chunk JSON invalide — on ignore
+          }
         }
       }
     } catch {
@@ -191,30 +215,30 @@ export default function ChatScreen() {
       setIsStreaming(false);
       setIsLoading(false);
     }
-  };
+  }
 
-  const renderMessage = (msg: Message) => {
+  /* ─── Render a single message bubble ─── */
+
+  function renderMessage(msg: Message) {
     const isUser = msg.role === 'user';
-    
+
     return (
       <View
         key={msg.id}
         style={[
-          styles.messageContainer,
-          isUser ? styles.userMessageContainer : styles.assistantMessageContainer,
+          styles.messageRow,
+          isUser ? styles.userRow : styles.assistantRow,
         ]}
       >
+        {/* Avatar Julie */}
         {!isUser && (
-          <View style={styles.avatarContainer}>
-            <Ionicons name="flower-outline" size={20} color="#D4AF37" />
+          <View style={styles.avatar}>
+            <Text style={styles.avatarEmoji}>🌸</Text>
           </View>
         )}
-        <View
-          style={[
-            styles.messageBubble,
-            isUser ? styles.userBubble : styles.assistantBubble,
-          ]}
-        >
+
+        {/* Bulle */}
+        <View style={[styles.bubble, isUser ? styles.userBubble : styles.assistantBubble]}>
           {msg.image_base64 && (
             <Image
               source={{ uri: msg.image_base64 }}
@@ -228,311 +252,308 @@ export default function ChatScreen() {
         </View>
       </View>
     );
-  };
+  }
+
+  /* ─── UI ─── */
+
+  const canSend = message.trim().length > 0 || selectedImage !== null;
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Assistant Julie</Text>
-          <Text style={styles.headerSubtitle}>Expert tricot & crochet</Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => Linking.openURL("https://www.instagram.com/djeminie972/")}
-          style={styles.newChatButton}
-        >
-          <Ionicons name="logo-instagram" size={24} color="#E1306C" />
-        </TouchableOpacity>
-      </View>
+    <SafeAreaView style={styles.page}>
+      <Header title="Chat Julie" subtitle="Experte tricot & crochet" back />
 
-      {/* Messages */}
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.chatContainer}
+        style={styles.chatArea}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
+        {/* Messages list */}
         <ScrollView
           ref={scrollViewRef}
-          style={styles.messagesContainer}
+          style={styles.messagesList}
           contentContainerStyle={styles.messagesContent}
           onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
         >
           {messages.map(renderMessage)}
+
+          {/* Loading indicator */}
           {isLoading && (
-            <View style={styles.loadingContainer}>
-              <View style={styles.avatarContainer}>
-                <Ionicons name="flower-outline" size={20} color="#D4AF37" />
+            <View style={[styles.messageRow, styles.assistantRow]}>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarEmoji}>🌸</Text>
               </View>
               <View style={styles.loadingBubble}>
-                <ActivityIndicator size="small" color="#D4AF37" />
+                <ActivityIndicator size="small" color={colors.blushDeep} />
                 <Text style={styles.loadingText}>Julie réfléchit...</Text>
               </View>
             </View>
           )}
         </ScrollView>
 
-        {/* Quick Suggestions */}
+        {/* Quick suggestions (only before first user message) */}
         {!message.trim() && !selectedImage && messages.length <= 1 && (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.suggestionsScroll}
-            contentContainerStyle={styles.suggestionsContent}>
-            {QUICK_SUGGESTIONS.map((s, i) => (
-              <TouchableOpacity key={i} style={styles.suggestionChip} onPress={() => setMessage(s.text)}>
-                <Text style={styles.suggestionEmoji}>{s.emoji}</Text>
-                <Text style={styles.suggestionText}>{s.text}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+          <View style={styles.suggestionsBar}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.suggestionsContent}
+            >
+              {QUICK_SUGGESTIONS.map((s, i) => (
+                <TouchableOpacity
+                  key={i}
+                  style={styles.chip}
+                  activeOpacity={0.7}
+                  onPress={() => setMessage(s.text)}
+                >
+                  <Text style={styles.chipEmoji}>{s.emoji}</Text>
+                  <Text style={styles.chipText}>{s.text}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
         )}
 
-        {/* Selected Image Preview */}
+        {/* Selected image preview */}
         {selectedImage && (
-          <View style={styles.imagePreviewContainer}>
-            <Image source={{ uri: selectedImage }} style={styles.imagePreview} />
-            <TouchableOpacity onPress={removeImage} style={styles.removeImageButton}>
-              <Ionicons name="close-circle" size={24} color="#FF4444" />
+          <View style={styles.previewBar}>
+            <Image source={{ uri: selectedImage }} style={styles.preview} />
+            <TouchableOpacity
+              onPress={removeImage}
+              style={styles.previewRemove}
+              accessibilityLabel="Retirer l'image"
+            >
+              <Ionicons name="close-circle" size={24} color={colors.danger} />
             </TouchableOpacity>
           </View>
         )}
 
-        {/* Input Area */}
-        <View style={styles.inputContainer}>
+        {/* Input bar */}
+        <View style={styles.inputBar}>
           <View style={styles.inputRow}>
-            <TouchableOpacity onPress={takePhoto} style={styles.attachButton}>
-              <Ionicons name="camera-outline" size={24} color="#D4AF37" />
+            <TouchableOpacity
+              onPress={takePhoto}
+              style={styles.attachBtn}
+              accessibilityLabel="Prendre une photo"
+            >
+              <Ionicons name="camera-outline" size={22} color={colors.blushDeep} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={pickImage} style={styles.attachButton}>
-              <Ionicons name="image-outline" size={24} color="#D4AF37" />
+            <TouchableOpacity
+              onPress={pickImage}
+              style={styles.attachBtn}
+              accessibilityLabel="Choisir une photo"
+            >
+              <Ionicons name="image-outline" size={22} color={colors.blushDeep} />
             </TouchableOpacity>
             <TextInput
               style={styles.textInput}
               value={message}
               onChangeText={setMessage}
               placeholder="Posez votre question..."
-              placeholderTextColor="#666666"
+              placeholderTextColor={colors.textMuted}
               multiline
               maxLength={2000}
+              onSubmitEditing={sendMessage}
             />
             <TouchableOpacity
               onPress={sendMessage}
-              style={[
-                styles.sendButton,
-                (!message.trim() && !selectedImage) && styles.sendButtonDisabled,
-              ]}
-              disabled={(!message.trim() && !selectedImage) || isLoading}
+              style={[styles.sendBtn, !canSend && styles.sendBtnDisabled]}
+              disabled={!canSend || isLoading}
+              accessibilityLabel="Envoyer"
+              accessibilityRole="button"
             >
               <Ionicons
                 name="send"
-                size={20}
-                color={(!message.trim() && !selectedImage) ? '#666666' : '#0A0A0A'}
+                size={18}
+                color={canSend ? colors.white : colors.textMuted}
               />
             </TouchableOpacity>
           </View>
         </View>
       </KeyboardAvoidingView>
+
       <BottomTab />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  page: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.cream,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerCenter: {
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  headerSubtitle: {
-    fontSize: 12,
-    color: '#D4AF37',
-    marginTop: 2,
-  },
-  newChatButton: {
-    padding: 8,
-  },
-  chatContainer: {
+
+  chatArea: {
     flex: 1,
   },
-  messagesContainer: {
+
+  /* Messages */
+  messagesList: {
     flex: 1,
   },
   messagesContent: {
-    padding: 16,
-    paddingBottom: 20,
+    padding: spacing.lg,
+    paddingBottom: spacing.xl,
   },
-  messageContainer: {
+  messageRow: {
     flexDirection: 'row',
-    marginBottom: 16,
+    marginBottom: spacing.lg,
     alignItems: 'flex-end',
   },
-  userMessageContainer: {
+  userRow: {
     justifyContent: 'flex-end',
   },
-  assistantMessageContainer: {
+  assistantRow: {
     justifyContent: 'flex-start',
   },
-  avatarContainer: {
+
+  avatar: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#1A1A1A',
+    backgroundColor: colors.blushSoft,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 8,
-    borderWidth: 1,
-    borderColor: '#D4AF37',
+    marginRight: spacing.sm,
   },
-  messageBubble: {
+  avatarEmoji: {
+    fontSize: 18,
+  },
+
+  bubble: {
     maxWidth: '75%',
     padding: 14,
-    borderRadius: 18,
+    borderRadius: radii.lg,
   },
   userBubble: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: colors.blushDeep,
     borderBottomRightRadius: 4,
   },
   assistantBubble: {
-    backgroundColor: '#1A1A1A',
+    backgroundColor: colors.surface,
     borderBottomLeftRadius: 4,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.line,
   },
   messageText: {
     fontSize: 15,
-    color: '#FFFFFF',
+    color: colors.text,
     lineHeight: 22,
   },
   userMessageText: {
-    color: '#0A0A0A',
+    color: colors.white,
   },
   messageImage: {
     width: 200,
     height: 150,
-    borderRadius: 12,
-    marginBottom: 8,
+    borderRadius: radii.sm,
+    marginBottom: spacing.sm,
   },
-  loadingContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    marginBottom: 16,
-  },
+
+  /* Loading */
   loadingBubble: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1A1A1A',
+    backgroundColor: colors.surface,
     padding: 14,
-    borderRadius: 18,
+    borderRadius: radii.lg,
     borderBottomLeftRadius: 4,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.line,
   },
   loadingText: {
     fontSize: 14,
-    color: '#888888',
-    marginLeft: 8,
+    color: colors.textMuted,
+    marginLeft: spacing.sm,
   },
-  imagePreviewContainer: {
-    padding: 12,
-    backgroundColor: '#1A1A1A',
+
+  /* Suggestions */
+  suggestionsBar: {
     borderTopWidth: 1,
-    borderTopColor: '#2A2A2A',
+    borderTopColor: colors.line,
+    maxHeight: 56,
   },
-  imagePreview: {
+  suggestionsContent: {
+    flexDirection: 'row',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    gap: spacing.sm,
+  },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: radii.round,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: colors.line,
+    gap: 6,
+  },
+  chipEmoji: {
+    fontSize: 14,
+  },
+  chipText: {
+    fontSize: 13,
+    color: colors.text,
+    maxWidth: 180,
+  },
+
+  /* Image preview */
+  previewBar: {
+    padding: spacing.md,
+    backgroundColor: colors.surface,
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  preview: {
     width: 100,
     height: 75,
-    borderRadius: 8,
+    borderRadius: spacing.sm,
   },
-  removeImageButton: {
-    position: 'absolute',
-    top: 4,
-    left: 104,
+  previewRemove: {
+    marginLeft: spacing.xs,
+    marginTop: -4,
   },
-  inputContainer: {
-    padding: 12,
-    backgroundColor: '#0A0A0A',
+
+  /* Input */
+  inputBar: {
+    padding: spacing.md,
+    backgroundColor: colors.cream,
     borderTopWidth: 1,
-    borderTopColor: '#1A1A1A',
+    borderTopColor: colors.line,
   },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    backgroundColor: '#1A1A1A',
-    borderRadius: 24,
-    paddingHorizontal: 8,
-    paddingVertical: 8,
+    backgroundColor: colors.surface,
+    borderRadius: radii.xl,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.line,
   },
-  attachButton: {
-    padding: 8,
+  attachBtn: {
+    padding: spacing.sm,
   },
   textInput: {
     flex: 1,
     fontSize: 15,
-    color: '#FFFFFF',
+    color: colors.text,
     maxHeight: 100,
-    paddingHorizontal: 8,
-    paddingVertical: 8,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
   },
-  sendButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#D4AF37',
+  sendBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: colors.blushDeep,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  sendButtonDisabled: {
-    backgroundColor: '#2A2A2A',
-  },
-  suggestionsScroll: {
-    borderTopWidth: 1,
-    borderTopColor: '#1A1A1A',
-  },
-  suggestionsContent: {
-    flexDirection: 'row',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    gap: 8,
-  },
-  suggestionChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#1A1A1A',
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
-    gap: 6,
-  },
-  suggestionEmoji: {
-    fontSize: 14,
-  },
-  suggestionText: {
-    fontSize: 13,
-    color: '#CCCCCC',
-    maxWidth: 180,
+  sendBtnDisabled: {
+    backgroundColor: colors.line,
   },
 });
