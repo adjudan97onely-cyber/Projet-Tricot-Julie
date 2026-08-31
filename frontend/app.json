@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "buitdamcreations",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
@@ -15,7 +15,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#0A0A0A"
+        "backgroundColor": "#FFF8F0"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.buithi.dam.creations"
@@ -27,8 +27,8 @@
       "name": "Julie Créations",
       "shortName": "Julie 🧶",
       "description": "Votre assistante experte en tricot et crochet",
-      "themeColor": "#D4AF37",
-      "backgroundColor": "#0A0A0A",
+      "themeColor": "#D9788B",
+      "backgroundColor": "#FFF8F0",
       "display": "standalone",
       "orientation": "portrait",
       "scope": "/",
@@ -42,7 +42,7 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#0A0A0A"
+          "backgroundColor": "#FFF8F0"
         }
       ],
       "expo-image-picker"
