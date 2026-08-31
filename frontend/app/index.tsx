@@ -126,18 +126,18 @@ export default function HomeScreen() {
               end={{ x: 1, y: 1 }}
               style={styles.heroGradient}
             >
-              {/* Illustration laine = zone secret tap admin */}
+              {/* Logo BTM = zone secret tap admin */}
               <TouchableOpacity
                 onPress={handleSecretTap}
                 activeOpacity={0.9}
                 style={styles.heroYarn}
-                accessibilityLabel="Illustration laine"
+                accessibilityLabel="Logo BUI-THI DAM"
               >
-                <Text style={styles.heroYarnText}>🧶</Text>
+                <Text style={styles.heroYarnText}>BTM</Text>
               </TouchableOpacity>
 
-              <Badge label="Fait main avec amour" tone="rose" />
-              <Text style={styles.eyebrow}>JULIE CRÉATIONS</Text>
+              <Badge label="Fait main avec amour" tone="gold" />
+              <Text style={styles.eyebrow}>BUI-THI DAM CRÉATIONS</Text>
               <Text style={styles.heroTitle}>
                 Des mailles, des couleurs, une histoire.
               </Text>
@@ -338,11 +338,12 @@ const styles = StyleSheet.create({
   heroGradient: { minHeight: 360, padding: spacing.xl, justifyContent: 'flex-end' },
   heroYarn: {
     position: 'absolute', right: 18, top: 16,
-    width: 116, height: 116, borderRadius: 58,
-    backgroundColor: 'rgba(255,255,255,.55)',
+    width: 100, height: 100, borderRadius: 50,
+    borderWidth: 2, borderColor: '#D4AF37',
+    backgroundColor: 'rgba(212, 175, 55, 0.1)',
     alignItems: 'center', justifyContent: 'center',
   },
-  heroYarnText: { fontSize: 62 },
+  heroYarnText: { fontSize: 28, fontWeight: '700', color: '#D4AF37', letterSpacing: 2 },
   eyebrow: {
     marginTop: spacing.md, fontSize: 11,
     letterSpacing: 2.5, fontWeight: '800', color: colors.blushDeep,
