@@ -12,7 +12,8 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 import uuid
 from datetime import datetime, timedelta
-from openai import AsyncOpenAI
+from google import genai
+from google.genai import types
 import base64
 import time
 from collections import defaultdict
@@ -31,8 +32,10 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# OpenAI API Key
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
+# Gemini API Key (free tier)
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+gemini_client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
+GEMINI_MODEL = os.environ.get('GEMINI_MODEL', 'gemini-2.5-flash')
 
 # Admin auth config
 JWT_SECRET = os.environ.get('JWT_SECRET', 'change-me-in-production-' + str(uuid.uuid4()))
@@ -165,35 +168,46 @@ class ProjectCreate(BaseModel):
 # Store active chat sessions (conversation history per session)
 chat_sessions: dict = {}
 
+def _build_gemini_contents(conversation_id: str, message: str, image_base64: Optional[str] = None):
+    """Build Gemini-compatible contents list from chat history."""
+    contents = []
+
+    # Add conversation history
+    for msg in chat_sessions.get(conversation_id, [])[-20:]:
+        role = "user" if msg["role"] == "user" else "model"
+        text = msg["content"] if isinstance(msg["content"], str) else msg["content"][0].get("text", "") if isinstance(msg["content"], list) else str(msg["content"])
+        contents.append(types.Content(role=role, parts=[types.Part.from_text(text=text)]))
+
+    # Build current message parts
+    parts = [types.Part.from_text(text=message)]
+    if image_base64:
+        img_data = image_base64
+        if ',' in img_data:
+            img_data = img_data.split(',')[1]
+        parts.append(types.Part.from_bytes(data=base64.b64decode(img_data), mime_type="image/jpeg"))
+
+    contents.append(types.Content(role="user", parts=parts))
+    return contents
+
 async def send_message_to_ai(conversation_id: str, message: str, image_base64: Optional[str] = None) -> str:
-    """Send a message to OpenAI GPT-4o and return the response"""
-    openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+    """Send a message to Gemini and return the response"""
+    if not gemini_client:
+        raise Exception("GEMINI_API_KEY non configurée")
 
     if conversation_id not in chat_sessions:
         chat_sessions[conversation_id] = []
 
-    # Build user content
-    if image_base64:
-        image_data = image_base64
-        if ',' in image_data:
-            image_data = image_data.split(',')[1]
-        content = [
-            {"type": "text", "text": message},
-            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_data}"}}
-        ]
-    else:
-        content = message
+    contents = _build_gemini_contents(conversation_id, message, image_base64)
 
-    chat_sessions[conversation_id].append({"role": "user", "content": content})
-
-    messages = [{"role": "system", "content": SYSTEM_MESSAGE}] + chat_sessions[conversation_id][-50:]
-
-    response = await openai_client.chat.completions.create(
-        model="gpt-4o",
-        messages=messages
+    response = await gemini_client.aio.models.generate_content(
+        model=GEMINI_MODEL,
+        contents=contents,
+        config=types.GenerateContentConfig(system_instruction=SYSTEM_MESSAGE),
     )
-    response_text = response.choices[0].message.content
+    response_text = response.text
 
+    # Store in session history
+    chat_sessions[conversation_id].append({"role": "user", "content": message})
     chat_sessions[conversation_id].append({"role": "assistant", "content": response_text})
     return response_text
 
@@ -318,7 +332,9 @@ async def chat_stream(request: ChatRequest, req: Request):
     """Streaming chat endpoint returning Server-Sent Events"""
     _check_rate_limit(req.client.host if req.client else "unknown")
     async def event_generator():
-        openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+        if not gemini_client:
+            yield f"data: {json.dumps({'error': 'GEMINI_API_KEY non configurée'})}\n\n"
+            return
         try:
             # Get or create conversation
             conv_id = request.conversation_id
@@ -335,21 +351,6 @@ async def chat_stream(request: ChatRequest, req: Request):
             if conv_id not in chat_sessions:
                 chat_sessions[conv_id] = []
 
-            # Build content
-            if request.image_base64:
-                img_data = request.image_base64
-                if ',' in img_data:
-                    img_data = img_data.split(',')[1]
-                content = [
-                    {"type": "text", "text": request.message},
-                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{img_data}"}}
-                ]
-            else:
-                content = request.message
-
-            chat_sessions[conv_id].append({"role": "user", "content": content})
-            messages = [{"role": "system", "content": SYSTEM_MESSAGE}] + chat_sessions[conv_id][-50:]
-
             # Save user message
             user_msg = Message(conversation_id=conv_id, role="user", content=request.message,
                                image_base64=request.image_base64)
@@ -358,22 +359,25 @@ async def chat_stream(request: ChatRequest, req: Request):
             # Send conversation_id first
             yield f"data: {json.dumps({'conversation_id': conv_id})}\n\n"
 
-            # Stream GPT response
+            # Build Gemini contents
+            contents = _build_gemini_contents(conv_id, request.message, request.image_base64)
+
+            # Stream Gemini response
             full_response = ""
-            stream = await openai_client.chat.completions.create(
-                model="gpt-4o",
-                messages=messages,
-                stream=True,
-            )
-            async for chunk in stream:
-                token = chunk.choices[0].delta.content or ""
+            async for chunk in await gemini_client.aio.models.generate_content_stream(
+                model=GEMINI_MODEL,
+                contents=contents,
+                config=types.GenerateContentConfig(system_instruction=SYSTEM_MESSAGE),
+            ):
+                token = chunk.text or ""
                 if token:
                     full_response += token
                     yield f"data: {json.dumps({'token': token})}\n\n"
 
             yield "data: [DONE]\n\n"
 
-            # Persist assistant message
+            # Persist in session + DB
+            chat_sessions[conv_id].append({"role": "user", "content": request.message})
             chat_sessions[conv_id].append({"role": "assistant", "content": full_response})
             asst_msg = Message(conversation_id=conv_id, role="assistant", content=full_response)
             await db.messages.insert_one(asst_msg.dict())
