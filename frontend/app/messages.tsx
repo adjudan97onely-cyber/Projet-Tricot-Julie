@@ -13,7 +13,9 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import Header from './components/Header';
 import { adminFetch } from './services/adminAccess';
+import { colors, spacing, radii, shadows } from './theme';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -43,9 +45,10 @@ export default function MessagesScreen() {
 
   const fetchMessages = async () => {
     try {
-      const url = filter === 'all' 
-        ? `${BACKEND_URL}/api/messages`
-        : `${BACKEND_URL}/api/messages?status=${filter}`;
+      const url =
+        filter === 'all'
+          ? `${BACKEND_URL}/api/messages`
+          : `${BACKEND_URL}/api/messages?status=${filter}`;
       const response = await adminFetch(url);
       if (response.ok) {
         const data = await response.json();
@@ -71,7 +74,7 @@ export default function MessagesScreen() {
   const openMessage = async (msg: ClientMessage) => {
     setSelectedMessage(msg);
     setReplyText(msg.reply || '');
-    
+
     if (msg.status === 'nouveau') {
       try {
         await adminFetch(`${BACKEND_URL}/api/messages/${msg.id}/read`, {
@@ -88,11 +91,14 @@ export default function MessagesScreen() {
     if (!selectedMessage || !replyText.trim()) return;
 
     try {
-      const response = await adminFetch(`${BACKEND_URL}/api/messages/${selectedMessage.id}/reply`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reply: replyText }),
-      });
+      const response = await adminFetch(
+        `${BACKEND_URL}/api/messages/${selectedMessage.id}/reply`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reply: replyText }),
+        }
+      );
 
       if (response.ok) {
         Alert.alert('Succès', 'Réponse envoyée !');
@@ -101,7 +107,7 @@ export default function MessagesScreen() {
         fetchMessages();
       }
     } catch (error) {
-      Alert.alert('Erreur', 'Impossible d\'envoyer la réponse.');
+      Alert.alert('Erreur', "Impossible d'envoyer la réponse.");
     }
   };
 
@@ -130,25 +136,33 @@ export default function MessagesScreen() {
     );
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): string => {
     switch (status) {
-      case 'nouveau': return '#FF6B6B';
-      case 'lu': return '#D4AF37';
-      case 'répondu': return '#4CAF50';
-      default: return '#888888';
+      case 'nouveau':
+        return colors.danger;
+      case 'lu':
+        return colors.gold;
+      case 'répondu':
+        return colors.sage;
+      default:
+        return colors.textMuted;
     }
   };
 
-  const getStatusLabel = (status: string) => {
+  const getStatusLabel = (status: string): string => {
     switch (status) {
-      case 'nouveau': return 'Nouveau';
-      case 'lu': return 'Lu';
-      case 'répondu': return 'Répondu';
-      default: return status;
+      case 'nouveau':
+        return 'Nouveau';
+      case 'lu':
+        return 'Lu';
+      case 'répondu':
+        return 'Répondu';
+      default:
+        return status;
     }
   };
 
-  const formatDate = (dateStr: string) => {
+  const formatDate = (dateStr: string): string => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('fr-FR', {
       day: 'numeric',
@@ -161,10 +175,7 @@ export default function MessagesScreen() {
   const renderMessage = (msg: ClientMessage) => (
     <TouchableOpacity
       key={msg.id}
-      style={[
-        styles.messageCard,
-        msg.status === 'nouveau' && styles.unreadCard,
-      ]}
+      style={[styles.messageCard, msg.status === 'nouveau' && styles.unreadCard]}
       onPress={() => openMessage(msg)}
       activeOpacity={0.8}
     >
@@ -193,24 +204,23 @@ export default function MessagesScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Messages</Text>
-        <View style={styles.headerRight} />
-      </View>
+      <Header title="Messages" back />
 
       {/* Filter Tabs */}
       <View style={styles.filterContainer}>
-        {[{ value: 'all', label: 'Tous' }, { value: 'nouveau', label: 'Nouveaux' }, { value: 'répondu', label: 'Répondus' }].map((f) => (
+        {[
+          { value: 'all', label: 'Tous' },
+          { value: 'nouveau', label: 'Nouveaux' },
+          { value: 'répondu', label: 'Répondus' },
+        ].map((f) => (
           <TouchableOpacity
             key={f.value}
             style={[styles.filterButton, filter === f.value && styles.filterButtonActive]}
             onPress={() => setFilter(f.value)}
           >
-            <Text style={[styles.filterText, filter === f.value && styles.filterTextActive]}>
+            <Text
+              style={[styles.filterText, filter === f.value && styles.filterTextActive]}
+            >
               {f.label}
             </Text>
           </TouchableOpacity>
@@ -222,12 +232,16 @@ export default function MessagesScreen() {
         style={styles.content}
         contentContainerStyle={styles.contentContainer}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#D4AF37" />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.blushDeep}
+          />
         }
       >
         {messages.length === 0 ? (
           <View style={styles.emptyState}>
-            <Ionicons name="mail-outline" size={64} color="#333333" />
+            <Ionicons name="mail-outline" size={64} color={colors.line} />
             <Text style={styles.emptyTitle}>Aucun message</Text>
             <Text style={styles.emptyText}>
               Les messages de vos clients apparaîtront ici.
@@ -245,15 +259,15 @@ export default function MessagesScreen() {
         presentationStyle="pageSheet"
         onRequestClose={() => setSelectedMessage(null)}
       >
-        {selectedMessage && (
+        {selectedMessage ? (
           <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
               <TouchableOpacity onPress={() => setSelectedMessage(null)}>
-                <Ionicons name="close" size={24} color="#FFFFFF" />
+                <Ionicons name="close" size={24} color={colors.text} />
               </TouchableOpacity>
               <Text style={styles.modalTitle}>Message</Text>
               <TouchableOpacity onPress={() => deleteMessage(selectedMessage.id)}>
-                <Ionicons name="trash-outline" size={22} color="#FF4444" />
+                <Ionicons name="trash-outline" size={22} color={colors.danger} />
               </TouchableOpacity>
             </View>
 
@@ -261,26 +275,26 @@ export default function MessagesScreen() {
               {/* Sender Info */}
               <View style={styles.detailSection}>
                 <View style={styles.detailRow}>
-                  <Ionicons name="person-outline" size={20} color="#D4AF37" />
+                  <Ionicons name="person-outline" size={20} color={colors.blushDeep} />
                   <Text style={styles.detailLabel}>De:</Text>
                   <Text style={styles.detailValue}>{selectedMessage.client_name}</Text>
                 </View>
-                {selectedMessage.client_email && (
+                {selectedMessage.client_email ? (
                   <View style={styles.detailRow}>
-                    <Ionicons name="mail-outline" size={20} color="#D4AF37" />
+                    <Ionicons name="mail-outline" size={20} color={colors.blushDeep} />
                     <Text style={styles.detailLabel}>Email:</Text>
                     <Text style={styles.detailValue}>{selectedMessage.client_email}</Text>
                   </View>
-                )}
-                {selectedMessage.client_phone && (
+                ) : null}
+                {selectedMessage.client_phone ? (
                   <View style={styles.detailRow}>
-                    <Ionicons name="call-outline" size={20} color="#D4AF37" />
+                    <Ionicons name="call-outline" size={20} color={colors.blushDeep} />
                     <Text style={styles.detailLabel}>Tél:</Text>
                     <Text style={styles.detailValue}>{selectedMessage.client_phone}</Text>
                   </View>
-                )}
+                ) : null}
                 <View style={styles.detailRow}>
-                  <Ionicons name="time-outline" size={20} color="#D4AF37" />
+                  <Ionicons name="time-outline" size={20} color={colors.blushDeep} />
                   <Text style={styles.detailLabel}>Date:</Text>
                   <Text style={styles.detailValue}>{formatDate(selectedMessage.created_at)}</Text>
                 </View>
@@ -293,12 +307,12 @@ export default function MessagesScreen() {
               </View>
 
               {/* Previous Reply */}
-              {selectedMessage.reply && (
+              {selectedMessage.reply ? (
                 <View style={styles.replySection}>
                   <Text style={styles.replySectionTitle}>Votre réponse</Text>
                   <Text style={styles.replyContent}>{selectedMessage.reply}</Text>
                 </View>
-              )}
+              ) : null}
 
               {/* Reply Input */}
               <View style={styles.replyInputSection}>
@@ -310,7 +324,7 @@ export default function MessagesScreen() {
                   value={replyText}
                   onChangeText={setReplyText}
                   placeholder="Écrivez votre réponse..."
-                  placeholderTextColor="#666666"
+                  placeholderTextColor={colors.textMuted}
                   multiline
                   numberOfLines={5}
                 />
@@ -319,13 +333,13 @@ export default function MessagesScreen() {
                   onPress={sendReply}
                   disabled={!replyText.trim()}
                 >
-                  <Ionicons name="send" size={20} color="#0A0A0A" />
+                  <Ionicons name="send" size={20} color={colors.white} />
                   <Text style={styles.sendButtonText}>Envoyer</Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>
           </View>
-        )}
+        ) : null}
       </Modal>
     </SafeAreaView>
   );
@@ -334,76 +348,61 @@ export default function MessagesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  headerRight: {
-    width: 40,
+    backgroundColor: colors.cream,
   },
   filterContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 8,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    gap: spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
+    borderBottomColor: colors.line,
+    backgroundColor: colors.surface,
   },
   filterButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
     borderRadius: 16,
-    backgroundColor: '#1A1A1A',
+    backgroundColor: colors.cream,
+    borderWidth: 1,
+    borderColor: colors.line,
   },
   filterButtonActive: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: colors.blushDeep,
+    borderColor: colors.blushDeep,
   },
   filterText: {
     fontSize: 13,
-    color: '#888888',
+    color: colors.textMuted,
   },
   filterTextActive: {
-    color: '#0A0A0A',
+    color: colors.white,
     fontWeight: '600',
   },
   content: {
     flex: 1,
   },
   contentContainer: {
-    padding: 16,
+    padding: spacing.lg,
   },
   messageCard: {
-    backgroundColor: '#1A1A1A',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    backgroundColor: colors.surface,
+    borderRadius: radii.sm,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.line,
+    ...shadows.soft,
   },
   unreadCard: {
-    borderColor: '#D4AF37',
+    borderColor: colors.blushDeep,
     borderLeftWidth: 3,
   },
   messageHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   senderInfo: {
     flexDirection: 'row',
@@ -413,45 +412,45 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#D4AF37',
+    backgroundColor: colors.blushDeep,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: spacing.md,
   },
   avatarText: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#0A0A0A',
+    color: colors.white,
   },
   senderName: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.text,
   },
   messageDate: {
     fontSize: 12,
-    color: '#888888',
+    color: colors.textMuted,
     marginTop: 2,
   },
   statusBadge: {
     paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingVertical: spacing.xs,
     borderRadius: 10,
   },
   statusText: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
   },
   messageSubject: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#D4AF37',
+    color: colors.blushDeep,
     marginBottom: 6,
   },
   messagePreview: {
     fontSize: 14,
-    color: '#AAAAAA',
+    color: colors.textMuted,
     lineHeight: 20,
   },
   emptyState: {
@@ -461,135 +460,138 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#FFFFFF',
-    marginTop: 16,
+    color: colors.text,
+    marginTop: spacing.lg,
   },
   emptyText: {
     fontSize: 14,
-    color: '#888888',
+    color: colors.textMuted,
     textAlign: 'center',
-    marginTop: 8,
+    marginTop: spacing.sm,
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.cream,
   },
   modalHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
+    borderBottomColor: colors.line,
+    backgroundColor: colors.surface,
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.text,
   },
   modalContent: {
     flex: 1,
-    padding: 16,
+    padding: spacing.lg,
   },
   detailSection: {
-    backgroundColor: '#1A1A1A',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    backgroundColor: colors.surface,
+    borderRadius: radii.sm,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.line,
+    ...shadows.soft,
   },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   detailLabel: {
     fontSize: 14,
-    color: '#888888',
+    color: colors.textMuted,
     marginLeft: 10,
-    marginRight: 8,
+    marginRight: spacing.sm,
   },
   detailValue: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: colors.text,
     flex: 1,
   },
   messageSection: {
-    backgroundColor: '#1A1A1A',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    backgroundColor: colors.surface,
+    borderRadius: radii.sm,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.line,
+    ...shadows.soft,
   },
   subjectTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#D4AF37',
-    marginBottom: 12,
+    color: colors.blushDeep,
+    marginBottom: spacing.md,
   },
   messageContent: {
     fontSize: 15,
-    color: '#CCCCCC',
+    color: colors.text,
     lineHeight: 24,
   },
   replySection: {
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    backgroundColor: colors.blushSoft,
+    borderRadius: radii.sm,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: colors.blushDeep,
   },
   replySectionTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#D4AF37',
-    marginBottom: 8,
+    color: colors.blushDeep,
+    marginBottom: spacing.sm,
   },
   replyContent: {
     fontSize: 14,
-    color: '#CCCCCC',
+    color: colors.text,
     lineHeight: 22,
   },
   replyInputSection: {
-    marginBottom: 24,
+    marginBottom: spacing.xl,
   },
   replyInputTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
-    marginBottom: 12,
+    color: colors.text,
+    marginBottom: spacing.md,
   },
   replyInput: {
-    backgroundColor: '#1A1A1A',
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: colors.surface,
+    borderRadius: radii.sm,
+    padding: spacing.lg,
     fontSize: 15,
-    color: '#FFFFFF',
+    color: colors.text,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.line,
     height: 150,
     textAlignVertical: 'top',
-    marginBottom: 16,
+    marginBottom: spacing.lg,
   },
   sendButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#D4AF37',
+    backgroundColor: colors.blushDeep,
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: radii.sm,
   },
   sendButtonDisabled: {
-    backgroundColor: '#2A2A2A',
+    backgroundColor: colors.line,
   },
   sendButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#0A0A0A',
-    marginLeft: 8,
+    color: colors.white,
+    marginLeft: spacing.sm,
   },
 });

@@ -17,7 +17,10 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import BottomTab from './components/BottomTab';
+import Header from './components/Header';
+import Badge from './components/Badge';
 import { adminFetch } from './services/adminAccess';
+import { colors, spacing, radii, shadows } from './theme';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 const { width } = Dimensions.get('window');
@@ -48,9 +51,9 @@ const PROJECT_TYPES = [
 ];
 
 const STATUS_OPTIONS = [
-  { value: 'en_cours', label: 'En cours', color: '#D4AF37' },
-  { value: 'en_pause', label: 'En pause', color: '#888888' },
-  { value: 'termine', label: 'Terminé', color: '#4CAF50' },
+  { value: 'en_cours', label: 'En cours', tone: 'gold' as const },
+  { value: 'en_pause', label: 'En pause', tone: 'neutral' as const },
+  { value: 'termine', label: 'Terminé', tone: 'sage' as const },
 ];
 
 export default function ProjectsScreen() {
@@ -60,8 +63,7 @@ export default function ProjectsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  
-  // Form state
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -173,25 +175,27 @@ export default function ProjectsScreen() {
   };
 
   const getProjectTypeInfo = (type: string) => {
-    return PROJECT_TYPES.find(t => t.value === type) || PROJECT_TYPES[PROJECT_TYPES.length - 1];
+    return PROJECT_TYPES.find((t) => t.value === type) || PROJECT_TYPES[PROJECT_TYPES.length - 1];
   };
 
-  const getStatusInfo = (status: string) => {
-    return STATUS_OPTIONS.find(s => s.value === status) || STATUS_OPTIONS[0];
+  const getStatusOption = (status: string) => {
+    return STATUS_OPTIONS.find((s) => s.value === status) || STATUS_OPTIONS[0];
   };
 
   const renderProjectCard = (project: Project) => {
     const typeInfo = getProjectTypeInfo(project.project_type);
-    const statusInfo = getStatusInfo(project.status);
+    const statusOption = getStatusOption(project.status);
 
     return (
       <TouchableOpacity
         key={project.id}
         style={styles.projectCard}
-        onPress={() => router.push({
-          pathname: '/project-detail',
-          params: { id: project.id }
-        })}
+        onPress={() =>
+          router.push({
+            pathname: '/project-detail',
+            params: { id: project.id },
+          })
+        }
         onLongPress={() => deleteProject(project.id)}
         activeOpacity={0.8}
       >
@@ -203,46 +207,44 @@ export default function ProjectsScreen() {
           />
         ) : (
           <View style={styles.projectImagePlaceholder}>
-            <Ionicons name={typeInfo.icon as any} size={40} color="#D4AF37" />
+            <Ionicons name={typeInfo.icon as any} size={40} color={colors.blushDeep} />
           </View>
         )}
         <View style={styles.projectInfo}>
           <View style={styles.projectHeader}>
-            <Text style={styles.projectName} numberOfLines={1}>{project.name}</Text>
-            <View style={[styles.statusBadge, { backgroundColor: statusInfo.color }]}>
-              <Text style={styles.statusText}>{statusInfo.label}</Text>
-            </View>
+            <Text style={styles.projectName} numberOfLines={1}>
+              {project.name}
+            </Text>
+            <Badge label={statusOption.label} tone={statusOption.tone} />
           </View>
           <Text style={styles.projectType}>{typeInfo.label}</Text>
-          {project.yarn_type && (
+          {project.yarn_type ? (
             <Text style={styles.projectDetail} numberOfLines={1}>
-              <Ionicons name="color-palette-outline" size={12} color="#888" /> {project.yarn_type}
+              <Ionicons name="color-palette-outline" size={12} color={colors.textMuted} />{' '}
+              {project.yarn_type}
             </Text>
-          )}
-          {project.needle_size && (
+          ) : null}
+          {project.needle_size ? (
             <Text style={styles.projectDetail} numberOfLines={1}>
-              <Ionicons name="construct-outline" size={12} color="#888" /> Aiguilles {project.needle_size}
+              <Ionicons name="construct-outline" size={12} color={colors.textMuted} /> Aiguilles{' '}
+              {project.needle_size}
             </Text>
-          )}
+          ) : null}
         </View>
       </TouchableOpacity>
     );
   };
 
+  const addButton = (
+    <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addButton}>
+      <Ionicons name="add" size={24} color={colors.blushDeep} />
+    </TouchableOpacity>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Mes Projets</Text>
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addButton}>
-          <Ionicons name="add" size={24} color="#D4AF37" />
-        </TouchableOpacity>
-      </View>
+      <Header title="Mes Projets" back right={addButton} />
 
-      {/* Projects List */}
       <ScrollView
         style={styles.content}
         contentContainerStyle={styles.contentContainer}
@@ -250,22 +252,19 @@ export default function ProjectsScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#D4AF37"
+            tintColor={colors.blushDeep}
           />
         }
       >
         {projects.length === 0 ? (
           <View style={styles.emptyState}>
-            <Ionicons name="folder-open-outline" size={64} color="#333333" />
+            <Ionicons name="folder-open-outline" size={64} color={colors.line} />
             <Text style={styles.emptyTitle}>Aucun projet</Text>
             <Text style={styles.emptyText}>
               Commencez par créer votre premier projet de tricot ou crochet !
             </Text>
-            <TouchableOpacity
-              style={styles.createButton}
-              onPress={() => setModalVisible(true)}
-            >
-              <Ionicons name="add" size={20} color="#0A0A0A" />
+            <TouchableOpacity style={styles.createButton} onPress={() => setModalVisible(true)}>
+              <Ionicons name="add" size={20} color={colors.white} />
               <Text style={styles.createButtonText}>Créer un projet</Text>
             </TouchableOpacity>
           </View>
@@ -284,7 +283,7 @@ export default function ProjectsScreen() {
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
             <TouchableOpacity onPress={() => setModalVisible(false)}>
-              <Ionicons name="close" size={24} color="#FFFFFF" />
+              <Ionicons name="close" size={24} color={colors.text} />
             </TouchableOpacity>
             <Text style={styles.modalTitle}>Nouveau Projet</Text>
             <TouchableOpacity onPress={createProject}>
@@ -299,7 +298,7 @@ export default function ProjectsScreen() {
                 <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
               ) : (
                 <View style={styles.imagePickerContent}>
-                  <Ionicons name="camera-outline" size={40} color="#D4AF37" />
+                  <Ionicons name="camera-outline" size={40} color={colors.blushDeep} />
                   <Text style={styles.imagePickerText}>Ajouter une photo</Text>
                 </View>
               )}
@@ -313,7 +312,7 @@ export default function ProjectsScreen() {
                 value={formData.name}
                 onChangeText={(text) => setFormData({ ...formData, name: text })}
                 placeholder="Ex: Bonnet d'hiver"
-                placeholderTextColor="#666666"
+                placeholderTextColor={colors.textMuted}
               />
             </View>
 
@@ -324,7 +323,7 @@ export default function ProjectsScreen() {
                 value={formData.description}
                 onChangeText={(text) => setFormData({ ...formData, description: text })}
                 placeholder="Décrivez votre projet..."
-                placeholderTextColor="#666666"
+                placeholderTextColor={colors.textMuted}
                 multiline
                 numberOfLines={3}
               />
@@ -346,7 +345,9 @@ export default function ProjectsScreen() {
                       <Ionicons
                         name={type.icon as any}
                         size={20}
-                        color={formData.project_type === type.value ? '#0A0A0A' : '#D4AF37'}
+                        color={
+                          formData.project_type === type.value ? colors.white : colors.blushDeep
+                        }
                       />
                       <Text
                         style={[
@@ -369,7 +370,7 @@ export default function ProjectsScreen() {
                 value={formData.yarn_type}
                 onChangeText={(text) => setFormData({ ...formData, yarn_type: text })}
                 placeholder="Ex: Mérinos, Alpaga, Coton..."
-                placeholderTextColor="#666666"
+                placeholderTextColor={colors.textMuted}
               />
             </View>
 
@@ -380,7 +381,7 @@ export default function ProjectsScreen() {
                 value={formData.needle_size}
                 onChangeText={(text) => setFormData({ ...formData, needle_size: text })}
                 placeholder="Ex: 4mm, 5mm..."
-                placeholderTextColor="#666666"
+                placeholderTextColor={colors.textMuted}
               />
             </View>
 
@@ -391,7 +392,7 @@ export default function ProjectsScreen() {
                 value={formData.notes}
                 onChangeText={(text) => setFormData({ ...formData, notes: text })}
                 placeholder="Notes supplémentaires..."
-                placeholderTextColor="#666666"
+                placeholderTextColor={colors.textMuted}
                 multiline
                 numberOfLines={3}
               />
@@ -399,6 +400,7 @@ export default function ProjectsScreen() {
           </ScrollView>
         </View>
       </Modal>
+
       <BottomTab />
     </SafeAreaView>
   );
@@ -407,41 +409,25 @@ export default function ProjectsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    backgroundColor: colors.cream,
   },
   addButton: {
-    padding: 8,
+    padding: spacing.sm,
   },
   content: {
     flex: 1,
   },
   contentContainer: {
-    padding: 16,
+    padding: spacing.lg,
   },
   projectCard: {
-    backgroundColor: '#1A1A1A',
-    borderRadius: 16,
-    marginBottom: 16,
+    backgroundColor: colors.surface,
+    borderRadius: radii.md,
+    marginBottom: spacing.lg,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.line,
+    ...shadows.soft,
   },
   projectImage: {
     width: '100%',
@@ -450,45 +436,35 @@ const styles = StyleSheet.create({
   projectImagePlaceholder: {
     width: '100%',
     height: 180,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.blushSoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
   projectInfo: {
-    padding: 16,
+    padding: spacing.lg,
   },
   projectHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: spacing.xs,
   },
   projectName: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.text,
     flex: 1,
-    marginRight: 12,
-  },
-  statusBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  statusText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#0A0A0A',
+    marginRight: spacing.md,
   },
   projectType: {
     fontSize: 14,
-    color: '#D4AF37',
-    marginBottom: 8,
+    color: colors.blushDeep,
+    marginBottom: spacing.sm,
   },
   projectDetail: {
     fontSize: 13,
-    color: '#888888',
-    marginTop: 4,
+    color: colors.textMuted,
+    marginTop: spacing.xs,
   },
   emptyState: {
     alignItems: 'center',
@@ -498,67 +474,68 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#FFFFFF',
-    marginTop: 16,
+    color: colors.text,
+    marginTop: spacing.lg,
   },
   emptyText: {
     fontSize: 14,
-    color: '#888888',
+    color: colors.textMuted,
     textAlign: 'center',
-    marginTop: 8,
+    marginTop: spacing.sm,
     paddingHorizontal: 40,
   },
   createButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#D4AF37',
-    paddingHorizontal: 24,
+    backgroundColor: colors.blushDeep,
+    paddingHorizontal: spacing.xl,
     paddingVertical: 14,
-    borderRadius: 12,
-    marginTop: 24,
+    borderRadius: radii.md,
+    marginTop: spacing.xl,
   },
   createButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#0A0A0A',
-    marginLeft: 8,
+    color: colors.white,
+    marginLeft: spacing.sm,
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.cream,
   },
   modalHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
+    borderBottomColor: colors.line,
+    backgroundColor: colors.surface,
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.text,
   },
   saveButton: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#D4AF37',
+    color: colors.blushDeep,
   },
   modalContent: {
     flex: 1,
-    padding: 16,
+    padding: spacing.lg,
   },
   imagePicker: {
     width: '100%',
     height: 200,
-    backgroundColor: '#1A1A1A',
-    borderRadius: 16,
+    backgroundColor: colors.blushSoft,
+    borderRadius: radii.md,
     overflow: 'hidden',
-    marginBottom: 24,
+    marginBottom: spacing.xl,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.line,
     borderStyle: 'dashed',
   },
   selectedImage: {
@@ -572,8 +549,8 @@ const styles = StyleSheet.create({
   },
   imagePickerText: {
     fontSize: 14,
-    color: '#888888',
-    marginTop: 8,
+    color: colors.textMuted,
+    marginTop: spacing.sm,
   },
   formGroup: {
     marginBottom: 20,
@@ -581,17 +558,17 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FFFFFF',
-    marginBottom: 8,
+    color: colors.text,
+    marginBottom: spacing.sm,
   },
   input: {
-    backgroundColor: '#1A1A1A',
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: colors.surface,
+    borderRadius: radii.sm,
+    padding: spacing.lg,
     fontSize: 15,
-    color: '#FFFFFF',
+    color: colors.text,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.line,
   },
   textArea: {
     height: 100,
@@ -599,27 +576,27 @@ const styles = StyleSheet.create({
   },
   typeOptions: {
     flexDirection: 'row',
-    gap: 8,
+    gap: spacing.sm,
   },
   typeOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1A1A1A',
-    paddingHorizontal: 16,
+    backgroundColor: colors.surface,
+    paddingHorizontal: spacing.lg,
     paddingVertical: 10,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: colors.blushDeep,
   },
   typeOptionSelected: {
-    backgroundColor: '#D4AF37',
+    backgroundColor: colors.blushDeep,
   },
   typeOptionText: {
     fontSize: 14,
-    color: '#D4AF37',
+    color: colors.blushDeep,
     marginLeft: 6,
   },
   typeOptionTextSelected: {
-    color: '#0A0A0A',
+    color: colors.white,
   },
 });

@@ -10,6 +10,10 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { colors, spacing, radii } from './theme';
+import Header from './components/Header';
+import Card from './components/Card';
+import BottomTab from './components/BottomTab';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -24,11 +28,11 @@ interface SizeGuide {
 }
 
 const CATEGORIES = [
-  { value: 'bonnets', label: 'Bonnets', icon: 'happy-outline' },
-  { value: 'chaussettes', label: 'Chaussettes', icon: 'footsteps-outline' },
-  { value: 'pulls', label: 'Pulls', icon: 'shirt-outline' },
-  { value: 'couvertures', label: 'Couvertures', icon: 'bed-outline' },
-  { value: 'echarpes', label: 'Écharpes', icon: 'resize-outline' },
+  { value: 'bonnets', label: 'Bonnets', icon: 'happy-outline' as const },
+  { value: 'chaussettes', label: 'Chaussettes', icon: 'footsteps-outline' as const },
+  { value: 'pulls', label: 'Pulls', icon: 'shirt-outline' as const },
+  { value: 'couvertures', label: 'Couvertures', icon: 'bed-outline' as const },
+  { value: 'echarpes', label: 'Écharpes', icon: 'resize-outline' as const },
 ];
 
 export default function SizeGuideScreen() {
@@ -60,27 +64,40 @@ export default function SizeGuideScreen() {
     const headers = Object.keys(data[0]);
 
     return (
-      <View style={styles.tableContainer}>
-        {title && <Text style={styles.tableTitle}>{title}</Text>}
+      <Card padded={false} style={styles.tableCard}>
+        {title ? (
+          <View style={styles.tableSubHeader}>
+            <Text style={styles.tableSubHeaderText}>{title}</Text>
+          </View>
+        ) : null}
         <View style={styles.tableHeader}>
           {headers.map((header, index) => (
-            <View key={index} style={[styles.tableCell, styles.headerCell, { flex: index === 0 ? 1.5 : 1 }]}>
+            <View
+              key={index}
+              style={[styles.tableCell, styles.headerCell, { flex: index === 0 ? 1.5 : 1 }]}
+            >
               <Text style={styles.headerText}>
-                {header.replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase())}
+                {header.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase())}
               </Text>
             </View>
           ))}
         </View>
         {data.map((row, rowIndex) => (
-          <View key={rowIndex} style={[styles.tableRow, rowIndex % 2 === 0 && styles.tableRowEven]}>
+          <View
+            key={rowIndex}
+            style={[styles.tableRow, rowIndex % 2 === 0 ? styles.tableRowEven : undefined]}
+          >
             {headers.map((header, cellIndex) => (
-              <View key={cellIndex} style={[styles.tableCell, { flex: cellIndex === 0 ? 1.5 : 1 }]}>
+              <View
+                key={cellIndex}
+                style={[styles.tableCell, { flex: cellIndex === 0 ? 1.5 : 1 }]}
+              >
                 <Text style={styles.cellText}>{row[header]}</Text>
               </View>
             ))}
           </View>
         ))}
-      </View>
+      </Card>
     );
   };
 
@@ -88,20 +105,18 @@ export default function SizeGuideScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Guide des Tailles</Text>
-          <Text style={styles.headerSubtitle}>Par âge et catégorie</Text>
-        </View>
-        <View style={styles.headerRight} />
-      </View>
+      <Header
+        title="Guide des Tailles"
+        subtitle="Par âge et catégorie"
+        back
+      />
 
       {/* Category Tabs */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.categoryScroll}
+      >
         <View style={styles.categoryContainer}>
           {CATEGORIES.map((cat) => (
             <TouchableOpacity
@@ -113,9 +128,9 @@ export default function SizeGuideScreen() {
               onPress={() => setSelectedCategory(cat.value)}
             >
               <Ionicons
-                name={cat.icon as any}
+                name={cat.icon}
                 size={18}
-                color={selectedCategory === cat.value ? '#0A0A0A' : '#D4AF37'}
+                color={selectedCategory === cat.value ? colors.white : colors.blushDeep}
               />
               <Text
                 style={[
@@ -134,21 +149,24 @@ export default function SizeGuideScreen() {
       <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#D4AF37" />
+            <ActivityIndicator size="large" color={colors.blushDeep} />
           </View>
         ) : currentGuide ? (
           <>
             <Text style={styles.guideTitle}>{currentGuide.title}</Text>
-            
-            {currentGuide.measurements && renderTable(currentGuide.measurements)}
-            {currentGuide.women && renderTable(currentGuide.women, 'Femmes')}
-            {currentGuide.men && renderTable(currentGuide.men, 'Hommes')}
-            {currentGuide.children && renderTable(currentGuide.children, 'Enfants')}
+
+            {currentGuide.measurements
+              ? renderTable(currentGuide.measurements)
+              : null}
+            {currentGuide.women ? renderTable(currentGuide.women, 'Femmes') : null}
+            {currentGuide.men ? renderTable(currentGuide.men, 'Hommes') : null}
+            {currentGuide.children ? renderTable(currentGuide.children, 'Enfants') : null}
 
             <View style={styles.tipCard}>
-              <Ionicons name="information-circle-outline" size={20} color="#D4AF37" />
+              <Ionicons name="information-circle-outline" size={20} color={colors.gold} />
               <Text style={styles.tipText}>
-                Ces mesures sont indicatives. Mesurez toujours la personne pour un résultat optimal !
+                Ces mesures sont indicatives. Mesurez toujours la personne pour un résultat
+                optimal !
               </Text>
             </View>
           </>
@@ -156,84 +174,97 @@ export default function SizeGuideScreen() {
           <Text style={styles.emptyText}>Guide non disponible</Text>
         )}
       </ScrollView>
+
+      <BottomTab />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0A0A0A' },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
+  container: {
+    flex: 1,
+    backgroundColor: colors.cream,
   },
-  backButton: { padding: 8 },
-  headerCenter: { alignItems: 'center' },
-  headerTitle: { fontSize: 18, fontWeight: '600', color: '#FFFFFF' },
-  headerSubtitle: { fontSize: 11, color: '#D4AF37', marginTop: 2 },
-  headerRight: { width: 40 },
-  categoryScroll: { maxHeight: 60, borderBottomWidth: 1, borderBottomColor: '#1A1A1A' },
+  categoryScroll: {
+    maxHeight: 60,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.line,
+  },
   categoryContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 12,
+    paddingHorizontal: spacing.md,
     paddingVertical: 10,
-    gap: 8,
+    gap: spacing.sm,
   },
   categoryButton: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: '#1A1A1A',
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
+    paddingVertical: spacing.sm,
+    borderRadius: radii.round,
+    backgroundColor: colors.surface,
+    borderWidth: 1.5,
+    borderColor: colors.line,
     gap: 6,
   },
   categoryButtonActive: {
-    backgroundColor: '#D4AF37',
-    borderColor: '#D4AF37',
+    backgroundColor: colors.blushDeep,
+    borderColor: colors.blushDeep,
   },
-  categoryText: { fontSize: 13, color: '#D4AF37' },
-  categoryTextActive: { color: '#0A0A0A', fontWeight: '600' },
-  content: { flex: 1 },
-  contentContainer: { padding: 16 },
-  loadingContainer: { alignItems: 'center', paddingVertical: 40 },
-  emptyText: { fontSize: 14, color: '#888', textAlign: 'center' },
+  categoryText: {
+    fontSize: 13,
+    color: colors.blushDeep,
+    fontWeight: '500',
+  },
+  categoryTextActive: {
+    color: colors.white,
+    fontWeight: '700',
+  },
+  content: {
+    flex: 1,
+  },
+  contentContainer: {
+    padding: spacing.lg,
+    paddingBottom: spacing.xl,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: colors.textMuted,
+    textAlign: 'center',
+  },
   guideTitle: {
     fontSize: 20,
-    fontWeight: '600',
-    color: '#D4AF37',
-    marginBottom: 16,
+    fontWeight: '700',
+    color: colors.blushDeep,
+    marginBottom: spacing.lg,
   },
-  tableContainer: {
-    backgroundColor: '#1A1A1A',
-    borderRadius: 12,
-    marginBottom: 16,
+  tableCard: {
+    marginBottom: spacing.lg,
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
   },
-  tableTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    padding: 12,
-    backgroundColor: '#252525',
+  tableSubHeader: {
+    backgroundColor: colors.goldSoft,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  tableSubHeaderText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.text,
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#D4AF37',
+    backgroundColor: colors.blushDeep,
   },
   tableRow: {
     flexDirection: 'row',
   },
   tableRowEven: {
-    backgroundColor: '#151515',
+    backgroundColor: colors.blushSoft,
   },
   tableCell: {
     padding: 10,
@@ -243,28 +274,28 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#0A0A0A',
+    color: colors.white,
     textTransform: 'capitalize',
   },
   cellText: {
     fontSize: 12,
-    color: '#CCCCCC',
+    color: colors.text,
   },
   tipCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-    borderRadius: 12,
-    padding: 14,
-    marginTop: 8,
+    backgroundColor: colors.goldSoft,
+    borderRadius: radii.md,
+    padding: spacing.md,
+    marginTop: spacing.sm,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: colors.gold,
     gap: 10,
   },
   tipText: {
     flex: 1,
     fontSize: 13,
-    color: '#CCCCCC',
+    color: colors.text,
     lineHeight: 20,
   },
 });

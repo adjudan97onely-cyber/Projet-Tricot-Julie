@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import BottomTab from './components/BottomTab';
+import Header from './components/Header';
+import { colors, spacing, radii, shadows } from './theme';
 
 const { width } = Dimensions.get('window');
 
@@ -88,13 +90,13 @@ function RangCounter() {
   return (
     <View style={styles.toolSection}>
       <View style={styles.toolTitleRow}>
-        <Ionicons name="layers-outline" size={22} color="#D4AF37" />
+        <Ionicons name="layers-outline" size={22} color={colors.blushDeep} />
         <Text style={styles.toolTitle}>Compteur de Rangs</Text>
         <TouchableOpacity
           style={styles.addSmallBtn}
           onPress={() => setShowAddModal(true)}
         >
-          <Ionicons name="add" size={20} color="#D4AF37" />
+          <Ionicons name="add" size={20} color={colors.blushDeep} />
         </TouchableOpacity>
       </View>
 
@@ -108,33 +110,33 @@ function RangCounter() {
           <View key={counter.id} style={styles.counterCard}>
             <View style={styles.counterHeader}>
               <Text style={styles.counterName}>{counter.name}</Text>
-              {counter.target && (
+              {counter.target ? (
                 <Text style={styles.counterTarget}>
                   / {counter.target} rangs
                 </Text>
-              )}
+              ) : null}
               <TouchableOpacity
                 onPress={() => deleteCounter(counter.id)}
                 style={styles.deleteBtn}
               >
-                <Ionicons name="trash-outline" size={16} color="#555" />
+                <Ionicons name="trash-outline" size={16} color={colors.textMuted} />
               </TouchableOpacity>
             </View>
 
-            {progress !== null && (
+            {progress !== null ? (
               <View style={styles.progressBarBg}>
                 <View
                   style={[styles.progressBarFill, { width: `${progress * 100}%` }]}
                 />
               </View>
-            )}
+            ) : null}
 
             <View style={styles.counterControls}>
               <TouchableOpacity
                 style={styles.counterBtn}
                 onPress={() => decrement(counter.id)}
               >
-                <Ionicons name="remove" size={28} color="#D4AF37" />
+                <Ionicons name="remove" size={28} color={colors.blushDeep} />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => reset(counter.id)}
@@ -147,7 +149,7 @@ function RangCounter() {
                 style={[styles.counterBtn, styles.counterBtnPrimary]}
                 onPress={() => increment(counter.id)}
               >
-                <Ionicons name="add" size={28} color="#0A0A0A" />
+                <Ionicons name="add" size={28} color={colors.white} />
               </TouchableOpacity>
             </View>
           </View>
@@ -162,14 +164,14 @@ function RangCounter() {
             <TextInput
               style={styles.modalInput}
               placeholder="Nom (ex: Rangs jersey)"
-              placeholderTextColor="#555"
+              placeholderTextColor={colors.textMuted}
               value={addName}
               onChangeText={setAddName}
             />
             <TextInput
               style={styles.modalInput}
               placeholder="Objectif (optionnel, ex: 80)"
-              placeholderTextColor="#555"
+              placeholderTextColor={colors.textMuted}
               value={addTarget}
               onChangeText={setAddTarget}
               keyboardType="numeric"
@@ -239,7 +241,7 @@ function YarnCalculator() {
   return (
     <View style={styles.toolSection}>
       <View style={styles.toolTitleRow}>
-        <Ionicons name="calculator-outline" size={22} color="#D4AF37" />
+        <Ionicons name="calculator-outline" size={22} color={colors.blushDeep} />
         <Text style={styles.toolTitle}>Calculateur de Laine</Text>
       </View>
 
@@ -283,14 +285,14 @@ function YarnCalculator() {
           style={styles.counterBtn}
           onPress={() => { setQuantity(Math.max(1, quantity - 1)); setResult(null); }}
         >
-          <Ionicons name="remove" size={22} color="#D4AF37" />
+          <Ionicons name="remove" size={22} color={colors.blushDeep} />
         </TouchableOpacity>
         <Text style={styles.quantityValue}>{quantity} {quantity > 1 ? 'pièces' : 'pièce'}</Text>
         <TouchableOpacity
           style={[styles.counterBtn, styles.counterBtnPrimary]}
           onPress={() => { setQuantity(quantity + 1); setResult(null); }}
         >
-          <Ionicons name="add" size={22} color="#0A0A0A" />
+          <Ionicons name="add" size={22} color={colors.white} />
         </TouchableOpacity>
       </View>
 
@@ -298,7 +300,7 @@ function YarnCalculator() {
         <Text style={styles.calcBtnText}>Calculer ✨</Text>
       </TouchableOpacity>
 
-      {result && (
+      {result ? (
         <View style={styles.resultCard}>
           <Text style={styles.resultTitle}>🧶 Résultat (avec 12% de surplus)</Text>
           <View style={styles.resultRow}>
@@ -321,7 +323,7 @@ function YarnCalculator() {
             Achetez toujours du même lot de teinture pour éviter les variations de couleur.
           </Text>
         </View>
-      )}
+      ) : null}
     </View>
   );
 }
@@ -371,7 +373,7 @@ function ProjectTimer() {
   return (
     <View style={styles.toolSection}>
       <View style={styles.toolTitleRow}>
-        <Ionicons name="timer-outline" size={22} color="#D4AF37" />
+        <Ionicons name="timer-outline" size={22} color={colors.blushDeep} />
         <Text style={styles.toolTitle}>Timer de Projet</Text>
       </View>
 
@@ -404,7 +406,7 @@ function ProjectTimer() {
         </TouchableOpacity>
       </View>
 
-      {laps.length > 0 && (
+      {laps.length > 0 ? (
         <View style={styles.lapsList}>
           <Text style={styles.lapsTitle}>Sections</Text>
           {laps.map((lap, i) => (
@@ -414,7 +416,7 @@ function ProjectTimer() {
             </View>
           ))}
         </View>
-      )}
+      ) : null}
     </View>
   );
 }
@@ -426,13 +428,10 @@ export default function ToolsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Mes Outils</Text>
-          <Text style={styles.headerSubtitle}>Compteur • Calculateur • Timer</Text>
-        </View>
-      </View>
+      <Header
+        title="Mes Outils"
+        subtitle="Compteur • Calculateur • Timer"
+      />
 
       {/* Tab selector */}
       <View style={styles.tabSelector}>
@@ -448,7 +447,7 @@ export default function ToolsScreen() {
               <Ionicons
                 name={icons[tab] as any}
                 size={18}
-                color={activeTab === tab ? '#0A0A0A' : '#D4AF37'}
+                color={activeTab === tab ? colors.white : colors.blushDeep}
               />
               <Text style={[styles.tabSelectorText, activeTab === tab && styles.tabSelectorTextActive]}>
                 {labels[tab]}
@@ -459,9 +458,9 @@ export default function ToolsScreen() {
       </View>
 
       <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
-        {activeTab === 'counter' && <RangCounter />}
-        {activeTab === 'calculator' && <YarnCalculator />}
-        {activeTab === 'timer' && <ProjectTimer />}
+        {activeTab === 'counter' ? <RangCounter /> : null}
+        {activeTab === 'calculator' ? <YarnCalculator /> : null}
+        {activeTab === 'timer' ? <ProjectTimer /> : null}
       </ScrollView>
 
       <BottomTab />
@@ -472,83 +471,111 @@ export default function ToolsScreen() {
 // ─── STYLES ──────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0A0A0A' },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
+  container: {
+    flex: 1,
+    backgroundColor: colors.cream,
   },
-  headerCenter: { alignItems: 'center' },
-  headerTitle: { fontSize: 20, fontWeight: '700', color: '#FFFFFF' },
-  headerSubtitle: { fontSize: 11, color: '#D4AF37', marginTop: 2 },
   tabSelector: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
     paddingVertical: 10,
-    gap: 8,
+    gap: spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
+    borderBottomColor: colors.line,
+    backgroundColor: colors.surface,
   },
   tabSelectorBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 8,
-    borderRadius: 10,
+    paddingVertical: spacing.sm,
+    borderRadius: radii.sm,
     borderWidth: 1,
-    borderColor: '#D4AF37',
-    backgroundColor: '#0A0A0A',
+    borderColor: colors.blushDeep,
+    backgroundColor: colors.cream,
     gap: 5,
   },
-  tabSelectorActive: { backgroundColor: '#D4AF37' },
-  tabSelectorText: { fontSize: 12, fontWeight: '600', color: '#D4AF37' },
-  tabSelectorTextActive: { color: '#0A0A0A' },
-  content: { flex: 1 },
-  contentContainer: { padding: 16, paddingBottom: 24 },
-  toolSection: { marginBottom: 8 },
+  tabSelectorActive: {
+    backgroundColor: colors.blushDeep,
+  },
+  tabSelectorText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.blushDeep,
+  },
+  tabSelectorTextActive: {
+    color: colors.white,
+  },
+  content: {
+    flex: 1,
+  },
+  contentContainer: {
+    padding: spacing.lg,
+    paddingBottom: 24,
+  },
+  toolSection: {
+    marginBottom: spacing.sm,
+  },
   toolTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginBottom: 16,
+    marginBottom: spacing.lg,
   },
-  toolTitle: { fontSize: 18, fontWeight: '700', color: '#FFFFFF', flex: 1 },
+  toolTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.text,
+    flex: 1,
+  },
   addSmallBtn: {
     width: 32,
     height: 32,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: colors.blushDeep,
     alignItems: 'center',
     justifyContent: 'center',
   },
   // Counter
   counterCard: {
-    backgroundColor: '#111111',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
+    backgroundColor: colors.surface,
+    borderRadius: radii.md,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.line,
+    ...shadows.soft,
   },
-  counterHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-  counterName: { fontSize: 15, fontWeight: '600', color: '#FFFFFF', flex: 1 },
-  counterTarget: { fontSize: 12, color: '#888888', marginRight: 8 },
-  deleteBtn: { padding: 4 },
+  counterHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  counterName: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.text,
+    flex: 1,
+  },
+  counterTarget: {
+    fontSize: 12,
+    color: colors.textMuted,
+    marginRight: spacing.sm,
+  },
+  deleteBtn: {
+    padding: spacing.xs,
+  },
   progressBarBg: {
     height: 4,
-    backgroundColor: '#2A2A2A',
+    backgroundColor: colors.line,
     borderRadius: 2,
     marginBottom: 14,
   },
   progressBarFill: {
     height: 4,
-    backgroundColor: '#D4AF37',
+    backgroundColor: colors.blushDeep,
     borderRadius: 2,
   },
   counterControls: {
@@ -561,110 +588,223 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 28,
     borderWidth: 2,
-    borderColor: '#D4AF37',
+    borderColor: colors.blushDeep,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
   },
-  counterBtnPrimary: { backgroundColor: '#D4AF37', borderColor: '#D4AF37' },
-  counterValueContainer: { alignItems: 'center' },
-  counterValue: { fontSize: 48, fontWeight: '700', color: '#D4AF37', lineHeight: 52 },
-  counterValueLabel: { fontSize: 12, color: '#888888' },
+  counterBtnPrimary: {
+    backgroundColor: colors.blushDeep,
+    borderColor: colors.blushDeep,
+  },
+  counterValueContainer: {
+    alignItems: 'center',
+  },
+  counterValue: {
+    fontSize: 48,
+    fontWeight: '700',
+    color: colors.blushDeep,
+    lineHeight: 52,
+  },
+  counterValueLabel: {
+    fontSize: 12,
+    color: colors.textMuted,
+  },
   // Modal
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.75)',
+    backgroundColor: colors.overlay,
     justifyContent: 'flex-end',
   },
   modal: {
-    backgroundColor: '#1A1A1A',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 24,
-    gap: 12,
+    backgroundColor: colors.surface,
+    borderTopLeftRadius: radii.lg,
+    borderTopRightRadius: radii.lg,
+    padding: spacing.xl,
+    gap: spacing.md,
   },
-  modalTitle: { fontSize: 18, fontWeight: '700', color: '#FFFFFF', marginBottom: 4 },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: spacing.xs,
+  },
   modalInput: {
-    backgroundColor: '#0A0A0A',
-    borderRadius: 10,
+    backgroundColor: colors.cream,
+    borderRadius: radii.sm,
     padding: 14,
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 15,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.line,
   },
-  modalButtons: { flexDirection: 'row', gap: 12, marginTop: 8 },
+  modalButtons: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    marginTop: spacing.sm,
+  },
   modalCancel: {
     flex: 1,
     padding: 14,
-    borderRadius: 10,
+    borderRadius: radii.sm,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.line,
     alignItems: 'center',
   },
-  modalCancelText: { color: '#888', fontSize: 15 },
+  modalCancelText: {
+    color: colors.textMuted,
+    fontSize: 15,
+  },
   modalConfirm: {
     flex: 1,
     padding: 14,
-    borderRadius: 10,
-    backgroundColor: '#D4AF37',
+    borderRadius: radii.sm,
+    backgroundColor: colors.blushDeep,
     alignItems: 'center',
   },
-  modalConfirmText: { color: '#0A0A0A', fontSize: 15, fontWeight: '700' },
+  modalConfirmText: {
+    color: colors.white,
+    fontSize: 15,
+    fontWeight: '700',
+  },
   // Calculator
-  calcLabel: { fontSize: 13, color: '#888888', fontWeight: '600', marginBottom: 8, marginTop: 4 },
-  chipScroll: { marginBottom: 4 },
-  chipRow: { flexDirection: 'row', gap: 8, paddingBottom: 8 },
+  calcLabel: {
+    fontSize: 13,
+    color: colors.textMuted,
+    fontWeight: '600',
+    marginBottom: spacing.sm,
+    marginTop: spacing.xs,
+  },
+  chipScroll: {
+    marginBottom: spacing.xs,
+  },
+  chipRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    paddingBottom: spacing.sm,
+  },
   chip: {
     paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingVertical: spacing.sm,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
-    backgroundColor: '#111111',
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
   },
-  chipActive: { backgroundColor: '#D4AF37', borderColor: '#D4AF37' },
-  chipText: { fontSize: 13, color: '#AAAAAA' },
-  chipTextActive: { color: '#0A0A0A', fontWeight: '600' },
-  quantityRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 24, marginVertical: 12 },
-  quantityValue: { fontSize: 20, fontWeight: '700', color: '#FFFFFF', minWidth: 100, textAlign: 'center' },
-  calcBtn: {
-    backgroundColor: '#D4AF37',
-    borderRadius: 14,
-    paddingVertical: 16,
+  chipActive: {
+    backgroundColor: colors.blushDeep,
+    borderColor: colors.blushDeep,
+  },
+  chipText: {
+    fontSize: 13,
+    color: colors.textMuted,
+  },
+  chipTextActive: {
+    color: colors.white,
+    fontWeight: '600',
+  },
+  quantityRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
+    justifyContent: 'center',
+    gap: spacing.xl,
+    marginVertical: spacing.md,
   },
-  calcBtnText: { fontSize: 16, fontWeight: '700', color: '#0A0A0A' },
+  quantityValue: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.text,
+    minWidth: 100,
+    textAlign: 'center',
+  },
+  calcBtn: {
+    backgroundColor: colors.blushDeep,
+    borderRadius: 14,
+    paddingVertical: spacing.lg,
+    alignItems: 'center',
+    marginTop: spacing.sm,
+  },
+  calcBtnText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.white,
+  },
   resultCard: {
-    backgroundColor: '#111111',
-    borderRadius: 16,
+    backgroundColor: colors.surface,
+    borderRadius: radii.md,
     padding: 20,
-    marginTop: 16,
+    marginTop: spacing.lg,
     borderWidth: 1,
-    borderColor: '#D4AF37',
+    borderColor: colors.blushDeep,
+    ...shadows.soft,
   },
-  resultTitle: { fontSize: 14, color: '#D4AF37', fontWeight: '600', marginBottom: 16 },
-  resultRow: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' },
-  resultItem: { alignItems: 'center' },
-  resultValue: { fontSize: 28, fontWeight: '700', color: '#FFFFFF' },
-  resultHighlight: { color: '#D4AF37', fontSize: 34 },
-  resultLabel: { fontSize: 11, color: '#888888', marginTop: 3 },
-  resultDivider: { width: 1, height: 40, backgroundColor: '#2A2A2A' },
-  resultNote: { fontSize: 12, color: '#666666', marginTop: 16, fontStyle: 'italic', textAlign: 'center' },
+  resultTitle: {
+    fontSize: 14,
+    color: colors.blushDeep,
+    fontWeight: '600',
+    marginBottom: spacing.lg,
+  },
+  resultRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  resultItem: {
+    alignItems: 'center',
+  },
+  resultValue: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  resultHighlight: {
+    color: colors.blushDeep,
+    fontSize: 34,
+  },
+  resultLabel: {
+    fontSize: 11,
+    color: colors.textMuted,
+    marginTop: 3,
+  },
+  resultDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: colors.line,
+  },
+  resultNote: {
+    fontSize: 12,
+    color: colors.textMuted,
+    marginTop: spacing.lg,
+    fontStyle: 'italic',
+    textAlign: 'center',
+  },
   // Timer
   timerDisplay: {
     alignItems: 'center',
-    backgroundColor: '#111111',
-    borderRadius: 20,
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
     paddingVertical: 40,
-    marginBottom: 24,
+    marginBottom: spacing.xl,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.line,
+    ...shadows.soft,
   },
-  timerText: { fontSize: 54, fontWeight: '200', color: '#D4AF37', letterSpacing: 4 },
-  timerLabel: { fontSize: 11, color: '#555555', marginTop: 8 },
-  timerButtons: { flexDirection: 'row', gap: 10, marginBottom: 20 },
+  timerText: {
+    fontSize: 54,
+    fontWeight: '200',
+    color: colors.blushDeep,
+    letterSpacing: 4,
+  },
+  timerLabel: {
+    fontSize: 11,
+    color: colors.textMuted,
+    marginTop: spacing.sm,
+  },
+  timerButtons: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 20,
+  },
   timerBtn: {
     flex: 1,
     paddingVertical: 14,
@@ -672,28 +812,57 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.line,
   },
-  timerBtnStart: { backgroundColor: '#D4AF37', borderColor: '#D4AF37' },
-  timerBtnStop: { backgroundColor: '#E55353', borderColor: '#E55353' },
-  timerBtnSecondary: { backgroundColor: '#111111' },
-  timerBtnText: { fontSize: 13, color: '#AAAAAA', fontWeight: '600' },
-  timerBtnTextMain: { fontSize: 15, color: '#FFFFFF', fontWeight: '700' },
+  timerBtnStart: {
+    backgroundColor: colors.blushDeep,
+    borderColor: colors.blushDeep,
+  },
+  timerBtnStop: {
+    backgroundColor: colors.danger,
+    borderColor: colors.danger,
+  },
+  timerBtnSecondary: {
+    backgroundColor: colors.surface,
+  },
+  timerBtnText: {
+    fontSize: 13,
+    color: colors.textMuted,
+    fontWeight: '600',
+  },
+  timerBtnTextMain: {
+    fontSize: 15,
+    color: colors.white,
+    fontWeight: '700',
+  },
   lapsList: {
-    backgroundColor: '#111111',
+    backgroundColor: colors.surface,
     borderRadius: 14,
-    padding: 16,
+    padding: spacing.lg,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: colors.line,
   },
-  lapsTitle: { fontSize: 14, fontWeight: '600', color: '#D4AF37', marginBottom: 12 },
+  lapsTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.blushDeep,
+    marginBottom: spacing.md,
+  },
   lapItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 8,
+    paddingVertical: spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
+    borderBottomColor: colors.line,
   },
-  lapLabel: { fontSize: 14, color: '#CCCCCC' },
-  lapTime: { fontSize: 14, color: '#D4AF37', fontWeight: '600', fontFamily: 'monospace' },
+  lapLabel: {
+    fontSize: 14,
+    color: colors.text,
+  },
+  lapTime: {
+    fontSize: 14,
+    color: colors.blushDeep,
+    fontWeight: '600',
+    fontFamily: 'monospace',
+  },
 });

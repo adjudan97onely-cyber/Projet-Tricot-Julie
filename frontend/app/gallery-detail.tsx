@@ -8,9 +8,15 @@ import {
   ScrollView,
   Image,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { colors, spacing, radii } from './theme';
+import Header from './components/Header';
+import Badge from './components/Badge';
+import Card from './components/Card';
+import BottomTab from './components/BottomTab';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 const { width } = Dimensions.get('window');
@@ -65,8 +71,9 @@ export default function GalleryDetailScreen() {
   if (isLoading || !item) {
     return (
       <SafeAreaView style={styles.container}>
+        <Header title="Création" back />
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Chargement...</Text>
+          <ActivityIndicator size="large" color={colors.blushDeep} />
         </View>
       </SafeAreaView>
     );
@@ -74,71 +81,69 @@ export default function GalleryDetailScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>{item.title}</Text>
-        <View style={styles.headerRight} />
-      </View>
+      <Header title={item.title} back />
 
-      <ScrollView style={styles.content}>
+      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
         {/* Image */}
         {item.image_base64 ? (
-          <Image source={{ uri: item.image_base64 }} style={styles.itemImage} resizeMode="cover" />
+          <Image
+            source={{ uri: item.image_base64 }}
+            style={styles.itemImage}
+            resizeMode="cover"
+          />
         ) : (
           <View style={styles.imagePlaceholder}>
-            <Ionicons name="image-outline" size={80} color="#D4AF37" />
+            <Ionicons name="image-outline" size={80} color={colors.line} />
           </View>
         )}
 
         {/* Badges */}
         <View style={styles.badgesRow}>
-          <View style={styles.categoryBadge}>
-            <Text style={styles.categoryText}>{CATEGORIES[item.category] || item.category}</Text>
-          </View>
-          {item.featured && (
-            <View style={styles.featuredBadge}>
-              <Ionicons name="star" size={14} color="#0A0A0A" />
-              <Text style={styles.featuredText}>Mis en avant</Text>
-            </View>
-          )}
-          <View style={[styles.availabilityBadge, !item.available && styles.unavailableBadge]}>
-            <Text style={[styles.availabilityText, !item.available && styles.unavailableText]}>
-              {item.available ? 'Disponible' : 'Vendu'}
-            </Text>
-          </View>
+          <Badge label={CATEGORIES[item.category] || item.category} tone="rose" />
+          {item.featured ? (
+            <Badge label="Mis en avant" tone="gold" />
+          ) : null}
+          <Badge
+            label={item.available ? 'Disponible' : 'Vendu'}
+            tone={item.available ? 'sage' : 'neutral'}
+          />
         </View>
 
         {/* Title & Price */}
         <View style={styles.titleSection}>
           <Text style={styles.title}>{item.title}</Text>
-          {item.price && <Text style={styles.price}>{item.price}</Text>}
+          {item.price ? (
+            <Text style={styles.price}>{item.price}</Text>
+          ) : null}
         </View>
 
         {/* Description */}
-        {item.description && (
-          <View style={styles.descriptionSection}>
+        {item.description ? (
+          <Card style={styles.descriptionCard}>
             <Text style={styles.sectionTitle}>Description</Text>
             <Text style={styles.description}>{item.description}</Text>
-          </View>
-        )}
+          </Card>
+        ) : null}
 
         {/* Contact Button */}
-        {item.available && (
+        {item.available ? (
           <TouchableOpacity
             style={styles.contactButton}
-            onPress={() => router.push({
-              pathname: '/contact',
-              params: { itemId: item.id, itemTitle: item.title }
-            })}
+            activeOpacity={0.85}
+            onPress={() =>
+              router.push({
+                pathname: '/contact',
+                params: { itemId: item.id, itemTitle: item.title },
+              })
+            }
           >
-            <Ionicons name="mail-outline" size={22} color="#0A0A0A" />
+            <Ionicons name="mail-outline" size={22} color={colors.white} />
             <Text style={styles.contactButtonText}>Commander / Poser une question</Text>
           </TouchableOpacity>
-        )}
+        ) : null}
       </ScrollView>
+
+      <BottomTab />
     </SafeAreaView>
   );
 }
@@ -146,42 +151,18 @@ export default function GalleryDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.cream,
   },
   loadingContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  loadingText: {
-    color: '#888888',
-    fontSize: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    textAlign: 'center',
-    marginHorizontal: 12,
-  },
-  headerRight: {
-    width: 40,
-  },
   content: {
     flex: 1,
+  },
+  contentContainer: {
+    paddingBottom: spacing.xl,
   },
   itemImage: {
     width: width,
@@ -190,107 +171,60 @@ const styles = StyleSheet.create({
   imagePlaceholder: {
     width: width,
     height: width * 0.75,
-    backgroundColor: '#1A1A1A',
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },
   badgesRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    padding: 16,
-    gap: 8,
-  },
-  categoryBadge: {
-    backgroundColor: '#1A1A1A',
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#D4AF37',
-  },
-  categoryText: {
-    fontSize: 13,
-    color: '#D4AF37',
-  },
-  featuredBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#D4AF37',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    gap: 4,
-  },
-  featuredText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#0A0A0A',
-  },
-  availabilityBadge: {
-    backgroundColor: 'rgba(76, 175, 80, 0.2)',
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  unavailableBadge: {
-    backgroundColor: 'rgba(136, 136, 136, 0.2)',
-  },
-  availabilityText: {
-    fontSize: 13,
-    color: '#4CAF50',
-  },
-  unavailableText: {
-    color: '#888888',
+    padding: spacing.lg,
+    gap: spacing.sm,
   },
   titleSection: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.lg,
   },
   title: {
     fontSize: 26,
     fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 8,
+    color: colors.text,
+    marginBottom: spacing.sm,
   },
   price: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#D4AF37',
+    color: colors.blushDeep,
   },
-  descriptionSection: {
-    padding: 16,
-    backgroundColor: '#1A1A1A',
-    marginHorizontal: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
+  descriptionCard: {
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.lg,
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#D4AF37',
-    marginBottom: 8,
+    fontWeight: '700',
+    color: colors.blushDeep,
+    marginBottom: spacing.sm,
   },
   description: {
     fontSize: 15,
-    color: '#CCCCCC',
+    color: colors.textMuted,
     lineHeight: 24,
   },
   contactButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#D4AF37',
-    marginHorizontal: 16,
-    marginBottom: 24,
-    paddingVertical: 16,
-    borderRadius: 12,
+    backgroundColor: colors.blushDeep,
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.xl,
+    paddingVertical: spacing.lg,
+    borderRadius: radii.md,
+    gap: 10,
   },
   contactButtonText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#0A0A0A',
-    marginLeft: 10,
+    fontWeight: '700',
+    color: colors.white,
   },
 });

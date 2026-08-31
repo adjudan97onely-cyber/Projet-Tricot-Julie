@@ -11,6 +11,11 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { colors, spacing, radii, shadows } from './theme';
+import Header from './components/Header';
+import Badge from './components/Badge';
+import Card from './components/Card';
+import BottomTab from './components/BottomTab';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -27,9 +32,9 @@ interface Tutorial {
 }
 
 const CATEGORIES = [
-  { value: 'all', label: 'Tout', icon: 'grid-outline' },
-  { value: 'base', label: 'Bases', icon: 'book-outline' },
-  { value: 'technique', label: 'Techniques', icon: 'construct-outline' },
+  { value: 'all', label: 'Tout', icon: 'grid-outline' as const },
+  { value: 'base', label: 'Bases', icon: 'book-outline' as const },
+  { value: 'technique', label: 'Techniques', icon: 'construct-outline' as const },
 ];
 
 const TECHNIQUES = [
@@ -48,11 +53,11 @@ export default function TutorialsScreen() {
   const fetchTutorials = async () => {
     try {
       let url = `${BACKEND_URL}/api/tutorials`;
-      const params = [];
+      const params: string[] = [];
       if (selectedCategory !== 'all') params.push(`category=${selectedCategory}`);
       if (selectedTechnique !== 'all') params.push(`technique=${selectedTechnique}`);
       if (params.length > 0) url += '?' + params.join('&');
-      
+
       const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
@@ -74,61 +79,57 @@ export default function TutorialsScreen() {
     Linking.openURL(url);
   };
 
+  const getDifficultyTone = (difficulty: string): 'sage' | 'gold' => {
+    return difficulty === 'débutant' ? 'sage' : 'gold';
+  };
+
   const renderTutorial = (tutorial: Tutorial) => (
     <TouchableOpacity
       key={tutorial.id}
-      style={styles.tutorialCard}
+      activeOpacity={0.85}
       onPress={() => router.push({ pathname: '/tutorial-detail', params: { id: tutorial.id } })}
-      activeOpacity={0.8}
+      style={styles.cardWrapper}
     >
-      <View style={styles.tutorialHeader}>
-        <View style={styles.techniqueBadge}>
-          <Ionicons
-            name={tutorial.technique === 'crochet' ? 'git-branch-outline' : 'color-wand-outline'}
-            size={14}
-            color="#D4AF37"
-          />
-          <Text style={styles.techniqueText}>
-            {tutorial.technique === 'crochet' ? 'Crochet' : 'Tricot'}
-          </Text>
+      <Card>
+        <View style={styles.tutorialHeader}>
+          <View style={styles.tutorialBadges}>
+            <Badge
+              label={tutorial.technique === 'crochet' ? 'Crochet' : 'Tricot'}
+              tone="rose"
+            />
+            <Badge
+              label={tutorial.difficulty}
+              tone={getDifficultyTone(tutorial.difficulty)}
+            />
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
         </View>
-        <View style={[
-          styles.difficultyBadge,
-          { backgroundColor: tutorial.difficulty === 'débutant' ? '#4CAF50' : '#FF9800' }
-        ]}>
-          <Text style={styles.difficultyText}>{tutorial.difficulty}</Text>
+
+        <Text style={styles.tutorialTitle}>{tutorial.title}</Text>
+        <Text style={styles.tutorialDesc} numberOfLines={2}>
+          {tutorial.description}
+        </Text>
+
+        <View style={styles.tutorialFooter}>
+          <TouchableOpacity
+            style={styles.videoButton}
+            onPress={() => openVideo(tutorial.video_url)}
+          >
+            <Ionicons name="logo-youtube" size={18} color="#FF0000" />
+            <Text style={styles.videoButtonText}>Voir vidéo</Text>
+          </TouchableOpacity>
         </View>
-      </View>
-      
-      <Text style={styles.tutorialTitle}>{tutorial.title}</Text>
-      <Text style={styles.tutorialDesc} numberOfLines={2}>{tutorial.description}</Text>
-      
-      <View style={styles.tutorialFooter}>
-        <TouchableOpacity
-          style={styles.videoButton}
-          onPress={() => openVideo(tutorial.video_url)}
-        >
-          <Ionicons name="logo-youtube" size={18} color="#FF0000" />
-          <Text style={styles.videoButtonText}>Voir vidéo</Text>
-        </TouchableOpacity>
-        <Ionicons name="chevron-forward" size={20} color="#D4AF37" />
-      </View>
+      </Card>
     </TouchableOpacity>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Tutoriels</Text>
-          <Text style={styles.headerSubtitle}>Bases & Techniques</Text>
-        </View>
-        <View style={styles.headerRight} />
-      </View>
+      <Header
+        title="Tutoriels"
+        subtitle="Bases & Techniques"
+        back
+      />
 
       {/* Technique Filter */}
       <View style={styles.techniqueFilterRow}>
@@ -154,7 +155,11 @@ export default function TutorialsScreen() {
       </View>
 
       {/* Category Filter */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.categoryScroll}
+      >
         <View style={styles.categoryContainer}>
           {CATEGORIES.map((cat) => (
             <TouchableOpacity
@@ -166,9 +171,9 @@ export default function TutorialsScreen() {
               onPress={() => setSelectedCategory(cat.value)}
             >
               <Ionicons
-                name={cat.icon as any}
+                name={cat.icon}
                 size={16}
-                color={selectedCategory === cat.value ? '#0A0A0A' : '#D4AF37'}
+                color={selectedCategory === cat.value ? colors.white : colors.blushDeep}
               />
               <Text
                 style={[
@@ -187,11 +192,11 @@ export default function TutorialsScreen() {
       <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#D4AF37" />
+            <ActivityIndicator size="large" color={colors.blushDeep} />
           </View>
         ) : tutorials.length === 0 ? (
           <View style={styles.emptyState}>
-            <Ionicons name="school-outline" size={48} color="#333" />
+            <Ionicons name="school-outline" size={48} color={colors.line} />
             <Text style={styles.emptyText}>Aucun tutoriel trouvé</Text>
           </View>
         ) : (
@@ -203,120 +208,145 @@ export default function TutorialsScreen() {
           </>
         )}
       </ScrollView>
+
+      <BottomTab />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0A0A0A' },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
+  container: {
+    flex: 1,
+    backgroundColor: colors.cream,
   },
-  backButton: { padding: 8 },
-  headerCenter: { alignItems: 'center' },
-  headerTitle: { fontSize: 18, fontWeight: '600', color: '#FFFFFF' },
-  headerSubtitle: { fontSize: 11, color: '#D4AF37', marginTop: 2 },
-  headerRight: { width: 40 },
   techniqueFilterRow: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 8,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    gap: spacing.sm,
   },
   techniqueFilterButton: {
     flex: 1,
     paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: '#1A1A1A',
+    borderRadius: radii.sm,
+    backgroundColor: colors.surface,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderWidth: 1.5,
+    borderColor: colors.line,
   },
   techniqueFilterActive: {
-    backgroundColor: '#D4AF37',
-    borderColor: '#D4AF37',
+    backgroundColor: colors.blushDeep,
+    borderColor: colors.blushDeep,
   },
-  techniqueFilterText: { fontSize: 14, color: '#D4AF37', fontWeight: '500' },
-  techniqueFilterTextActive: { color: '#0A0A0A', fontWeight: '600' },
-  categoryScroll: { maxHeight: 50 },
+  techniqueFilterText: {
+    fontSize: 14,
+    color: colors.blushDeep,
+    fontWeight: '600',
+  },
+  techniqueFilterTextActive: {
+    color: colors.white,
+    fontWeight: '700',
+  },
+  categoryScroll: {
+    maxHeight: 52,
+  },
   categoryContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 12,
-    gap: 8,
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.sm,
+    gap: spacing.sm,
   },
   categoryButton: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#1A1A1A',
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
+    paddingVertical: spacing.sm,
+    borderRadius: radii.round,
+    backgroundColor: colors.surface,
+    borderWidth: 1.5,
+    borderColor: colors.line,
     gap: 6,
   },
   categoryButtonActive: {
-    backgroundColor: '#D4AF37',
-    borderColor: '#D4AF37',
+    backgroundColor: colors.blushDeep,
+    borderColor: colors.blushDeep,
   },
-  categoryText: { fontSize: 13, color: '#D4AF37' },
-  categoryTextActive: { color: '#0A0A0A', fontWeight: '600' },
-  content: { flex: 1 },
-  contentContainer: { padding: 16 },
-  loadingContainer: { alignItems: 'center', paddingVertical: 40 },
-  emptyState: { alignItems: 'center', paddingVertical: 40 },
-  emptyText: { fontSize: 14, color: '#888', marginTop: 12 },
-  resultsCount: { fontSize: 13, color: '#888', marginBottom: 12 },
-  tutorialCard: {
-    backgroundColor: '#1A1A1A',
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
+  categoryText: {
+    fontSize: 13,
+    color: colors.blushDeep,
+    fontWeight: '500',
+  },
+  categoryTextActive: {
+    color: colors.white,
+    fontWeight: '700',
+  },
+  content: {
+    flex: 1,
+  },
+  contentContainer: {
+    padding: spacing.lg,
+    paddingBottom: spacing.xl,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: colors.textMuted,
+    marginTop: spacing.md,
+  },
+  resultsCount: {
+    fontSize: 13,
+    color: colors.textMuted,
+    marginBottom: spacing.md,
+  },
+  cardWrapper: {
+    marginBottom: spacing.md,
   },
   tutorialHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    alignItems: 'flex-start',
+    marginBottom: spacing.sm,
   },
-  techniqueBadge: {
+  tutorialBadges: {
     flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-    gap: 4,
+    gap: spacing.sm,
+    flexWrap: 'wrap',
   },
-  techniqueText: { fontSize: 12, color: '#D4AF37' },
-  difficultyBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
+  tutorialTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 6,
   },
-  difficultyText: { fontSize: 12, color: '#FFFFFF', fontWeight: '600' },
-  tutorialTitle: { fontSize: 17, fontWeight: '600', color: '#FFFFFF', marginBottom: 6 },
-  tutorialDesc: { fontSize: 13, color: '#AAAAAA', lineHeight: 20 },
+  tutorialDesc: {
+    fontSize: 13,
+    color: colors.textMuted,
+    lineHeight: 20,
+  },
   tutorialFooter: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    marginTop: 14,
-    paddingTop: 12,
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
     borderTopWidth: 1,
-    borderTopColor: '#2A2A2A',
+    borderTopColor: colors.line,
   },
   videoButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
   },
-  videoButtonText: { fontSize: 13, color: '#FFFFFF' },
+  videoButtonText: {
+    fontSize: 13,
+    color: colors.text,
+    fontWeight: '500',
+  },
 });

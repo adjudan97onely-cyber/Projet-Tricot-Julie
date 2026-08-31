@@ -11,6 +11,11 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { colors, spacing, radii } from './theme';
+import Header from './components/Header';
+import Badge from './components/Badge';
+import Card from './components/Card';
+import BottomTab from './components/BottomTab';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -53,44 +58,37 @@ export default function TutorialDetailScreen() {
   if (isLoading || !tutorial) {
     return (
       <SafeAreaView style={styles.container}>
+        <Header title="Tutoriel" back />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#D4AF37" />
+          <ActivityIndicator size="large" color={colors.blushDeep} />
         </View>
       </SafeAreaView>
     );
   }
 
+  const getDifficultyTone = (difficulty: string): 'sage' | 'gold' => {
+    return difficulty === 'débutant' ? 'sage' : 'gold';
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>{tutorial.title}</Text>
-        <View style={styles.headerRight} />
-      </View>
+      <Header
+        title={tutorial.title}
+        back
+      />
 
-      <ScrollView style={styles.content}>
-        {/* Title & Description */}
+      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+        {/* Title & Badges */}
         <View style={styles.titleSection}>
           <View style={styles.badgesRow}>
-            <View style={styles.techniqueBadge}>
-              <Ionicons
-                name={tutorial.technique === 'crochet' ? 'git-branch-outline' : 'color-wand-outline'}
-                size={14}
-                color="#D4AF37"
-              />
-              <Text style={styles.techniqueText}>
-                {tutorial.technique === 'crochet' ? 'Crochet' : 'Tricot'}
-              </Text>
-            </View>
-            <View style={[
-              styles.difficultyBadge,
-              { backgroundColor: tutorial.difficulty === 'débutant' ? '#4CAF50' : '#FF9800' }
-            ]}>
-              <Text style={styles.difficultyText}>{tutorial.difficulty}</Text>
-            </View>
+            <Badge
+              label={tutorial.technique === 'crochet' ? 'Crochet' : 'Tricot'}
+              tone="rose"
+            />
+            <Badge
+              label={tutorial.difficulty}
+              tone={getDifficultyTone(tutorial.difficulty)}
+            />
           </View>
           <Text style={styles.title}>{tutorial.title}</Text>
           <Text style={styles.description}>{tutorial.description}</Text>
@@ -100,27 +98,28 @@ export default function TutorialDetailScreen() {
         <TouchableOpacity
           style={styles.videoButton}
           onPress={() => Linking.openURL(tutorial.video_url)}
+          activeOpacity={0.8}
         >
           <Ionicons name="logo-youtube" size={24} color="#FF0000" />
           <Text style={styles.videoButtonText}>Voir les tutoriels vidéo sur YouTube</Text>
-          <Ionicons name="open-outline" size={18} color="#888" />
+          <Ionicons name="open-outline" size={18} color={colors.textMuted} />
         </TouchableOpacity>
 
         {/* Steps */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Étapes</Text>
-          {tutorial.steps.map((step, index) => (
-            <View key={index} style={styles.stepCard}>
-              {step ? (
-                <>
+          {tutorial.steps
+            .filter((step) => step && step.trim().length > 0)
+            .map((step, index) => (
+              <Card key={index} style={styles.stepCard}>
+                <View style={styles.stepInner}>
                   <View style={styles.stepNumber}>
                     <Text style={styles.stepNumberText}>{index + 1}</Text>
                   </View>
                   <Text style={styles.stepText}>{step}</Text>
-                </>
-              ) : null}
-            </View>
-          )).filter((_, i) => tutorial.steps[i])}
+                </View>
+              </Card>
+            ))}
         </View>
 
         {/* Tips */}
@@ -128,7 +127,7 @@ export default function TutorialDetailScreen() {
           <Text style={styles.sectionTitle}>Astuces</Text>
           {tutorial.tips.map((tip, index) => (
             <View key={index} style={styles.tipCard}>
-              <Ionicons name="bulb" size={18} color="#D4AF37" />
+              <Ionicons name="bulb" size={18} color={colors.gold} />
               <Text style={styles.tipText}>{tip}</Text>
             </View>
           ))}
@@ -137,107 +136,146 @@ export default function TutorialDetailScreen() {
         {/* Ask AI */}
         <TouchableOpacity
           style={styles.aiButton}
-          onPress={() => router.push({
-            pathname: '/chat',
-            params: { question: `J'ai besoin d'aide pour comprendre "${tutorial.title}". Peux-tu m'expliquer ?` }
-          })}
+          activeOpacity={0.85}
+          onPress={() =>
+            router.push({
+              pathname: '/chat',
+              params: {
+                question: `J'ai besoin d'aide pour comprendre "${tutorial.title}". Peux-tu m'expliquer ?`,
+              },
+            })
+          }
         >
-          <Ionicons name="sparkles" size={22} color="#0A0A0A" />
+          <Ionicons name="sparkles" size={22} color={colors.white} />
           <Text style={styles.aiButtonText}>Demander à l'assistant IA</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      <BottomTab />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0A0A0A' },
-  loadingContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
+  container: {
+    flex: 1,
+    backgroundColor: colors.cream,
   },
-  backButton: { padding: 8 },
-  headerTitle: { flex: 1, fontSize: 16, fontWeight: '600', color: '#FFFFFF', textAlign: 'center', marginHorizontal: 12 },
-  headerRight: { width: 40 },
-  content: { flex: 1 },
-  titleSection: { padding: 20 },
-  badgesRow: { flexDirection: 'row', gap: 10, marginBottom: 12 },
-  techniqueBadge: {
-    flexDirection: 'row',
+  loadingContainer: {
+    flex: 1,
     alignItems: 'center',
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 10,
-    gap: 6,
+    justifyContent: 'center',
   },
-  techniqueText: { fontSize: 13, color: '#D4AF37' },
-  difficultyBadge: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10 },
-  difficultyText: { fontSize: 13, color: '#FFFFFF', fontWeight: '600' },
-  title: { fontSize: 24, fontWeight: '700', color: '#FFFFFF', marginBottom: 10 },
-  description: { fontSize: 15, color: '#AAAAAA', lineHeight: 24 },
+  content: {
+    flex: 1,
+  },
+  contentContainer: {
+    paddingBottom: spacing.xl,
+  },
+  titleSection: {
+    padding: spacing.xl,
+  },
+  badgesRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 10,
+  },
+  description: {
+    fontSize: 15,
+    color: colors.textMuted,
+    lineHeight: 24,
+  },
   videoButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1A1A1A',
-    marginHorizontal: 16,
-    padding: 16,
-    borderRadius: 12,
+    backgroundColor: colors.surface,
+    marginHorizontal: spacing.lg,
+    padding: spacing.lg,
+    borderRadius: radii.md,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
-    gap: 12,
+    borderColor: colors.line,
+    gap: spacing.md,
   },
-  videoButtonText: { flex: 1, fontSize: 14, color: '#FFFFFF' },
-  section: { padding: 16 },
-  sectionTitle: { fontSize: 18, fontWeight: '600', color: '#D4AF37', marginBottom: 14 },
+  videoButtonText: {
+    flex: 1,
+    fontSize: 14,
+    color: colors.text,
+    fontWeight: '500',
+  },
+  section: {
+    padding: spacing.lg,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.blushDeep,
+    marginBottom: spacing.md,
+  },
   stepCard: {
+    marginBottom: spacing.sm,
+  },
+  stepInner: {
     flexDirection: 'row',
-    backgroundColor: '#1A1A1A',
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
+    alignItems: 'flex-start',
   },
   stepNumber: {
     width: 28,
     height: 28,
-    borderRadius: 14,
-    backgroundColor: '#D4AF37',
+    borderRadius: radii.round,
+    backgroundColor: colors.blushDeep,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: spacing.md,
+    flexShrink: 0,
   },
-  stepNumberText: { fontSize: 14, fontWeight: '700', color: '#0A0A0A' },
-  stepText: { flex: 1, fontSize: 14, color: '#CCCCCC', lineHeight: 22 },
+  stepNumberText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.white,
+  },
+  stepText: {
+    flex: 1,
+    fontSize: 14,
+    color: colors.text,
+    lineHeight: 22,
+  },
   tipCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 10,
+    backgroundColor: colors.goldSoft,
+    borderRadius: radii.md,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
     borderWidth: 1,
-    borderColor: '#D4AF37',
-    gap: 12,
+    borderColor: colors.gold,
+    gap: spacing.md,
   },
-  tipText: { flex: 1, fontSize: 14, color: '#CCCCCC', lineHeight: 22 },
+  tipText: {
+    flex: 1,
+    fontSize: 14,
+    color: colors.text,
+    lineHeight: 22,
+  },
   aiButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#D4AF37',
-    marginHorizontal: 16,
-    marginBottom: 24,
-    paddingVertical: 16,
-    borderRadius: 12,
+    backgroundColor: colors.blushDeep,
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.xl,
+    paddingVertical: spacing.lg,
+    borderRadius: radii.md,
     gap: 10,
   },
-  aiButtonText: { fontSize: 16, fontWeight: '600', color: '#0A0A0A' },
+  aiButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.white,
+  },
 });
