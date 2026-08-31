@@ -121,7 +121,7 @@ export default function HomeScreen() {
           {/* Hero */}
           <View style={styles.hero}>
             <LinearGradient
-              colors={['#F4C9D1', '#F8E5D1', '#DCE8D3']}
+              colors={['#1A1A1A', '#2A2A1A', '#1A2A1A']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.heroGradient}

@@ -1,20 +1,20 @@
 export const colors = {
-  cream: '#FFF8F0',
-  surface: '#FEFEFE',
-  blush: '#FFB6C1',
-  blushSoft: '#FFE7EB',
-  blushDeep: '#D9788B',
-  gold: '#C9A96E',
-  goldSoft: '#F2E6CF',
-  sage: '#9CAF88',
-  sageSoft: '#E7EFE0',
-  cocoa: '#4A3831',
-  text: '#3E312D',
-  textMuted: '#806F68',
-  line: '#EDE1D8',
+  cream: '#0A0A0A',
+  surface: '#1A1A1A',
+  blush: '#D4AF37',
+  blushSoft: 'rgba(212, 175, 55, 0.1)',
+  blushDeep: '#D4AF37',
+  gold: '#D4AF37',
+  goldSoft: 'rgba(212, 175, 55, 0.1)',
+  sage: '#4CAF50',
+  sageSoft: 'rgba(76, 175, 80, 0.1)',
+  cocoa: '#FFFFFF',
+  text: '#FFFFFF',
+  textMuted: '#888888',
+  line: '#2A2A2A',
   white: '#FFFFFF',
-  danger: '#B95B68',
-  overlay: 'rgba(62, 49, 45, 0.42)',
+  danger: '#FF4444',
+  overlay: 'rgba(0, 0, 0, 0.75)',
 } as const;
 
 export const spacing = {
@@ -36,16 +36,16 @@ export const radii = {
 } as const;
 
 export const fonts = {
-  display: 'Georgia',
+  display: undefined,
   body: undefined,
 } as const;
 
 export const shadows = {
   soft: {
-    shadowColor: '#6B4C42',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.1,
-    shadowRadius: 14,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
     elevation: 3,
   },
 } as const;
