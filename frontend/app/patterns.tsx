@@ -6,16 +6,17 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
-  Dimensions,
   ActivityIndicator,
   Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import BottomTab from './components/BottomTab';
+import Header from './components/Header';
+import Badge from './components/Badge';
+import { colors, fonts, radii, shadows, spacing, layout } from './theme';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
-const { width } = Dimensions.get('window');
 
 interface Pattern {
   id: string;
@@ -28,13 +29,19 @@ interface Pattern {
   image_url: string;
 }
 
-const TECHNIQUES = [
+interface FilterOption {
+  value: string;
+  label: string;
+  icon?: keyof typeof Ionicons.glyphMap;
+}
+
+const TECHNIQUES: FilterOption[] = [
   { value: 'all', label: 'Tout' },
   { value: 'aiguilles', label: 'Aiguilles', icon: 'color-wand-outline' },
   { value: 'crochet', label: 'Crochet', icon: 'git-branch-outline' },
 ];
 
-const CATEGORIES = [
+const CATEGORIES: FilterOption[] = [
   { value: 'all', label: 'Tous', icon: 'grid-outline' },
   { value: 'bonnet', label: 'Bonnets', icon: 'happy-outline' },
   { value: 'echarpe', label: 'Écharpes', icon: 'resize-outline' },
@@ -48,18 +55,24 @@ const CATEGORIES = [
   { value: 'accessoire', label: 'Accessoires', icon: 'diamond-outline' },
 ];
 
-const DIFFICULTY_COLORS: Record<string, string> = {
-  'débutant': '#4CAF50',
-  'intermédiaire': '#FF9800',
-  'avancé': '#F44336',
+type DifficultyTone = 'sage' | 'gold' | 'rose';
+
+const DIFFICULTY_TONE: Record<string, DifficultyTone> = {
+  'débutant': 'sage',
+  'intermédiaire': 'gold',
+  'avancé': 'rose',
 };
 
-const CATEGORY_ICONS: Record<string, string> = {
+const CATEGORY_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
   'bonnet': 'happy-outline',
   'echarpe': 'resize-outline',
   'pull': 'shirt-outline',
+  'robe': 'woman-outline',
+  'top': 'sunny-outline',
+  'maillot': 'water-outline',
   'couverture': 'bed-outline',
   'chaussettes': 'footsteps-outline',
+  'bebe': 'heart-outline',
   'accessoire': 'diamond-outline',
 };
 
@@ -70,112 +83,101 @@ export default function PatternsScreen() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTechnique, setSelectedTechnique] = useState('all');
 
-  const fetchPatterns = async () => {
+  useEffect(() => {
+    setIsLoading(true);
+    fetchPatterns();
+  }, [selectedCategory, selectedTechnique]);
+
+  async function fetchPatterns() {
     try {
       let url = `${BACKEND_URL}/api/patterns`;
-      const params = [];
+      const params: string[] = [];
       if (selectedCategory !== 'all') params.push(`category=${selectedCategory}`);
       if (selectedTechnique !== 'all') params.push(`technique=${selectedTechnique}`);
       if (params.length > 0) url += '?' + params.join('&');
-      
+
       const response = await fetch(url);
       if (response.ok) {
-        const data = await response.json();
-        setPatterns(data);
+        setPatterns(await response.json());
       }
     } catch (error) {
       console.error('Error fetching patterns:', error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
-  useEffect(() => {
-    setIsLoading(true);
-    fetchPatterns();
-  }, [selectedCategory, selectedTechnique]);
-
-  const renderPatternCard = (pattern: Pattern) => {
+  function renderPatternCard(pattern: Pattern) {
     const iconName = CATEGORY_ICONS[pattern.category] || 'cube-outline';
-    const difficultyColor = DIFFICULTY_COLORS[pattern.difficulty] || '#888888';
+    const difficultyTone = DIFFICULTY_TONE[pattern.difficulty] || 'neutral';
     const hasImage = pattern.image_url && pattern.image_url.startsWith('http');
 
     return (
       <TouchableOpacity
         key={pattern.id}
-        style={styles.patternCard}
+        style={styles.card}
+        activeOpacity={0.85}
         onPress={() => router.push({ pathname: '/pattern-detail', params: { id: pattern.id } })}
-        activeOpacity={0.8}
       >
-        <View style={styles.patternImageContainer}>
+        {/* Icône / Image */}
+        <View style={styles.cardImage}>
           {hasImage ? (
-            <Image 
-              source={{ uri: pattern.image_url }} 
-              style={styles.patternImage}
-              resizeMode="cover"
-            />
+            <Image source={{ uri: pattern.image_url }} style={styles.cardPhoto} resizeMode="cover" />
           ) : (
-            <View style={styles.patternIconFallback}>
-              <Ionicons name={iconName as any} size={40} color="#D4AF37" />
+            <View style={styles.cardIconFallback}>
+              <Ionicons name={iconName} size={32} color={colors.blushDeep} />
             </View>
           )}
         </View>
-        <View style={styles.patternInfo}>
-          <Text style={styles.patternName}>{pattern.name}</Text>
-          <Text style={styles.patternDescription} numberOfLines={2}>
+
+        {/* Infos */}
+        <View style={styles.cardInfo}>
+          <Text style={styles.cardName}>{pattern.name}</Text>
+          <Text style={styles.cardDesc} numberOfLines={2}>
             {pattern.description}
           </Text>
-          <View style={styles.patternMeta}>
-            <View style={[styles.difficultyBadge, { backgroundColor: difficultyColor }]}>
-              <Text style={styles.difficultyText}>{pattern.difficulty}</Text>
-            </View>
+          <View style={styles.cardMeta}>
+            <Badge label={pattern.difficulty} tone={difficultyTone} />
             <View style={styles.timeBadge}>
-              <Ionicons name="time-outline" size={14} color="#888888" />
+              <Ionicons name="time-outline" size={13} color={colors.textMuted} />
               <Text style={styles.timeText}>{pattern.estimated_time}</Text>
             </View>
           </View>
         </View>
-        <Ionicons name="chevron-forward" size={24} color="#D4AF37" style={styles.arrowIcon} />
+
+        <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
       </TouchableOpacity>
     );
-  };
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Patrons & Recettes</Text>
-          <Text style={styles.headerSubtitle}>Tout ce qu'il faut pour chaque projet</Text>
-        </View>
-        <View style={styles.headerRight} />
-      </View>
+    <SafeAreaView style={styles.page}>
+      <Header title="Patrons & Recettes" subtitle="Tout ce qu'il faut pour chaque projet" back />
 
-      {/* Technique Filter (Aiguilles / Crochet) */}
-      <View style={styles.techniqueFilterRow}>
+      {/* Filtre technique (Aiguilles / Crochet) */}
+      <View style={styles.techniqueRow}>
         {TECHNIQUES.map((tech) => (
           <TouchableOpacity
             key={tech.value}
             style={[
-              styles.techniqueFilterButton,
-              selectedTechnique === tech.value && styles.techniqueFilterActive,
+              styles.techniqueBtn,
+              selectedTechnique === tech.value && styles.techniqueBtnActive,
             ]}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: selectedTechnique === tech.value }}
             onPress={() => setSelectedTechnique(tech.value)}
           >
             {tech.icon && (
               <Ionicons
-                name={tech.icon as any}
-                size={16}
-                color={selectedTechnique === tech.value ? '#0A0A0A' : '#D4AF37'}
+                name={tech.icon}
+                size={15}
+                color={selectedTechnique === tech.value ? colors.white : colors.blushDeep}
               />
             )}
             <Text
               style={[
-                styles.techniqueFilterText,
-                selectedTechnique === tech.value && styles.techniqueFilterTextActive,
+                styles.techniqueText,
+                selectedTechnique === tech.value && styles.techniqueTextActive,
               ]}
             >
               {tech.label}
@@ -184,23 +186,31 @@ export default function PatternsScreen() {
         ))}
       </View>
 
-      {/* Category Filter */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
-        <View style={styles.categoryContainer}>
+      {/* Filtre catégorie */}
+      <View style={styles.categoryWrap}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoryRow}
+        >
           {CATEGORIES.map((cat) => (
             <TouchableOpacity
               key={cat.value}
               style={[
-                styles.categoryButton,
-                selectedCategory === cat.value && styles.categoryButtonActive,
+                styles.categoryBtn,
+                selectedCategory === cat.value && styles.categoryBtnActive,
               ]}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: selectedCategory === cat.value }}
               onPress={() => setSelectedCategory(cat.value)}
             >
-              <Ionicons
-                name={cat.icon as any}
-                size={16}
-                color={selectedCategory === cat.value ? '#0A0A0A' : '#D4AF37'}
-              />
+              {cat.icon && (
+                <Ionicons
+                  name={cat.icon}
+                  size={14}
+                  color={selectedCategory === cat.value ? colors.white : colors.blushDeep}
+                />
+              )}
               <Text
                 style={[
                   styles.categoryText,
@@ -211,252 +221,223 @@ export default function PatternsScreen() {
               </Text>
             </TouchableOpacity>
           ))}
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
 
-      {/* Patterns List */}
-      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+      {/* Liste des patrons */}
+      <ScrollView
+        style={styles.list}
+        contentContainerStyle={styles.listContent}
+      >
         {isLoading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#D4AF37" />
-            <Text style={styles.loadingText}>Chargement des patrons...</Text>
+          <View style={styles.center}>
+            <ActivityIndicator size="large" color={colors.blushDeep} />
+            <Text style={styles.centerText}>Chargement des patrons...</Text>
           </View>
         ) : patterns.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Ionicons name="book-outline" size={64} color="#333333" />
+          <View style={styles.center}>
+            <View style={styles.emptyIcon}>
+              <Text style={styles.emptyEmoji}>🧶</Text>
+            </View>
             <Text style={styles.emptyTitle}>Aucun patron</Text>
-            <Text style={styles.emptyText}>Aucun patron dans cette catégorie.</Text>
+            <Text style={styles.centerText}>Aucun patron dans cette catégorie.</Text>
           </View>
         ) : (
           <>
-            <Text style={styles.resultsCount}>
-              {patterns.length} patron{patterns.length > 1 ? 's' : ''} disponible{patterns.length > 1 ? 's' : ''}
+            <Text style={styles.count}>
+              {patterns.length} patron{patterns.length > 1 ? 's' : ''} disponible
+              {patterns.length > 1 ? 's' : ''}
             </Text>
             {patterns.map(renderPatternCard)}
           </>
         )}
       </ScrollView>
+
       <BottomTab />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  page: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.cream,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerCenter: {
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  headerSubtitle: {
-    fontSize: 11,
-    color: '#D4AF37',
-    marginTop: 2,
-  },
-  headerRight: {
-    width: 40,
-  },
-  techniqueFilterRow: {
+
+  /* Technique filter */
+  techniqueRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    gap: 12,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    gap: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
+    borderBottomColor: colors.line,
   },
-  techniqueFilterButton: {
+  techniqueBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 25,
-    backgroundColor: '#1A1A1A',
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.sm,
+    borderRadius: radii.round,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#D4AF37',
-    gap: 8,
+    borderColor: colors.line,
+    gap: spacing.sm,
   },
-  techniqueFilterActive: {
-    backgroundColor: '#D4AF37',
-    borderColor: '#D4AF37',
+  techniqueBtnActive: {
+    backgroundColor: colors.blushDeep,
+    borderColor: colors.blushDeep,
   },
-  techniqueFilterText: {
+  techniqueText: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#D4AF37',
-  },
-  techniqueFilterTextActive: {
-    color: '#0A0A0A',
     fontWeight: '600',
+    color: colors.blushDeep,
   },
-  categoryScroll: {
-    maxHeight: 56,
+  techniqueTextActive: {
+    color: colors.white,
+    fontWeight: '700',
+  },
+
+  /* Category filter */
+  categoryWrap: {
+    maxHeight: 52,
     borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
+    borderBottomColor: colors.line,
   },
-  categoryContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    gap: 8,
+  categoryRow: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    gap: spacing.sm,
   },
-  categoryButton: {
+  categoryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#1A1A1A',
+    paddingVertical: spacing.sm,
+    borderRadius: radii.round,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
-    gap: 6,
+    borderColor: colors.line,
+    gap: 5,
   },
-  categoryButtonActive: {
-    backgroundColor: '#D4AF37',
-    borderColor: '#D4AF37',
+  categoryBtnActive: {
+    backgroundColor: colors.blushDeep,
+    borderColor: colors.blushDeep,
   },
   categoryText: {
     fontSize: 13,
-    color: '#D4AF37',
+    color: colors.blushDeep,
+    fontWeight: '600',
   },
   categoryTextActive: {
-    color: '#0A0A0A',
-    fontWeight: '600',
+    color: colors.white,
+    fontWeight: '700',
   },
-  content: {
+
+  /* List */
+  list: {
     flex: 1,
   },
-  contentContainer: {
-    padding: 16,
+  listContent: {
+    padding: layout.pagePadding,
+    paddingBottom: layout.bottomTabSpace,
+    maxWidth: layout.maxContentWidth,
+    width: '100%',
+    alignSelf: 'center',
   },
-  resultsCount: {
+  count: {
     fontSize: 13,
-    color: '#888888',
-    marginBottom: 16,
+    color: colors.textMuted,
+    marginBottom: spacing.md,
   },
-  loadingContainer: {
-    alignItems: 'center',
-    paddingVertical: 60,
-  },
-  loadingText: {
-    fontSize: 14,
-    color: '#888888',
-    marginTop: 12,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: 60,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginTop: 16,
-  },
-  emptyText: {
-    fontSize: 14,
-    color: '#888888',
-    marginTop: 8,
-  },
-  patternCard: {
+
+  /* Pattern card */
+  card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1A1A1A',
-    borderRadius: 16,
-    padding: 12,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+    ...shadows.soft,
   },
-  patternImageContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 12,
+  cardImage: {
+    width: 76,
+    height: 76,
+    borderRadius: radii.sm,
     overflow: 'hidden',
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-    borderWidth: 1,
-    borderColor: '#D4AF37',
+    backgroundColor: colors.blushSoft,
   },
-  patternImage: {
+  cardPhoto: {
     width: '100%',
     height: '100%',
   },
-  patternIconFallback: {
+  cardIconFallback: {
     width: '100%',
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  patternIconContainer: {
-    width: 70,
-    height: 70,
-    borderRadius: 12,
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#D4AF37',
-  },
-  patternInfo: {
+  cardInfo: {
     flex: 1,
-    marginLeft: 14,
-    marginRight: 8,
+    marginLeft: spacing.md,
+    marginRight: spacing.sm,
   },
-  patternName: {
+  cardName: {
+    fontFamily: fonts.display,
     fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginBottom: 4,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 3,
   },
-  patternDescription: {
+  cardDesc: {
     fontSize: 12,
-    color: '#AAAAAA',
-    lineHeight: 18,
-    marginBottom: 8,
+    color: colors.textMuted,
+    lineHeight: 17,
+    marginBottom: spacing.sm,
   },
-  patternMeta: {
+  cardMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-  },
-  difficultyBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 10,
-  },
-  difficultyText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    gap: spacing.sm,
   },
   timeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 3,
   },
   timeText: {
     fontSize: 11,
-    color: '#888888',
+    color: colors.textMuted,
   },
-  arrowIcon: {
-    marginLeft: 'auto',
+
+  /* Empty / Loading */
+  center: {
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  centerText: {
+    fontSize: 14,
+    color: colors.textMuted,
+    marginTop: spacing.md,
+  },
+  emptyIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.blushSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyEmoji: {
+    fontSize: 40,
+  },
+  emptyTitle: {
+    fontFamily: fonts.display,
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.text,
+    marginTop: spacing.lg,
   },
 });

@@ -16,6 +16,10 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { submitFeedback, getFeedbackCounts, getComments } from './services/supabaseService';
+import Header from './components/Header';
+import Badge from './components/Badge';
+import Card from './components/Card';
+import { colors, fonts, radii, shadows, spacing, layout } from './theme';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -27,80 +31,53 @@ interface Pattern {
   estimated_time: string;
   description: string;
   materials: {
-    yarn: {
-      type: string;
-      weight: string;
-      quantity: string;
-      recommended: string;
-    };
-    needles: {
-      type: string;
-      size: string;
-      cable_length: string;
-    };
+    yarn: { type: string; weight: string; quantity: string; recommended: string };
+    needles: { type: string; size: string; cable_length: string };
     accessories: string[];
   };
   gauge: string;
   sizes: Record<string, string>;
-  steps: Array<{
-    step: number;
-    title: string;
-    instruction: string;
-  }>;
+  steps: Array<{ step: number; title: string; instruction: string }>;
   tips: string[];
   image_url: string;
 }
 
-const DIFFICULTY_COLORS: Record<string, string> = {
-  'débutant': '#4CAF50',
-  'intermédiaire': '#FF9800',
-  'avancé': '#F44336',
+type DifficultyTone = 'sage' | 'gold' | 'rose';
+const DIFFICULTY_TONE: Record<string, DifficultyTone> = {
+  'débutant': 'sage',
+  'intermédiaire': 'gold',
+  'avancé': 'rose',
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
-  'bonnet': 'Bonnet',
-  'echarpe': 'Écharpe',
-  'pull': 'Vêtement',
-  'couverture': 'Couverture',
-  'chaussettes': 'Chaussettes',
-  'accessoire': 'Accessoire',
+  bonnet: 'Bonnet', echarpe: 'Écharpe', pull: 'Vêtement',
+  couverture: 'Couverture', chaussettes: 'Chaussettes', accessoire: 'Accessoire',
+  robe: 'Robe', top: 'Top', maillot: 'Maillot', bebe: 'Bébé',
 };
 
-// Function to open Amazon search for yarn
-const openAmazonSearch = (searchTerm: string) => {
-  // Clean and format the search term for Amazon France
-  const cleanedTerm = searchTerm
-    .replace(/,/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-  const encodedSearch = encodeURIComponent(`laine tricot ${cleanedTerm}`);
-  const amazonUrl = `https://www.amazon.fr/s?k=${encodedSearch}`;
-  Linking.openURL(amazonUrl);
-};
+/* ─── External store links ─── */
 
-// Function to open Amazon search for needles
-const openAmazonNeedleSearch = (needleType: string, needleSize: string) => {
-  const searchTerm = `${needleType} ${needleSize} tricot`;
-  const encodedSearch = encodeURIComponent(searchTerm);
-  const amazonUrl = `https://www.amazon.fr/s?k=${encodedSearch}`;
-  Linking.openURL(amazonUrl);
-};
+function openAmazonSearch(term: string) {
+  const q = encodeURIComponent(`laine tricot ${term.replace(/,/g, ' ').trim()}`);
+  Linking.openURL(`https://www.amazon.fr/s?k=${q}`);
+}
 
-// Function to open Hobbii search
-const openHobbiiSearch = (searchTerm: string) => {
-  const cleanedTerm = searchTerm.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
-  const encodedSearch = encodeURIComponent(cleanedTerm);
-  const hobbiiUrl = `https://hobbii.fr/catalogsearch/result/?q=${encodedSearch}`;
-  Linking.openURL(hobbiiUrl);
-};
+function openAmazonNeedleSearch(type: string, size: string) {
+  const q = encodeURIComponent(`${type} ${size} tricot`);
+  Linking.openURL(`https://www.amazon.fr/s?k=${q}`);
+}
 
-// Function to open Lou Passion
-const openLouPassionSearch = (searchTerm: string) => {
-  const cleanedTerm = searchTerm.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
-  const encodedSearch = encodeURIComponent(cleanedTerm);
-  const louPassionUrl = `https://loupassion.com/?s=${encodedSearch}&post_type=product`;
-  Linking.openURL(louPassionUrl);
-};
+function openHobbiiSearch(term: string) {
+  const q = encodeURIComponent(term.replace(/,/g, ' ').trim());
+  Linking.openURL(`https://hobbii.fr/catalogsearch/result/?q=${q}`);
+}
+
+function openLouPassionSearch(term: string) {
+  const q = encodeURIComponent(term.replace(/,/g, ' ').trim());
+  Linking.openURL(`https://loupassion.com/?s=${q}&post_type=product`);
+}
+
+/* ─── Main screen ─── */
 
 export default function PatternDetailScreen() {
   const router = useRouter();
@@ -122,21 +99,21 @@ export default function PatternDetailScreen() {
     }
   }, [id]);
 
-  const loadFeedback = async () => {
+  async function loadFeedback() {
     if (!id) return;
     const [counts, cmts] = await Promise.all([getFeedbackCounts(id), getComments(id)]);
     setLikes(counts.likes);
     setComments(cmts);
-  };
+  }
 
-  const handleLike = async () => {
+  async function handleLike() {
     if (hasLiked || !id) return;
     setHasLiked(true);
-    setLikes(l => l + 1);
+    setLikes((l) => l + 1);
     await submitFeedback({ patternId: id, type: 'like' });
-  };
+  }
 
-  const handleComment = async () => {
+  async function handleComment() {
     if (!newComment.trim() || !id) return;
     setCommentLoading(true);
     await submitFeedback({ patternId: id, comment: newComment.trim() });
@@ -144,39 +121,47 @@ export default function PatternDetailScreen() {
     const cmts = await getComments(id);
     setComments(cmts);
     setCommentLoading(false);
-  };
+  }
 
-  const handleShare = async () => {
+  async function handleShare() {
     if (!pattern) return;
     try {
       await Share.share({
         title: pattern.name,
-        message: `Découvre ce patron de tricot : ${pattern.name} — ${pattern.description}\n\nhttps://projet-tricot-julie.vercel.app`,
-        url: 'https://projet-tricot-julie.vercel.app',
+        message: `Découvre ce patron de tricot : ${pattern.name} — ${pattern.description}`,
       });
     } catch {}
-  };
+  }
 
-  const fetchPattern = async () => {
+  async function fetchPattern() {
     try {
       const response = await fetch(`${BACKEND_URL}/api/patterns/${id}`);
       if (response.ok) {
-        const data = await response.json();
-        setPattern(data);
+        setPattern(await response.json());
       }
     } catch (error) {
       console.error('Error fetching pattern:', error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }
+
+  function askJulie() {
+    if (!pattern) return;
+    router.push({
+      pathname: '/chat',
+      params: { question: `J'aimerais des conseils pour réaliser le patron "${pattern.name}". Peux-tu m'aider ?` },
+    });
+  }
+
+  /* ─── Loading / Error states ─── */
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#D4AF37" />
-          <Text style={styles.loadingText}>Chargement...</Text>
+      <SafeAreaView style={styles.page}>
+        <View style={styles.center}>
+          <ActivityIndicator size="large" color={colors.blushDeep} />
+          <Text style={styles.centerText}>Chargement...</Text>
         </View>
       </SafeAreaView>
     );
@@ -184,123 +169,114 @@ export default function PatternDetailScreen() {
 
   if (!pattern) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Patron non trouvé</Text>
+      <SafeAreaView style={styles.page}>
+        <Header title="Patron" back />
+        <View style={styles.center}>
+          <Text style={styles.centerText}>Patron non trouvé</Text>
         </View>
       </SafeAreaView>
     );
   }
 
-  const difficultyColor = DIFFICULTY_COLORS[pattern.difficulty] || '#888888';
+  const difficultyTone = DIFFICULTY_TONE[pattern.difficulty] || 'neutral';
+
+  /* ─── UI ─── */
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/patterns')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>{pattern.name}</Text>
-        <TouchableOpacity
-          style={styles.aiButton}
-          onPress={() => router.push({
-            pathname: '/chat',
-            params: { question: `J'aimerais des conseils pour réaliser le patron "${pattern.name}". Peux-tu m'aider ?` }
-          })}
-        >
-          <Ionicons name="sparkles" size={22} color="#D4AF37" />
-        </TouchableOpacity>
-      </View>
+    <SafeAreaView style={styles.page}>
+      <Header
+        title={pattern.name}
+        back
+        right={
+          <TouchableOpacity onPress={askJulie} accessibilityLabel="Demander conseil à Julie">
+            <Ionicons name="sparkles" size={22} color={colors.blushDeep} />
+          </TouchableOpacity>
+        }
+      />
 
-      <ScrollView style={styles.content}>
-        {/* Pattern Image */}
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+        {/* Image */}
         {pattern.image_url && pattern.image_url.startsWith('http') && (
-          <View style={styles.imageContainer}>
-            <Image 
-              source={{ uri: pattern.image_url }} 
-              style={styles.patternImage}
-              resizeMode="cover"
-            />
+          <View style={styles.imageWrap}>
+            <Image source={{ uri: pattern.image_url }} style={styles.image} resizeMode="cover" />
           </View>
         )}
 
-        {/* Pattern Header */}
-        <View style={styles.patternHeader}>
+        {/* Header info */}
+        <View style={styles.info}>
           <Text style={styles.patternName}>{pattern.name}</Text>
-          <Text style={styles.patternDescription}>{pattern.description}</Text>
-          
-          <View style={styles.badgesRow}>
-            <View style={styles.categoryBadge}>
-              <Text style={styles.categoryText}>
-                {CATEGORY_LABELS[pattern.category] || pattern.category}
-              </Text>
-            </View>
-            <View style={[styles.difficultyBadge, { backgroundColor: difficultyColor }]}>
-              <Text style={styles.difficultyText}>{pattern.difficulty}</Text>
-            </View>
+          <Text style={styles.patternDesc}>{pattern.description}</Text>
+
+          <View style={styles.badges}>
+            <Badge label={CATEGORY_LABELS[pattern.category] || pattern.category} tone="gold" />
+            <Badge label={pattern.difficulty} tone={difficultyTone} />
             <View style={styles.timeBadge}>
-              <Ionicons name="time-outline" size={14} color="#D4AF37" />
+              <Ionicons name="time-outline" size={13} color={colors.textMuted} />
               <Text style={styles.timeText}>{pattern.estimated_time}</Text>
             </View>
           </View>
         </View>
 
         {/* Sizes */}
-        <View style={styles.sizesCard}>
+        <Card style={styles.section}>
           <Text style={styles.sectionTitle}>Tailles disponibles</Text>
-          <View style={styles.sizesList}>
-            {Object.entries(pattern.sizes).map(([size, desc]) => (
-              <View key={size} style={styles.sizeItem}>
-                <Text style={styles.sizeLabel}>{size}</Text>
-                <Text style={styles.sizeDesc}>{desc}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
+          {Object.entries(pattern.sizes).map(([size, desc]) => (
+            <View key={size} style={styles.sizeRow}>
+              <Text style={styles.sizeLabel}>{size}</Text>
+              <Text style={styles.sizeDesc}>{desc}</Text>
+            </View>
+          ))}
+        </Card>
 
         {/* Gauge */}
-        <View style={styles.gaugeCard}>
-          <Ionicons name="grid-outline" size={20} color="#D4AF37" />
+        <Card style={styles.gaugeCard}>
+          <Ionicons name="grid-outline" size={20} color={colors.blushDeep} />
           <View style={styles.gaugeInfo}>
             <Text style={styles.gaugeLabel}>Échantillon</Text>
             <Text style={styles.gaugeValue}>{pattern.gauge}</Text>
           </View>
-        </View>
+        </Card>
 
-        {/* Action bar : likes, commentaires, partage, instagram */}
+        {/* Action bar: likes, comments, share, instagram */}
         <View style={styles.actionBar}>
-          <TouchableOpacity style={[styles.actionBtn, hasLiked && styles.actionBtnActive]} onPress={handleLike}>
-            <Ionicons name={hasLiked ? "heart" : "heart-outline"} size={20} color={hasLiked ? "#E74C3C" : "#AAAAAA"} />
-            <Text style={[styles.actionText, hasLiked && { color: '#E74C3C' }]}>{likes}</Text>
+          <TouchableOpacity style={styles.actionBtn} onPress={handleLike}>
+            <Ionicons
+              name={hasLiked ? 'heart' : 'heart-outline'}
+              size={20}
+              color={hasLiked ? colors.danger : colors.textMuted}
+            />
+            <Text style={[styles.actionText, hasLiked && { color: colors.danger }]}>{likes}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionBtn} onPress={() => setShowComments(v => !v)}>
-            <Ionicons name="chatbubble-outline" size={20} color="#AAAAAA" />
+          <TouchableOpacity style={styles.actionBtn} onPress={() => setShowComments((v) => !v)}>
+            <Ionicons name="chatbubble-outline" size={20} color={colors.textMuted} />
             <Text style={styles.actionText}>{comments.length}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
-            <Ionicons name="share-social-outline" size={20} color="#AAAAAA" />
+            <Ionicons name="share-social-outline" size={20} color={colors.textMuted} />
             <Text style={styles.actionText}>Partager</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionBtn} onPress={() => Linking.openURL('https://www.instagram.com/djeminie972/')}>
+          <TouchableOpacity
+            style={styles.actionBtn}
+            onPress={() => Linking.openURL('https://www.instagram.com/djeminie972/')}
+          >
             <Ionicons name="logo-instagram" size={20} color="#C13584" />
             <Text style={[styles.actionText, { color: '#C13584' }]}>Julie</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Section commentaires */}
+        {/* Comments section */}
         {showComments && (
-          <View style={styles.commentsSection}>
+          <Card style={styles.section}>
             <View style={styles.commentInputRow}>
               <TextInput
                 style={styles.commentInput}
                 value={newComment}
                 onChangeText={setNewComment}
                 placeholder="Laisser un commentaire..."
-                placeholderTextColor="#555"
+                placeholderTextColor={colors.textMuted}
                 multiline
               />
               <TouchableOpacity
@@ -308,659 +284,325 @@ export default function PatternDetailScreen() {
                 onPress={handleComment}
                 disabled={commentLoading || !newComment.trim()}
               >
-                <Ionicons name="send" size={18} color="#0A0A0A" />
+                <Ionicons name="send" size={16} color={colors.white} />
               </TouchableOpacity>
             </View>
             {comments.length === 0 ? (
-              <Text style={styles.noCommentText}>Soyez le premier à commenter !</Text>
+              <Text style={styles.noComment}>Soyez le premier à commenter !</Text>
             ) : (
               comments.map((c, i) => (
                 <View key={i} style={styles.commentItem}>
-                  <Ionicons name="person-circle-outline" size={22} color="#D4AF37" />
+                  <Ionicons name="person-circle-outline" size={22} color={colors.blushDeep} />
                   <View style={{ flex: 1, marginLeft: 10 }}>
                     <Text style={styles.commentText}>{c.comment}</Text>
-                    <Text style={styles.commentDate}>{new Date(c.created_at).toLocaleDateString('fr-FR')}</Text>
+                    <Text style={styles.commentDate}>
+                      {new Date(c.created_at).toLocaleDateString('fr-FR')}
+                    </Text>
                   </View>
                 </View>
               ))
             )}
-          </View>
+          </Card>
         )}
 
-        {/* Tabs + contenu + bouton IA */}
-        {(<>
-        <View style={styles.tabsContainer}>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'materials' && styles.tabActive]}
-            onPress={() => setActiveTab('materials')}
-          >
-            <Ionicons
-              name="cube-outline"
-              size={18}
-              color={activeTab === 'materials' ? '#0A0A0A' : '#D4AF37'}
-            />
-            <Text style={[styles.tabText, activeTab === 'materials' && styles.tabTextActive]}>
-              Matériel
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'steps' && styles.tabActive]}
-            onPress={() => setActiveTab('steps')}
-          >
-            <Ionicons
-              name="list-outline"
-              size={18}
-              color={activeTab === 'steps' ? '#0A0A0A' : '#D4AF37'}
-            />
-            <Text style={[styles.tabText, activeTab === 'steps' && styles.tabTextActive]}>
-              Étapes
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === 'tips' && styles.tabActive]}
-            onPress={() => setActiveTab('tips')}
-          >
-            <Ionicons
-              name="bulb-outline"
-              size={18}
-              color={activeTab === 'tips' ? '#0A0A0A' : '#D4AF37'}
-            />
-            <Text style={[styles.tabText, activeTab === 'tips' && styles.tabTextActive]}>
-              Astuces
-            </Text>
-          </TouchableOpacity>
+        {/* Tabs: Matériel / Étapes / Astuces */}
+        <View style={styles.tabsRow}>
+          {(['materials', 'steps', 'tips'] as const).map((tab) => {
+            const icons = { materials: 'cube-outline', steps: 'list-outline', tips: 'bulb-outline' } as const;
+            const labels = { materials: 'Matériel', steps: 'Étapes', tips: 'Astuces' };
+            const active = activeTab === tab;
+            return (
+              <TouchableOpacity
+                key={tab}
+                style={[styles.tab, active && styles.tabActive]}
+                onPress={() => setActiveTab(tab)}
+                accessibilityRole="tab"
+                accessibilityState={{ selected: active }}
+              >
+                <Ionicons
+                  name={icons[tab] as any}
+                  size={16}
+                  color={active ? colors.white : colors.blushDeep}
+                />
+                <Text style={[styles.tabText, active && styles.tabTextActive]}>
+                  {labels[tab]}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
-        {/* Tab Content */}
+        {/* Tab content */}
         <View style={styles.tabContent}>
           {activeTab === 'materials' && (
             <>
               {/* Yarn */}
-              <View style={styles.materialCard}>
+              <Card style={styles.materialCard}>
                 <View style={styles.materialHeader}>
-                  <Ionicons name="color-palette-outline" size={24} color="#D4AF37" />
+                  <Ionicons name="color-palette-outline" size={22} color={colors.blushDeep} />
                   <Text style={styles.materialTitle}>Laine</Text>
                 </View>
-                <View style={styles.materialDetail}>
-                  <Text style={styles.detailLabel}>Type</Text>
-                  <Text style={styles.detailValue}>{pattern.materials.yarn.type}</Text>
-                </View>
-                <View style={styles.materialDetail}>
-                  <Text style={styles.detailLabel}>Poids</Text>
-                  <Text style={styles.detailValue}>{pattern.materials.yarn.weight}</Text>
-                </View>
-                <View style={styles.materialDetail}>
-                  <Text style={styles.detailLabel}>Quantité</Text>
-                  <Text style={styles.detailValue}>{pattern.materials.yarn.quantity}</Text>
-                </View>
+                <DetailRow label="Type" value={pattern.materials.yarn.type} />
+                <DetailRow label="Poids" value={pattern.materials.yarn.weight} />
+                <DetailRow label="Quantité" value={pattern.materials.yarn.quantity} />
                 <View style={styles.recommendedBox}>
                   <Text style={styles.recommendedLabel}>Recommandé</Text>
                   <Text style={styles.recommendedValue}>{pattern.materials.yarn.recommended}</Text>
                 </View>
-                {/* Amazon Buy Button for Yarn */}
                 <TouchableOpacity
-                  style={styles.amazonButton}
+                  style={styles.amazonBtn}
                   onPress={() => openAmazonSearch(pattern.materials.yarn.recommended || pattern.materials.yarn.type)}
                 >
-                  <Ionicons name="cart-outline" size={18} color="#FFFFFF" />
-                  <Text style={styles.amazonButtonText}>Amazon</Text>
-                  <Ionicons name="open-outline" size={16} color="#FFFFFF" />
+                  <Ionicons name="cart-outline" size={16} color={colors.white} />
+                  <Text style={styles.storeBtnText}>Amazon</Text>
+                  <Ionicons name="open-outline" size={14} color={colors.white} />
                 </TouchableOpacity>
-                {/* Additional store buttons */}
-                <View style={styles.storeButtonsRow}>
+                <View style={styles.storeRow}>
                   <TouchableOpacity
-                    style={styles.hobbiiButton}
+                    style={[styles.storeBtn, { backgroundColor: '#E74C3C' }]}
                     onPress={() => openHobbiiSearch(pattern.materials.yarn.type)}
                   >
-                    <Text style={styles.storeButtonText}>Hobbii</Text>
+                    <Text style={styles.storeBtnText}>Hobbii</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={styles.louPassionButton}
+                    style={[styles.storeBtn, { backgroundColor: '#9B59B6' }]}
                     onPress={() => openLouPassionSearch(pattern.materials.yarn.type)}
                   >
-                    <Text style={styles.storeButtonText}>Lou Passion</Text>
+                    <Text style={styles.storeBtnText}>Lou Passion</Text>
                   </TouchableOpacity>
                 </View>
-              </View>
+              </Card>
 
               {/* Needles */}
-              <View style={styles.materialCard}>
+              <Card style={styles.materialCard}>
                 <View style={styles.materialHeader}>
-                  <Ionicons name="construct-outline" size={24} color="#D4AF37" />
+                  <Ionicons name="construct-outline" size={22} color={colors.blushDeep} />
                   <Text style={styles.materialTitle}>Aiguilles / Crochet</Text>
                 </View>
-                <View style={styles.materialDetail}>
-                  <Text style={styles.detailLabel}>Type</Text>
-                  <Text style={styles.detailValue}>{pattern.materials.needles.type}</Text>
-                </View>
-                <View style={styles.materialDetail}>
-                  <Text style={styles.detailLabel}>Taille</Text>
-                  <Text style={styles.detailValue}>{pattern.materials.needles.size}</Text>
-                </View>
+                <DetailRow label="Type" value={pattern.materials.needles.type} />
+                <DetailRow label="Taille" value={pattern.materials.needles.size} />
                 {pattern.materials.needles.cable_length !== 'N/A' && (
-                  <View style={styles.materialDetail}>
-                    <Text style={styles.detailLabel}>Câble</Text>
-                    <Text style={styles.detailValue}>{pattern.materials.needles.cable_length}</Text>
-                  </View>
+                  <DetailRow label="Câble" value={pattern.materials.needles.cable_length} />
                 )}
-                {/* Amazon Buy Button for Needles */}
                 <TouchableOpacity
-                  style={styles.amazonButton}
+                  style={styles.amazonBtn}
                   onPress={() => openAmazonNeedleSearch(pattern.materials.needles.type, pattern.materials.needles.size)}
                 >
-                  <Ionicons name="cart-outline" size={18} color="#FFFFFF" />
-                  <Text style={styles.amazonButtonText}>Acheter sur Amazon</Text>
-                  <Ionicons name="open-outline" size={16} color="#FFFFFF" />
+                  <Ionicons name="cart-outline" size={16} color={colors.white} />
+                  <Text style={styles.storeBtnText}>Acheter sur Amazon</Text>
+                  <Ionicons name="open-outline" size={14} color={colors.white} />
                 </TouchableOpacity>
-              </View>
+              </Card>
 
               {/* Accessories */}
-              <View style={styles.materialCard}>
+              <Card style={styles.materialCard}>
                 <View style={styles.materialHeader}>
-                  <Ionicons name="bag-outline" size={24} color="#D4AF37" />
+                  <Ionicons name="bag-outline" size={22} color={colors.blushDeep} />
                   <Text style={styles.materialTitle}>Accessoires</Text>
                 </View>
-                {pattern.materials.accessories.map((acc, index) => (
-                  <View key={index} style={styles.accessoryItem}>
-                    <Ionicons name="checkmark-circle" size={18} color="#4CAF50" />
+                {pattern.materials.accessories.map((acc, i) => (
+                  <View key={i} style={styles.accessoryRow}>
+                    <Ionicons name="checkmark-circle" size={16} color={colors.sage} />
                     <Text style={styles.accessoryText}>{acc}</Text>
                   </View>
                 ))}
+              </Card>
+            </>
+          )}
+
+          {activeTab === 'steps' &&
+            pattern.steps.map((step) => (
+              <View key={step.step} style={styles.stepCard}>
+                <View style={styles.stepNumber}>
+                  <Text style={styles.stepNumberText}>{step.step}</Text>
+                </View>
+                <View style={styles.stepBody}>
+                  <Text style={styles.stepTitle}>{step.title}</Text>
+                  <Text style={styles.stepInstruction}>{step.instruction}</Text>
+                </View>
               </View>
-            </>
-          )}
+            ))}
 
-          {activeTab === 'steps' && (
-            <>
-              {pattern.steps.map((step, index) => (
-                <View key={index} style={styles.stepCard}>
-                  <View style={styles.stepNumber}>
-                    <Text style={styles.stepNumberText}>{step.step}</Text>
-                  </View>
-                  <View style={styles.stepContent}>
-                    <Text style={styles.stepTitle}>{step.title}</Text>
-                    <Text style={styles.stepInstruction}>{step.instruction}</Text>
-                  </View>
-                </View>
-              ))}
-            </>
-          )}
-
-          {activeTab === 'tips' && (
-            <>
-              {pattern.tips.map((tip, index) => (
-                <View key={index} style={styles.tipCard}>
-                  <Ionicons name="bulb" size={20} color="#D4AF37" />
-                  <Text style={styles.tipText}>{tip}</Text>
-                </View>
-              ))}
-            </>
-          )}
+          {activeTab === 'tips' &&
+            pattern.tips.map((tip, i) => (
+              <View key={i} style={styles.tipCard}>
+                <Ionicons name="bulb" size={18} color={colors.gold} />
+                <Text style={styles.tipText}>{tip}</Text>
+              </View>
+            ))}
         </View>
 
-        {/* Ask AI Button */}
-        <TouchableOpacity
-          style={styles.askAiButton}
-          onPress={() => router.push({
-            pathname: '/chat',
-            params: { question: `Je veux faire le patron "${pattern.name}". Peux-tu m'aider avec des conseils personnalisés ?` }
-          })}
-        >
-          <Ionicons name="sparkles" size={22} color="#0A0A0A" />
-          <Text style={styles.askAiText}>Demander conseil à Julie</Text>
+        {/* Ask Julie CTA */}
+        <TouchableOpacity style={styles.askJulie} onPress={askJulie} accessibilityRole="button">
+          <Ionicons name="sparkles" size={20} color={colors.white} />
+          <Text style={styles.askJulieText}>Demander conseil à Julie</Text>
         </TouchableOpacity>
-        </>)}
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+/* ─── Small sub-component ─── */
+
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={styles.detailRow}>
+      <Text style={styles.detailLabel}>{label}</Text>
+      <Text style={styles.detailValue}>{value}</Text>
+    </View>
+  );
+}
+
+/* ─── Styles ─── */
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0A0A0A',
-  },
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loadingText: {
-    fontSize: 14,
-    color: '#888888',
-    marginTop: 12,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    textAlign: 'center',
-    marginHorizontal: 12,
-  },
-  aiButton: {
-    padding: 8,
-  },
-  content: {
-    flex: 1,
-  },
-  imageContainer: {
+  page: { flex: 1, backgroundColor: colors.cream },
+  scroll: { flex: 1 },
+  scrollContent: {
+    paddingBottom: spacing.xxxl,
+    maxWidth: layout.maxContentWidth,
     width: '100%',
-    height: 220,
-    backgroundColor: '#1A1A1A',
+    alignSelf: 'center',
   },
-  patternImage: {
-    width: '100%',
-    height: '100%',
-  },
-  patternHeader: {
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
-  },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  centerText: { fontSize: 14, color: colors.textMuted, marginTop: spacing.md },
+
+  /* Image */
+  imageWrap: { width: '100%', height: 220, backgroundColor: colors.blushSoft },
+  image: { width: '100%', height: '100%' },
+
+  /* Info header */
+  info: { padding: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.line },
   patternName: {
-    fontSize: 26,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 8,
+    fontFamily: fonts.display, fontSize: 26, fontWeight: '700',
+    color: colors.text, marginBottom: spacing.sm,
   },
-  patternDescription: {
-    fontSize: 15,
-    color: '#AAAAAA',
-    lineHeight: 22,
-    marginBottom: 16,
-  },
-  badgesRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  categoryBadge: {
-    backgroundColor: '#1A1A1A',
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#D4AF37',
-  },
-  categoryText: {
-    fontSize: 13,
-    color: '#D4AF37',
-  },
-  difficultyBadge: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  difficultyText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  timeBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#1A1A1A',
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 16,
-    gap: 6,
-  },
-  timeText: {
-    fontSize: 13,
-    color: '#D4AF37',
-  },
-  sizesCard: {
-    margin: 16,
-    padding: 16,
-    backgroundColor: '#1A1A1A',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
-  },
+  patternDesc: { fontSize: 15, color: colors.textMuted, lineHeight: 22, marginBottom: spacing.lg },
+  badges: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  timeBadge: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  timeText: { fontSize: 13, color: colors.textMuted },
+
+  /* Section cards */
+  section: { marginHorizontal: spacing.lg, marginTop: spacing.lg },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#D4AF37',
-    marginBottom: 12,
+    fontFamily: fonts.display, fontSize: 16, fontWeight: '700',
+    color: colors.blushDeep, marginBottom: spacing.md,
   },
-  sizesList: {
-    gap: 8,
-  },
-  sizeItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  sizeLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    width: 60,
-  },
-  sizeDesc: {
-    fontSize: 14,
-    color: '#AAAAAA',
-    flex: 1,
-  },
+  sizeRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm },
+  sizeLabel: { fontSize: 14, fontWeight: '700', color: colors.text, width: 60 },
+  sizeDesc: { fontSize: 14, color: colors.textMuted, flex: 1 },
+
+  /* Gauge */
   gaugeCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 16,
-    marginBottom: 16,
-    padding: 16,
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#D4AF37',
+    flexDirection: 'row', alignItems: 'center', gap: spacing.md,
+    marginHorizontal: spacing.lg, marginTop: spacing.lg,
+    backgroundColor: colors.goldSoft, borderWidth: 0,
   },
-  gaugeInfo: {
-    marginLeft: 12,
-  },
-  gaugeLabel: {
-    fontSize: 12,
-    color: '#D4AF37',
-    fontWeight: '600',
-  },
-  gaugeValue: {
-    fontSize: 14,
-    color: '#FFFFFF',
-    marginTop: 2,
-  },
-  tabsContainer: {
-    flexDirection: 'row',
-    marginHorizontal: 16,
-    backgroundColor: '#1A1A1A',
-    borderRadius: 12,
-    padding: 4,
-  },
-  tab: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    borderRadius: 10,
-    gap: 6,
-  },
-  tabActive: {
-    backgroundColor: '#D4AF37',
-  },
-  tabText: {
-    fontSize: 13,
-    color: '#D4AF37',
-    fontWeight: '500',
-  },
-  tabTextActive: {
-    color: '#0A0A0A',
-    fontWeight: '600',
-  },
-  tabContent: {
-    padding: 16,
-  },
-  materialCard: {
-    backgroundColor: '#1A1A1A',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
-  },
-  materialHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#2A2A2A',
-  },
-  materialTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginLeft: 10,
-  },
-  materialDetail: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  detailLabel: {
-    fontSize: 14,
-    color: '#888888',
-  },
-  detailValue: {
-    fontSize: 14,
-    color: '#FFFFFF',
-    flex: 1,
-    textAlign: 'right',
-    marginLeft: 12,
-  },
-  recommendedBox: {
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-    borderRadius: 8,
-    padding: 12,
-    marginTop: 8,
-  },
-  recommendedLabel: {
-    fontSize: 12,
-    color: '#D4AF37',
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  recommendedValue: {
-    fontSize: 13,
-    color: '#CCCCCC',
-  },
-  amazonButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FF9900',
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    marginTop: 12,
-    gap: 8,
-  },
-  amazonButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    flex: 1,
-    textAlign: 'center',
-  },
-  storeButtonsRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 8,
-  },
-  hobbiiButton: {
-    flex: 1,
-    backgroundColor: '#E74C3C',
-    borderRadius: 8,
-    paddingVertical: 10,
-    alignItems: 'center',
-  },
-  louPassionButton: {
-    flex: 1,
-    backgroundColor: '#9B59B6',
-    borderRadius: 8,
-    paddingVertical: 10,
-    alignItems: 'center',
-  },
-  storeButtonText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  accessoryItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-    gap: 10,
-  },
-  accessoryText: {
-    fontSize: 14,
-    color: '#CCCCCC',
-  },
-  stepCard: {
-    flexDirection: 'row',
-    backgroundColor: '#1A1A1A',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
-  },
-  stepNumber: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#D4AF37',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 14,
-  },
-  stepNumberText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#0A0A0A',
-  },
-  stepContent: {
-    flex: 1,
-  },
-  stepTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginBottom: 6,
-  },
-  stepInstruction: {
-    fontSize: 14,
-    color: '#AAAAAA',
-    lineHeight: 22,
-  },
-  tipCard: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#D4AF37',
-    gap: 12,
-  },
-  tipText: {
-    flex: 1,
-    fontSize: 14,
-    color: '#CCCCCC',
-    lineHeight: 22,
-  },
-  askAiButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#D4AF37',
-    marginHorizontal: 16,
-    marginBottom: 24,
-    paddingVertical: 16,
-    borderRadius: 12,
-    gap: 10,
-  },
-  askAiText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#0A0A0A',
-  },
+  gaugeInfo: { flex: 1 },
+  gaugeLabel: { fontSize: 12, color: colors.gold, fontWeight: '700' },
+  gaugeValue: { fontSize: 14, color: colors.text, marginTop: 2 },
+
+  /* Action bar */
   actionBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginHorizontal: 16,
-    marginBottom: 16,
-    backgroundColor: '#1A1A1A',
-    borderRadius: 12,
-    paddingVertical: 12,
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
+    flexDirection: 'row', justifyContent: 'space-around',
+    marginHorizontal: spacing.lg, marginTop: spacing.lg,
+    backgroundColor: colors.surface, borderRadius: radii.md,
+    paddingVertical: spacing.md, ...shadows.soft,
   },
-  actionBtn: {
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 12,
-  },
-  actionBtnActive: {},
-  actionText: {
-    fontSize: 11,
-    color: '#AAAAAA',
-    fontWeight: '500',
-  },
-  commentsSection: {
-    marginHorizontal: 16,
-    marginBottom: 16,
-    backgroundColor: '#1A1A1A',
-    borderRadius: 12,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: '#2A2A2A',
-  },
-  commentInputRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 10,
-    marginBottom: 14,
-  },
+  actionBtn: { alignItems: 'center', gap: 3, paddingHorizontal: spacing.md },
+  actionText: { fontSize: 11, color: colors.textMuted, fontWeight: '600' },
+
+  /* Comments */
+  commentInputRow: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.sm, marginBottom: spacing.md },
   commentInput: {
-    flex: 1,
-    backgroundColor: '#0A0A0A',
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    fontSize: 14,
-    color: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#333',
-    maxHeight: 80,
+    flex: 1, backgroundColor: colors.cream, borderRadius: radii.sm,
+    paddingHorizontal: 14, paddingVertical: 10, fontSize: 14,
+    color: colors.text, maxHeight: 80,
   },
   commentSendBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    backgroundColor: '#D4AF37',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 38, height: 38, borderRadius: radii.sm,
+    backgroundColor: colors.blushDeep, alignItems: 'center', justifyContent: 'center',
   },
-  noCommentText: {
-    fontSize: 13,
-    color: '#555',
-    textAlign: 'center',
-    paddingVertical: 8,
+  noComment: { fontSize: 13, color: colors.textMuted, textAlign: 'center', paddingVertical: spacing.sm },
+  commentItem: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: spacing.md },
+  commentText: { fontSize: 14, color: colors.text, lineHeight: 20 },
+  commentDate: { fontSize: 11, color: colors.textMuted, marginTop: 2 },
+
+  /* Tabs */
+  tabsRow: {
+    flexDirection: 'row', marginHorizontal: spacing.lg, marginTop: spacing.lg,
+    backgroundColor: colors.surface, borderRadius: radii.md, padding: 4, ...shadows.soft,
   },
-  commentItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 12,
+  tab: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    paddingVertical: spacing.md, borderRadius: radii.sm, gap: 5,
   },
-  commentText: {
-    fontSize: 14,
-    color: '#CCCCCC',
-    lineHeight: 20,
+  tabActive: { backgroundColor: colors.blushDeep },
+  tabText: { fontSize: 13, color: colors.blushDeep, fontWeight: '600' },
+  tabTextActive: { color: colors.white, fontWeight: '700' },
+  tabContent: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg },
+
+  /* Materials */
+  materialCard: { marginBottom: spacing.md },
+  materialHeader: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
+    marginBottom: spacing.md, paddingBottom: spacing.md,
+    borderBottomWidth: 1, borderBottomColor: colors.line,
   },
-  commentDate: {
-    fontSize: 11,
-    color: '#555',
-    marginTop: 3,
+  materialTitle: { fontFamily: fonts.display, fontSize: 16, fontWeight: '700', color: colors.text },
+  detailRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm },
+  detailLabel: { fontSize: 14, color: colors.textMuted },
+  detailValue: { fontSize: 14, color: colors.text, flex: 1, textAlign: 'right', marginLeft: spacing.md },
+  recommendedBox: {
+    backgroundColor: colors.goldSoft, borderRadius: radii.sm, padding: spacing.md, marginTop: spacing.sm,
   },
+  recommendedLabel: { fontSize: 12, color: colors.gold, fontWeight: '700', marginBottom: 3 },
+  recommendedValue: { fontSize: 13, color: colors.text },
+  amazonBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: '#FF9900', borderRadius: radii.sm,
+    paddingVertical: spacing.md, marginTop: spacing.md, gap: spacing.sm,
+  },
+  storeRow: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm },
+  storeBtn: { flex: 1, borderRadius: radii.sm, paddingVertical: spacing.sm, alignItems: 'center' },
+  storeBtnText: { fontSize: 13, fontWeight: '700', color: colors.white },
+
+  /* Accessories */
+  accessoryRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm },
+  accessoryText: { fontSize: 14, color: colors.text },
+
+  /* Steps */
+  stepCard: {
+    flexDirection: 'row', backgroundColor: colors.surface,
+    borderRadius: radii.md, padding: spacing.lg, marginBottom: spacing.md, ...shadows.soft,
+  },
+  stepNumber: {
+    width: 34, height: 34, borderRadius: 17,
+    backgroundColor: colors.blushDeep, alignItems: 'center', justifyContent: 'center',
+    marginRight: spacing.md,
+  },
+  stepNumberText: { fontSize: 15, fontWeight: '800', color: colors.white },
+  stepBody: { flex: 1 },
+  stepTitle: {
+    fontFamily: fonts.display, fontSize: 15, fontWeight: '700',
+    color: colors.text, marginBottom: 4,
+  },
+  stepInstruction: { fontSize: 14, color: colors.textMuted, lineHeight: 21 },
+
+  /* Tips */
+  tipCard: {
+    flexDirection: 'row', alignItems: 'flex-start',
+    backgroundColor: colors.goldSoft, borderRadius: radii.md,
+    padding: spacing.lg, marginBottom: spacing.md, gap: spacing.md,
+  },
+  tipText: { flex: 1, fontSize: 14, color: colors.text, lineHeight: 21 },
+
+  /* Ask Julie CTA */
+  askJulie: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: colors.blushDeep, marginHorizontal: spacing.lg,
+    marginTop: spacing.lg, marginBottom: spacing.xl,
+    paddingVertical: spacing.lg, borderRadius: radii.md, gap: spacing.sm,
+  },
+  askJulieText: { fontSize: 16, fontWeight: '700', color: colors.white },
 });
