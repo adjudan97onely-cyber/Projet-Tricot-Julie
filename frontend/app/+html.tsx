@@ -14,8 +14,8 @@ export default function Root({ children }: PropsWithChildren) {
         />
 
         {/* === SEO === */}
-        <title>Julie Créations — Tricot & Crochet</title>
-        <meta name="description" content="Votre assistante experte en tricot et crochet. Patrons, tutoriels, outils et IA." />
+        <title>BTM Créations — Tricot & Crochet</title>
+        <meta name="description" content="Tricot et crochet fait main avec amour. Patrons, tutoriels, outils et assistant IA." />
 
         {/* === PWA — Android / Desktop === */}
         <meta name="theme-color" content="#D4AF37" />

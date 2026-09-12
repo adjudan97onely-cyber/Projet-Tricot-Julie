@@ -1,7 +1,7 @@
 {
-  "name": "Julie Créations — Tricot & Crochet",
-  "short_name": "Julie Créations",
-  "description": "Votre assistante experte en tricot et crochet. Patrons, tutoriels, outils et IA.",
+  "name": "BUI-THI DAM Créations — Tricot & Crochet",
+  "short_name": "BTM Créations",
+  "description": "Tricot et crochet fait main avec amour. Patrons, tutoriels, outils et assistant IA.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

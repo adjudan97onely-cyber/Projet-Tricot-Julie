@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Julie Créations",
+    "name": "BTM Créations",
     "slug": "julie-creations",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -24,9 +24,9 @@
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png",
-      "name": "Julie Créations",
-      "shortName": "Julie 🧶",
-      "description": "Votre assistante experte en tricot et crochet",
+      "name": "BTM Créations",
+      "shortName": "BTM 🧶",
+      "description": "Tricot et crochet fait main avec amour",
       "themeColor": "#D4AF37",
       "backgroundColor": "#0A0A0A",
       "display": "standalone",

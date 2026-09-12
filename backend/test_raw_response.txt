@@ -1,0 +1,6 @@
+```json
+[
+  {
+    "step": 1,
+    "title": "Préparez votre matériel et faites un échantillon",
+    "instruction": "Avant de commencer, assurez-vous d'avoir tout votre matériel à portée de main : la laine, les aiguilles 4mm et 5mm, le marqueur de mailles et l'aiguille à laine. Pour vérifier votre jauge (tension de tricot), tricotez un carré de 15x15cm en point jersey avec les aiguilles 5mm. Votre échantillon devrait mesurer 18 mailles sur 24 rangs pour 10cm x 10cm ; ajustez la taille de vos aiguilles si nécessaire pour obtenir cette jauge
